@@ -42,27 +42,6 @@ function makePats(words)
   return(regexs);
 }
 
-function matchAD_new(text, regexs)
-{
-  for(idx in regexs)
-  {
-    var AD = ADS[idx];
-    console.log('Finding ' + AD + ' ...');
-
-    var results = text.match(regexs[idx]);
-    if(results && (results.length>0))
-    {
-      var info = "有广告:" + AD;
-      console.log(results);
-      alert(info);
-    }
-    else
-    {
-      console.log('没有广告');
-    }
-  }
-}
-
 function matchAD(text, regex)
 {
   var hasAD = false;
