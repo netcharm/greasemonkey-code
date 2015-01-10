@@ -68,9 +68,13 @@ function notifyAD(info)
   }
 }
 
-function highlightAD(word)
+function highlightAD(word, node)
 {
   var gwrap = $('div.gwrap');
+  if(node)
+  {
+    gwrap = $(node);
+  }
   var html = gwrap.html().replace(word, function(m){
     return '<span style="color:white; background-color:red;">'+m+'</span>'
   });
@@ -97,17 +101,25 @@ function main(loaded)
     posts.each(function(){
       var text = this.textContent;
       hasAD |= matchAD(text, regexs[idx]);
+      if(hasAD)
+      {
+        highlightAD(regexs[idx], this)
+      }
     });
     comments.each(function(){
       var text = this.textContent;
       hasAD |= matchAD(text, regexs[idx]);
+      if(hasAD)
+      {
+        highlightAD(regexs[idx], this)
+      }
     });
 
     if(hasAD)
     {
       var info = "已发现广告: " + AD;
       notifyAD(info);
-      highlightAD(regexs[idx])
+      //highlightAD(regexs[idx])
       console.warn(info);
       //alert(info);
     }
