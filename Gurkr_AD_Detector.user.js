@@ -94,6 +94,42 @@ function highlightAD(word, node, mode)
   //});
 }
 
+function findingAD(items, regex, notice, mode)
+{
+  var hasAD = false;
+
+  items.each(function(){
+    var text = '';
+    if(mode && mode.toLowerCase()=='link')
+    {
+      text = this.innerHTML;
+    }
+    else
+    {
+      text = this.textContent;
+    }
+    //console.log(text);
+    hasAD |= matchAD(text, regex);
+    if(hasAD)
+    {
+      highlightAD(regex, this, mode);
+    }
+  });
+
+  if(hasAD)
+  {
+    var info = "已发现" + notice;
+    notifyAD(info);
+    console.warn(info);
+    //alert(info);
+  }
+  else
+  {
+    var info = "未发现" + notice;
+    console.info(info);
+  }
+}
+
 function main(loaded)
 {
   var regexs = makePats(ADS);
@@ -101,81 +137,19 @@ function main(loaded)
   var posts = $('.post-txt');
   var comments = $('.cmtContent');
 
+  //var items = article.toArray().concat(comments.toArray());
+  var items = $.merge(article, comments);
+  
   for(idx in regexs)
   {
-    var hasAD = false;
-
     var AD = ADS[idx];
-    //console.log('Finding ' + AD + ' ...');
-    
-    // finding AD words
-    article.each(function(){
-      var text = this.textContent;
-      hasAD |= matchAD(text, regexs[idx]);
-      if(hasAD)
-      {
-        highlightAD(regexs[idx], this, mode);
-      }
-    });
-    comments.each(function(){
-      var text = this.textContent;
-      hasAD |= matchAD(text, regexs[idx]);
-      if(hasAD)
-      {
-        highlightAD(regexs[idx], this, mode);
-      }
-    });
-
-    if(hasAD)
-    {
-      var info = "已发现广告: " + AD;
-      notifyAD(info);
-      //highlightAD(regexs[idx])
-      console.warn(info);
-      //alert(info);
-    }
-    else
-    {
-      var info = "未发现广告: " + AD;
-      console.info(info);
-    }
+    //console.log('Finding ' + AD + ' ...');   
+    findingAD(items, regexs[idx], '广告:'+AD);
   }
-  // finding ext-links
-  var link = new RegExp('<a.*?href="http://.*?".*?>.*?</a>', 'g');
-  var mode = 'link';
-  var LINK = '外链';
-  var hasLINK = false;
   
-  article.each(function(){
-    var html = this.innerHTML;
-    hasLINK |= matchAD(html, link);
-    if(hasLINK)
-    {
-      highlightAD(link, this, mode);
-    }
-  });
-  comments.each(function(){
-    var html = this.innerHTML;
-    hasLINK |= matchAD(html, link);
-    if(hasLINK)
-    {
-      highlightAD(link, this, mode);
-    }
-  });
-
-  if(hasLINK)
-  {
-    var info = "已发现外链";
-    notifyAD(info);
-    //highlightAD(regexs[idx])
-    console.warn(info);
-    //alert(info);
-  }
-  else
-  {
-    var info = "未发现外链";
-    console.info(info);
-  }
+  // finding ext-links
+  var link = new RegExp('<a.*?href="http://.*?".*?>.*?</a>', 'g'); 
+  findingAD(items, link, '外链', 'link');
   
 }
 
