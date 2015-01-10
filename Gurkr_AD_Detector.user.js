@@ -10,7 +10,7 @@
 
 const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '极美茵', '伯来世特', '叆鲱迪坷',
+  '极美茵', '伯来世特', '叆鲱迪坷', '路易',
   '天津妇科',
   '贝贝游戏', '91y'
 ];
@@ -26,10 +26,10 @@ function makePat(words)
     }
     else
     {
-      pat = pat + ".{0,8}" + words[idx];
+      pat = pat + ".{0,6}" + words[idx];
     }
   }
-  return(new RegExp(pat, 'g'));
+  return(new RegExp(pat, 'gi'));
 }
 
 function makePats(words)
@@ -65,7 +65,7 @@ function notifyAD(info)
   }
   else
   {
-    $('a.gh-i-notice').attr('title', info);  
+    $('a.gh-i-notice').attr('title', info);
   }
 }
 
@@ -74,7 +74,7 @@ function highlightAD(word, node, mode)
   var ad_style = 'color:white; background-color:red;';
   var link_style = 'color:white; background-color:yellow;';
   var style = ad_style;
-  
+
   var gwrap = $('div.gwrap');
   if(node)
   {
@@ -88,7 +88,7 @@ function highlightAD(word, node, mode)
     return '<span style="' + style + '">'+m+'</span>'
   });
   gwrap.html( html );
-  
+
   //document.body.innerHTML = document.body.innerHTML.replace(word, function(m){
   //  return '<span style="color:white; background-color:red;">'+m+'</span>'
   //});
@@ -133,26 +133,28 @@ function findingAD(items, regex, notice, mode)
 function main(loaded)
 {
   var regexs = makePats(ADS);
+  var title = $('#articleTitle');
   var article = $('#articleContent');
   var posts = $('.post-txt');
   var comments = $('.cmtContent');
 
   //var items = article.toArray().concat(comments.toArray());
-  var items = $.merge(article, comments);
-  
+  var items = $.merge($.merge(title, article), comments);
+
   for(idx in regexs)
   {
     var AD = ADS[idx];
-    //console.log('Finding ' + AD + ' ...');   
+    //console.log('Finding ' + AD + ' ...');
+    //console.log('Finding ' + regexs[idx] + ' ...');
     findingAD(items, regexs[idx], '广告:'+AD);
   }
-  
+
   // finding ext-links
-  //var link = new RegExp('<a.*?href="http://^((?!guokr).).*?".*?>.*?</a>', 'g'); 
-  var link = new RegExp('<a.*?href="http://(?!.*?\.guokr\.com).*?".*?>.*?</a>', 'g'); 
-  
+  //var link = new RegExp('<a.*?href="http://(?!.*?\.guokr\.com|).*?".*?>.*?</a>', 'g');
+  var link = new RegExp('<a (target="_blank"\ ){0,1}(?!data-nickname=".*?"\ ){0,0}href="(http://(?!.*?\.guokr\.com).*?)".*?>.*?</a>', 'gi');
+
   findingAD(items, link, '外链', 'link');
-  
+
 }
 
 main();
