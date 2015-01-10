@@ -11,6 +11,7 @@
 const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
   '极美茵', '伯来世特',
+  '天津妇科',
   '贝贝游戏', '91y'
 ];
 
@@ -68,15 +69,23 @@ function notifyAD(info)
   }
 }
 
-function highlightAD(word, node)
+function highlightAD(word, node, mode)
 {
+  var ad_style = 'color:white; background-color:red;';
+  var link_style = 'color:white; background-color:yellow;';
+  var style = ad_style;
+  
   var gwrap = $('div.gwrap');
   if(node)
   {
     gwrap = $(node);
   }
+  if(mode && mode.toLowerCase()=='link')
+  {
+    style = link_style;
+  }
   var html = gwrap.html().replace(word, function(m){
-    return '<span style="color:white; background-color:red;">'+m+'</span>'
+    return '<span style="' + style + '">'+m+'</span>'
   });
   gwrap.html( html );
   
@@ -88,6 +97,7 @@ function highlightAD(word, node)
 function main(loaded)
 {
   var regexs = makePats(ADS);
+  var article = $('#articleContent');
   var posts = $('.post-txt');
   var comments = $('.cmtContent');
 
@@ -97,13 +107,14 @@ function main(loaded)
 
     var AD = ADS[idx];
     //console.log('Finding ' + AD + ' ...');
-
-    posts.each(function(){
+    
+    // finding AD words
+    article.each(function(){
       var text = this.textContent;
       hasAD |= matchAD(text, regexs[idx]);
       if(hasAD)
       {
-        highlightAD(regexs[idx], this)
+        highlightAD(regexs[idx], this, mode);
       }
     });
     comments.each(function(){
@@ -111,7 +122,7 @@ function main(loaded)
       hasAD |= matchAD(text, regexs[idx]);
       if(hasAD)
       {
-        highlightAD(regexs[idx], this)
+        highlightAD(regexs[idx], this, mode);
       }
     });
 
@@ -129,6 +140,43 @@ function main(loaded)
       console.info(info);
     }
   }
+  // finding ext-links
+  var link = new RegExp('<a.*?href="http://.*?".*?>.*?</a>', 'g');
+  var mode = 'link';
+  var LINK = '外链';
+  var hasLINK = false;
+  
+  article.each(function(){
+    var html = this.innerHTML;
+    hasLINK |= matchAD(html, link);
+    if(hasLINK)
+    {
+      highlightAD(link, this, mode);
+    }
+  });
+  comments.each(function(){
+    var html = this.innerHTML;
+    hasLINK |= matchAD(html, link);
+    if(hasLINK)
+    {
+      highlightAD(link, this, mode);
+    }
+  });
+
+  if(hasLINK)
+  {
+    var info = "已发现外链";
+    notifyAD(info);
+    //highlightAD(regexs[idx])
+    console.warn(info);
+    //alert(info);
+  }
+  else
+  {
+    var info = "未发现外链";
+    console.info(info);
+  }
+  
 }
 
 main();
