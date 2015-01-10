@@ -10,7 +10,7 @@
 
 const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '极美茵', '伯来世特',
+  '极美茵', '伯来世特', '叆鲱迪坷',
   '天津妇科',
   '贝贝游戏', '91y'
 ];
@@ -148,7 +148,9 @@ function main(loaded)
   }
   
   // finding ext-links
-  var link = new RegExp('<a.*?href="http://.*?".*?>.*?</a>', 'g'); 
+  //var link = new RegExp('<a.*?href="http://^((?!guokr).).*?".*?>.*?</a>', 'g'); 
+  var link = new RegExp('<a.*?href="http://(?!.*?\.guokr\.com).*?".*?>.*?</a>', 'g'); 
+  
   findingAD(items, link, '外链', 'link');
   
 }
