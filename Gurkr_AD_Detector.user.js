@@ -1,11 +1,14 @@
 ﻿// ==UserScript==
 // @name        Gurkr AD Detector
-// @namespace   NetCharm
+// @namespace   NetCharm - [https://github.com/netcharm]/[https://netcharm.bitbucket.org/]
+// @author      netcharm
 // @description Gurkr AD Detector
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
-// @version     1.1.0.0
+// @version     1.1.1.0
 // @run-at      document-end
+// @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
+// @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @grant       none
 // ==/UserScript==
 
