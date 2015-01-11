@@ -2,7 +2,8 @@
 // @name        Gurkr AD Detector
 // @namespace   NetCharm
 // @description Gurkr AD Detector
-// @include     http://www.guokr.com/post/*
+// @include     http://*.guokr.com/post/*
+// @include     http://*.guokr.com/question/*
 // @version     1.1.0.0
 // @run-at      document-end
 // @grant       none
@@ -54,10 +55,15 @@ function matchAD(text, regex)
   return(hasAD);
 }
 
-function notifyAD(info)
+function notifyAD(info, fg, bg)
 {
-  $('a.gh-i-notice').css('background-color', 'red');
-  $('a.gh-i-notice').css('color', 'white');
+  var bgcolor='red';
+  var fgcolor='white';
+  if(bg) bgcolor = bg;
+  if(fg) fgcolor = fg;
+  
+  $('a.gh-i-notice').css('background-color', bgcolor);
+  $('a.gh-i-notice').css('color', fgcolor);
   var title = $('a.gh-i-notice').attr('title');
   if(title)
   {
@@ -128,10 +134,13 @@ function findingAD(items, regex, notice, mode)
     var info = "未发现" + notice;
     console.info(info);
   }
+  return(hasAD);  
 }
 
-function findingLink(items)
+function findingLink(items, hasAD)
 {
+  var bgcolor = 'yellow';
+  var fgcolor = 'red';
   var hasLink = false;
   var notice = '外链';
   var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gi');
@@ -144,8 +153,8 @@ function findingLink(items)
       if(isExtLink && isExtLink.length>0)
       {
         hasLink = true;
-        link.css('background-color', 'yellow');
-        link.css('color', 'red');
+        link.css('background-color', bgcolor);
+        link.css('color', fgcolor);
       }
     });
   });
@@ -153,7 +162,8 @@ function findingLink(items)
   if(hasLink)
   {
     var info = "已发现" + notice;
-    notifyAD(info);
+    if(hasAD) bgcolor='orange';
+    notifyAD(info, fgcolor, bgcolor);
     console.warn(info);
     //alert(info);
   }
@@ -162,15 +172,19 @@ function findingLink(items)
     var info = "未发现" + notice;
     console.info(info);
   }
+  return(hasLink);
 }
 
 function main(loaded)
 {
+  var hasAD = false;
+  
   var regexs = makePats(ADS);
   var title = $('#articleTitle');
   var article = $('#articleContent');
   var posts = $('.post-txt');
-  var comments = $('.cmtContent');
+  //var comments = $('.cmtContent');
+  var comments = $('.gbbcode-content');
 
   //var items = article.toArray().concat(comments.toArray());
   var items = $.merge($.merge(title, article), comments);
@@ -180,7 +194,7 @@ function main(loaded)
     var AD = ADS[idx];
     //console.log('Finding ' + AD + ' ...');
     //console.log('Finding ' + regexs[idx] + ' ...');
-    findingAD(items, regexs[idx], '广告:'+AD);
+    hasAD |= findingAD(items, regexs[idx], '广告:'+AD);
   }
 
   // finding ext-links
@@ -188,7 +202,7 @@ function main(loaded)
   var link = new RegExp('<a (target="_blank"\ ){0,1}(?!data-nickname=".*?"\ ){0,0}href="(http://(?!.*?\.guokr\.com).*?)".*?>.*?</a>', 'gi');
 
   //findingAD(items, link, '外链', 'link');
-  findingLink(items);
+  findingLink(items, hasAD);
 
 }
 
