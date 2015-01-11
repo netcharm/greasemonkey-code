@@ -10,9 +10,9 @@
 
 const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '极美茵', '伯来世特', '叆鲱迪坷', '路易',
+  '极美茵', '伯来世特', '伯莱狮特', '叆鲱迪坷', '路易',
   '天津妇科',
-  '贝贝游戏', '91y'
+  '贝贝游戏', '91y','1908游戏'
 ];
 
 function makePat(words)
@@ -130,6 +130,40 @@ function findingAD(items, regex, notice, mode)
   }
 }
 
+function findingLink(items)
+{
+  var hasLink = false;
+  var notice = '外链';
+  var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gi');
+
+  items.each(function(){
+    var links = $(this).find('a');
+    links.each(function(){
+      var link = $(this);
+      var isExtLink = link[0].href.match(link_pat);
+      if(isExtLink && isExtLink.length>0)
+      {
+        hasLink = true;
+        link.css('background-color', 'yellow');
+        link.css('color', 'red');
+      }
+    });
+  });
+
+  if(hasLink)
+  {
+    var info = "已发现" + notice;
+    notifyAD(info);
+    console.warn(info);
+    //alert(info);
+  }
+  else
+  {
+    var info = "未发现" + notice;
+    console.info(info);
+  }
+}
+
 function main(loaded)
 {
   var regexs = makePats(ADS);
@@ -153,7 +187,8 @@ function main(loaded)
   //var link = new RegExp('<a.*?href="http://(?!.*?\.guokr\.com|).*?".*?>.*?</a>', 'g');
   var link = new RegExp('<a (target="_blank"\ ){0,1}(?!data-nickname=".*?"\ ){0,0}href="(http://(?!.*?\.guokr\.com).*?)".*?>.*?</a>', 'gi');
 
-  findingAD(items, link, '外链', 'link');
+  //findingAD(items, link, '外链', 'link');
+  findingLink(items);
 
 }
 
