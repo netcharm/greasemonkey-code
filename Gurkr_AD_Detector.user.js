@@ -16,9 +16,10 @@ const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
   '极美茵', '伯来世特', '伯莱狮特', '叆鲱迪坷', '路易',
   '妙女郎', '酵素梅', '酵素', '总代理',
-  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测',
+  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
   '咨詢熱線', '咨询热线',
-  '贝贝游戏', '91y','1908游戏'
+  '新闻牙膏', '新闻牙刷',
+  '贝贝游戏', '贝贝银子', '91y', '1908游戏'
 ];
 
 function makePat(words)
@@ -99,9 +100,8 @@ function highlightAD(word, node, mode)
     return '<span style="' + style + '">'+m+'</span>'
   });
   gwrap.html( html );
-
   //document.body.innerHTML = document.body.innerHTML.replace(word, function(m){
-  //  return '<span style="color:white; background-color:red;">'+m+'</span>'
+  //  return '<span style="color:white; background-color:red;">AD:'+m+'</span>'
   //});
 }
 
@@ -119,7 +119,6 @@ function findingAD(items, regex, notice, mode)
     {
       text = this.textContent;
     }
-    //console.log(text);
     hasAD |= matchAD(text, regex);
     if(hasAD)
     {
@@ -188,10 +187,8 @@ function main(loaded)
   var title = $('#articleTitle');
   var article = $('#articleContent');
   var posts = $('.post-txt');
-  //var comments = $('.cmtContent');
-  var comments = $('.gbbcode-content');
+  var comments = $('.cmtContent, .answerTxt');
 
-  //var items = article.toArray().concat(comments.toArray());
   var items = $.merge($.merge(title, article), comments);
 
   for(idx in regexs)
@@ -202,13 +199,7 @@ function main(loaded)
     hasAD |= findingAD(items, regexs[idx], '广告:'+AD);
   }
 
-  // finding ext-links
-  //var link = new RegExp('<a.*?href="http://(?!.*?\.guokr\.com|).*?".*?>.*?</a>', 'g');
-  var link = new RegExp('<a (target="_blank"\ ){0,1}(?!data-nickname=".*?"\ ){0,0}href="(http://(?!.*?\.guokr\.com).*?)".*?>.*?</a>', 'gi');
-
-  //findingAD(items, link, '外链', 'link');
   findingLink(items, hasAD);
-
 }
 
 main();
