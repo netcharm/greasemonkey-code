@@ -3,14 +3,21 @@
 // @namespace   NetCharm
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://www.guokr.com/group/*
-// @version     1.2.0.0
+// @version     1.2.0.5
 // @run-at      document-end
+// @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
+// @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @grant       none
 // ==/UserScript==
 
 const adkw = [ 
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '贝贝游戏', '91y','1908游戏'
+  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '路易',
+  '妙女郎', '酵素梅', '酵素', '总代理',
+  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
+  '咨詢熱線', '咨询热线',
+  '新闻牙膏', '新闻牙刷',
+  '贝贝游戏', '贝贝银子', '91y', '1908游戏', '747官网'
 ];
 
 function hideAD(){

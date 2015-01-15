@@ -5,7 +5,7 @@
 // @description Gurkr AD Detector
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
-// @version     1.1.1.0
+// @version     1.1.1.5
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -14,12 +14,12 @@
 
 const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '极美茵', '伯来世特', '伯莱狮特', '叆鲱迪坷', '路易',
+  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '路易',
   '妙女郎', '酵素梅', '酵素', '总代理',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
   '咨詢熱線', '咨询热线',
   '新闻牙膏', '新闻牙刷',
-  '贝贝游戏', '贝贝银子', '91y', '1908游戏'
+  '贝贝游戏', '贝贝银子', '91y', '1908游戏', '747官网'
 ];
 
 function makePat(words)
