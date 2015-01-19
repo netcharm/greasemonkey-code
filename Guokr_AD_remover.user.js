@@ -3,36 +3,68 @@
 // @namespace   NetCharm
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://www.guokr.com/group/*
-// @version     1.2.0.5
+// @version     1.2.0.6
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @grant       none
 // ==/UserScript==
 
-const adkw = [ 
+const adkw = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '路易',
-  '妙女郎', '酵素梅', '酵素', '总代理',
+  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '蚾梾轼忒', '秡猍狮特',
+  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草',
+  '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
   '咨詢熱線', '咨询热线',
   '新闻牙膏', '新闻牙刷',
-  '贝贝游戏', '贝贝银子', '91y', '1908游戏', '747官网'
+  '海华伦留学',
+  '成都装修', '苹果官方',
+  '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '91y', '1908游戏', '747官网'
 ];
+
+function makePat(words)
+{
+  var pat = "";
+  for(idx in words.split(''))
+  {
+    if(pat.length <= 0)
+    {
+      pat = words[idx];
+    }
+    else
+    {
+      pat = pat + ".{0,6}" + words[idx];
+    }
+  }
+  return(new RegExp(pat, 'gi'));
+}
+
+function makePats(words)
+{
+  var regexs = new Array();
+  for(idx in words)
+  {
+    regexs[regexs.length] = makePat(words[idx]);
+    //console.log(regexs);
+  }
+  return(regexs);
+}
 
 function hideAD(){
   var post_list = $('ul.titles > li.gclear');
   var post = null;
   var title = '';
+  var adpats = makePats(adkw);
   post_list.each(function(){
     post = $(this);
     title = post.find('h4 > a.title-link').text();
-    $.each(adkw,function(i,n)
+    $.each(adpats,function(i,n)
     {
       if(n && title.match(n))
       {
-        //console.log(title);        
         post.hide();
+        console.log('已发现广告词: '+ adkw[i] +', 帖子标题:'+title);
         return false;
       }
     });
@@ -41,7 +73,7 @@ function hideAD(){
 
 function addPostOrderButton(){
   $("p.main-btn-tab").css('border-bottom', 'none');
-  
+
   $('p.main-btn-tab').find('*').addClass("tab-left");
   var url = (window.location.pathname+'/?sort=created').replace('//', '/');
   var $orderBtn = $('<a href="'+url+'" title="按创建时间排序">创建</a>').appendTo('p.main-btn-tab');
@@ -49,7 +81,7 @@ function addPostOrderButton(){
   //$('ul.tab').find('*').addClass("tab-left");
   var url = (window.location.pathname+'/?sort=created').replace('//', '/');
   var $orderBtn = $('<li><a href="'+url+'" title="按创建时间排序">按创建排序</a></li>').appendTo('ul.tab');
-  
+
   //?sort=created
 };
 

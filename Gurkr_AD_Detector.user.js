@@ -5,7 +5,7 @@
 // @description Gurkr AD Detector
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
-// @version     1.1.1.5
+// @version     1.1.1.7
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -14,12 +14,15 @@
 
 const ADS = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
-  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '路易',
-  '妙女郎', '酵素梅', '酵素', '总代理',
+  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '蚾梾轼忒', '秡猍狮特',
+  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草',
+  '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
   '咨詢熱線', '咨询热线',
   '新闻牙膏', '新闻牙刷',
-  '贝贝游戏', '贝贝银子', '91y', '1908游戏', '747官网'
+  '海华伦留学',
+  '成都装修', '苹果官方',
+  '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '91y', '1908游戏', '747官网'
 ];
 
 function makePat(words)
@@ -67,7 +70,7 @@ function notifyAD(info, fg, bg)
   var fgcolor='white';
   if(bg) bgcolor = bg;
   if(fg) fgcolor = fg;
-  
+
   $('a.gh-i-notice').css('background-color', bgcolor);
   $('a.gh-i-notice').css('color', fgcolor);
   var title = $('a.gh-i-notice').attr('title');
@@ -138,7 +141,7 @@ function findingAD(items, regex, notice, mode)
     var info = "未发现" + notice;
     console.info(info);
   }
-  return(hasAD);  
+  return(hasAD);
 }
 
 function findingLink(items, hasAD)
@@ -182,11 +185,12 @@ function findingLink(items, hasAD)
 function main(loaded)
 {
   var hasAD = false;
-  
+
   var regexs = makePats(ADS);
   var title = $('#articleTitle');
   var article = $('#articleContent');
   var posts = $('.post-txt');
+  //var comments = $('.cmt-content, .answerTxt');
   var comments = $('.cmtContent, .answerTxt');
 
   var items = $.merge($.merge(title, article), comments);
