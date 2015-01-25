@@ -2,8 +2,9 @@
 // @name        Guokr AD Hiding
 // @namespace   NetCharm
 // @description Hide Guokr AD in post list & customizer it.
-// @include     http://www.guokr.com/group/*
-// @version     1.2.0.6
+// @include     http://*.guokr.com/group/*
+// @include     http://*.guokr.com/ask/*
+// @version     1.2.1.9
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -11,9 +12,10 @@
 // ==/UserScript==
 
 const adkw = [
-  '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', '中獎信息',
+  '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', 
+  '中獎信息', '小姐联系电话', '..小姐',
   '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '蚾梾轼忒', '秡猍狮特',
-  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草',
+  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
   '咨詢熱線', '咨询热线',
@@ -51,11 +53,12 @@ function makePats(words)
   return(regexs);
 }
 
-function hideAD(){
+var adpats = makePats(adkw);
+
+function hideAD_group(){
   var post_list = $('ul.titles > li.gclear');
   var post = null;
   var title = '';
-  var adpats = makePats(adkw);
   post_list.each(function(){
     post = $(this);
     title = post.find('h4 > a.title-link').text();
@@ -64,6 +67,25 @@ function hideAD(){
       if(n && title.match(n))
       {
         post.hide();
+        console.log('已发现广告词: '+ adkw[i] +', 帖子标题:'+title);
+        return false;
+      }
+    });
+  });
+};
+
+function hideAD_ask(){
+  var ask_list = $('.ask-list-detials');
+  var ask = null;
+  var title = '';
+  ask_list.each(function(){
+    ask = $(this);
+    title = ask.find('h2 > a').text();
+    $.each(adpats,function(i,n)
+    {
+      if(n && title.match(n))
+      {
+        ask.parent().hide();
         console.log('已发现广告词: '+ adkw[i] +', 帖子标题:'+title);
         return false;
       }
@@ -85,5 +107,6 @@ function addPostOrderButton(){
   //?sort=created
 };
 
-hideAD();
+hideAD_group();
+hideAD_ask();
 addPostOrderButton();
