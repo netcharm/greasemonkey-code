@@ -6,7 +6,7 @@
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
-// @version     1.1.1.14
+// @version     1.1.2.15
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -17,9 +17,10 @@ const ADS = [
   '爸爸去哪儿', '爸爸去哪兒', 
   '中国好声音', '中國好聲音', 
   '中獎信息', 
-  '小姐联系电话', //'..小姐', 
+  '小姐联系电话', '/..小姐/', 
   '极美茵', 
-  '伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝',
+  '/[伯博蚾秡渤卜].*?[来莱梾俫庲婡].*?[世狮轼史是时].*?[特忒慝]/',
+  '伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特',
   '叆鲱迪坷', 
   '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
   '一小兜', 'yixiaodou.com',
@@ -36,15 +37,22 @@ const ADS = [
 function makePat(words)
 {
   var pat = "";
-  for(idx in words.split(''))
+  if(words.startsWith('/') && words.endsWith('/'))
   {
-    if(pat.length <= 0)
-    {
-      pat = words[idx];
-    }
-    else
-    {
-      pat = pat + ".{0,6}" + words[idx];
+    pat = words.substr(1, words.length-2);
+  }
+  else
+  {
+    for(idx in words.split(''))
+    {   
+      if(pat.length <= 0)
+      {
+        pat = words[idx];
+      }
+      else
+      {
+        pat = pat + ".{0,6}" + words[idx];
+      }
     }
   }
   return(new RegExp(pat, 'gi'));

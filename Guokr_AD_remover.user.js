@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.1.9
+// @version     1.2.2.9
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -13,8 +13,11 @@
 
 const adkw = [
   '爸爸去哪儿', '中国好声音', '爸爸去哪兒', '中國好聲音', 
-  '中獎信息', '小姐联系电话', '..小姐',
-  '极美茵', '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '蚾梾轼忒', '秡猍狮特',
+  '中獎信息',
+  '小姐联系电话', '/..小姐/',
+  '极美茵', 
+  '/[伯博蚾秡渤卜].*?[来莱梾俫庲婡].*?[世狮轼史是时].*?[特忒慝]/',
+  '伯来世特', '伯莱狮特', '博来狮特', '叆鲱迪坷', '蚾梾轼忒', '秡猍狮特',
   '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
@@ -28,15 +31,22 @@ const adkw = [
 function makePat(words)
 {
   var pat = "";
-  for(idx in words.split(''))
+  if(words.startsWith('/') && words.endsWith('/'))
   {
-    if(pat.length <= 0)
-    {
-      pat = words[idx];
-    }
-    else
-    {
-      pat = pat + ".{0,6}" + words[idx];
+    pat = words.substr(1, words.length-2);
+  }
+  else
+  {
+    for(idx in words.split(''))
+    {   
+      if(pat.length <= 0)
+      {
+        pat = words[idx];
+      }
+      else
+      {
+        pat = pat + ".{0,6}" + words[idx];
+      }
     }
   }
   return(new RegExp(pat, 'gi'));
