@@ -6,7 +6,7 @@
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
-// @version     1.2.4.20
+// @version     1.2.4.21
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -269,7 +269,7 @@ function addReportButtons()
       var user = $(avators[idx]);
       var floor = user.siblings('.cmt-floor');
       //if(floor.length>0 && $.isNumeric(idx))
-      if(floor.length>0 && idx<avators.length)
+      if(floor.length>0 && isFinite(idx))
       {
         if(user.length>0)
         {
@@ -291,7 +291,7 @@ function addReportButtons()
     var link = $(reportLinks[idx]);
     var like = link.siblings('a.cmt-do-quote');
     //if(like.length>0 && $.isNumeric(idx))
-    if(like.length>0 && idx<reportLinks.length)
+    if(like.length>0 && isFinite(idx))
     {
       like = $(like[0]);
 
