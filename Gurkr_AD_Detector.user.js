@@ -6,7 +6,7 @@
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
-// @version     1.1.2.15
+// @version     1.2.2.18
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -19,8 +19,8 @@ const ADS = [
   '中獎信息', 
   '小姐联系电话', '/..小姐/', 
   '极美茵', 
-  '/[伯博蚾秡渤卜].*?[来莱梾俫庲婡].*?[世狮轼史是时].*?[特忒慝]/',
-  '伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特',
+  '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
+  //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
   '叆鲱迪坷', 
   '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
   '一小兜', 'yixiaodou.com',
@@ -31,7 +31,8 @@ const ADS = [
   '成都装修', '苹果官方',
   //'91y',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网',
-  '有动静'
+  '有动静',
+  '微营销'
 ];
 
 function makePat(words)
@@ -98,6 +99,11 @@ function notifyAD(info, fg, bg)
   {
     $('a.gh-i-notice').attr('title', info);
   }
+  
+  $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;">举报</button></li>');
+  //$reportButton.bind('click', reportAD);
+  $('#reportAD').on('click', reportAD);
+  
 }
 
 function highlightAD(word, node, mode)
@@ -119,9 +125,6 @@ function highlightAD(word, node, mode)
     return '<span style="' + style + '">'+m+'</span>'
   });
   gwrap.html( html );
-  //document.body.innerHTML = document.body.innerHTML.replace(word, function(m){
-  //  return '<span style="color:white; background-color:red;">AD:'+m+'</span>'
-  //});
 }
 
 function findingAD(items, regex, notice, mode)
@@ -198,18 +201,89 @@ function findingLink(items, hasAD)
   return(hasLink);
 }
 
+function getReportParam()
+{
+  var ca = document.cookie.split(';');
+  var accessToken = null;
+  for(idx in ca)
+  {
+    var item = ca[idx];
+    var kv = item.split('=');
+    var k = kv[0].trim();
+    var v = kv[1].trim();
+    if(k.endsWith('access_token'))
+    {
+      accessToken = v;
+      break;
+    }
+  }
+  
+  return({url:document.location.href, reason:'垃圾广告', access_token:accessToken});
+}
+
+function reportAD()
+{
+  var reportParam = getReportParam();
+  //console.log(reportParam);
+  $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
+    if(data.ok)
+    {
+      $('#reportAD').text('举报成功');
+      console.log($('#reportAD').text());
+    }
+  }, "json");
+}
+
+function reportADs(btn)
+{
+  var reportParam = getReportParam();
+  reportParam.url = $(btn).attr('data-url');
+  //console.log(reportParam);
+  $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
+    if(data.ok)
+    {
+      $(btn).text('举报成功');
+      console.log($(btn).text());
+    }
+  }, "json");
+}
+
+function addReportButtons()
+{
+  var reportLinks = $('a.ghide.red-link');
+  for(idx in reportLinks)
+  {
+    var link = $(reportLinks[idx]);
+    var btnID = 'reportAD_'+ idx;
+    link.before('<button id="'+ btnID +'" class="reportADs">举报</button>');
+
+    var btn = $('#'+btnID);
+    btn.attr('data-img', link.attr('data-img'));
+    btn.attr('data-url', link.attr('data-url'));
+    btn.attr('data-title', link.attr('data-title'));
+    btn.attr('data-type', link.attr('data-type'));
+    btn.attr('data-report', link.attr('data-report'));
+    btn.on('click', function(){reportADs($(this))});
+    
+  }
+  //reportLinks.before('<button class="reportADs"">举报</button>');
+  //$reportButtons = $('.cmt-do a:first').before('<button class="reportADs"">举报</button>');
+  //$('.reportADs').on('click', reportADs);
+}
+
 function main(loaded)
 {
   var hasAD = false;
 
   var regexs = makePats(ADS);
+  var author = $('#articleAuthor');
   var title = $('#articleTitle');
   var article = $('#articleContent');
-  var posts = $('.post-txt');
-  //var comments = $('.cmt-content, .answerTxt');
+  //var posts = $('.post-txt');
   var comments = $('.cmtContent, .answerTxt');
 
-  var items = $.merge($.merge(title, article), comments);
+  //var items = $.extend({}, author, title, article, comments);
+  var items = $.merge($.merge($.merge(author, title), article), comments);
 
   for(idx in regexs)
   {
@@ -220,6 +294,8 @@ function main(loaded)
   }
 
   findingLink(items, hasAD);
+  
+  addReportButtons();
 }
 
 main();
