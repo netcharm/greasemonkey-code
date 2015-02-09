@@ -13,15 +13,17 @@
 // @grant       none
 // ==/UserScript==
 
+var jQueryVersion = $.fn.jquery;
+
 const ADS = [
-  '爸爸去哪儿', '爸爸去哪兒', 
-  '中国好声音', '中國好聲音', 
-  '中獎信息', 
-  '小姐联系电话', '/..小姐/', 
-  '极美茵', 
+  '爸爸去哪儿', '爸爸去哪兒',
+  '中国好声音', '中國好聲音',
+  '中獎信息',
+  '小姐联系电话', '/..小姐/',
+  '极美茵',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
   //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
-  '叆鲱迪坷', 
+  '叆鲱迪坷',
   '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
@@ -32,7 +34,8 @@ const ADS = [
   //'91y',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网',
   '有动静',
-  '微营销'
+  '微营销',
+  '微商'
 ];
 
 function makePat(words)
@@ -45,7 +48,7 @@ function makePat(words)
   else
   {
     for(idx in words.split(''))
-    {   
+    {
       if(pat.length <= 0)
       {
         pat = words[idx];
@@ -99,11 +102,11 @@ function notifyAD(info, fg, bg)
   {
     $('a.gh-i-notice').attr('title', info);
   }
-  
+
   $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;">举报</button></li>');
   //$reportButton.bind('click', reportAD);
   $('#reportAD').on('click', reportAD);
-  
+
 }
 
 function highlightAD(word, node, mode)
@@ -217,7 +220,6 @@ function getReportParam()
       break;
     }
   }
-  
   return({url:document.location.href, reason:'垃圾广告', access_token:accessToken});
 }
 
@@ -250,29 +252,67 @@ function reportADs(btn)
 
 function addReportButtons()
 {
+  console.log('add button');
+  var poster = $('.post-pic a, .author-pic');
+  if(poster.length>0)
+  {
+    poster = $(poster[0]);
+    poster.after('</br><button id="reportUSER_poster" class="reportUSERs" title="举报此用户">举报</button>');
+    var btnPoster = $('#reportUSER_poster');
+    btnPoster.attr('data-url', poster[0].href);
+    btnPoster.bind('click', function(){reportADs($(this))});
+  }
+
+  var avators = $('.pt-pic a');
+  for(idx in avators)
+  {
+      var user = $(avators[idx]);
+      var floor = user.siblings('.cmt-floor');
+      //if(floor.length>0 && $.isNumeric(idx))
+      if(floor.length>0 && idx<floor.length)
+      {
+        if(user.length>0)
+        {
+          floor = $(floor[0]);
+
+          var btnUserID = 'reportUSER_'+ idx;
+          floor.after('</br><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
+
+          var btnUser = $('#'+btnUserID);
+          btnUser.attr('data-url', user[0].href);
+          btnUser.bind('click', function(){reportADs($(this))});
+        }
+      }
+  }
+
   var reportLinks = $('a.ghide.red-link');
   for(idx in reportLinks)
   {
     var link = $(reportLinks[idx]);
-    var btnID = 'reportAD_'+ idx;
-    link.before('<button id="'+ btnID +'" class="reportADs">举报</button>');
+    var like = link.siblings('a.cmt-do-quote');
+    //if(like.length>0 && $.isNumeric(idx))
+    if(like.length>0 && idx<like.length)
+    {
+      like = $(like[0]);
 
-    var btn = $('#'+btnID);
-    btn.attr('data-img', link.attr('data-img'));
-    btn.attr('data-url', link.attr('data-url'));
-    btn.attr('data-title', link.attr('data-title'));
-    btn.attr('data-type', link.attr('data-type'));
-    btn.attr('data-report', link.attr('data-report'));
-    btn.on('click', function(){reportADs($(this))});
-    
+      var btnID = 'reportAD_'+ idx;
+      like.before('<button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
+
+      var btn = $('#'+btnID);
+      btn.attr('data-img', link.attr('data-img'));
+      btn.attr('data-url', link.attr('data-url'));
+      btn.attr('data-title', link.attr('data-title'));
+      btn.attr('data-type', link.attr('data-type'));
+      btn.attr('data-report', link.attr('data-report'));
+      btn.bind('click', function(){reportADs($(this))});
+    }
   }
-  //reportLinks.before('<button class="reportADs"">举报</button>');
-  //$reportButtons = $('.cmt-do a:first').before('<button class="reportADs"">举报</button>');
-  //$('.reportADs').on('click', reportADs);
 }
 
 function main(loaded)
 {
+  addReportButtons();
+
   var hasAD = false;
 
   var regexs = makePats(ADS);
@@ -294,8 +334,7 @@ function main(loaded)
   }
 
   findingLink(items, hasAD);
-  
-  addReportButtons();
+
 }
 
 main();
