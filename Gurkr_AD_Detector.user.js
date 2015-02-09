@@ -6,7 +6,7 @@
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
-// @version     1.2.4.21
+// @version     1.2.5.21
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -279,7 +279,7 @@ function addReportButtons()
           floor.after('</br><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
           var btnUser = $('#'+btnUserID);
-          btnUser.attr('data-url', user[0].href);
+          btnUser.attr('data-url', user[0].href.replace('/group',''));
           btnUser.bind('click', function(){reportADs($(this))});
         }
       }
