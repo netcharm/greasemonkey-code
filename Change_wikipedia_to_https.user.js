@@ -23,6 +23,7 @@ function changeLink(link)
   if(alt != null)
   {
     alt = alt.replace(/http:\/\/zh\.wikipedia\.org/ig, "https://zh.wikipedia.org");
+    alt = alt.replace(/\/zh-hant\//ig, "/zh-cn/");
     //alert(alt);
     link.href = alt;
   }

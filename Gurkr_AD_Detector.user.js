@@ -6,7 +6,7 @@
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
-// @version     1.2.5.21
+// @version     1.2.5.22
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -35,7 +35,9 @@ const ADS = [
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网',
   '有动静',
   '微营销',
-  '微商'
+  '微商',
+  '华芝国际', '生命之源'
+  //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
 
 function makePat(words)
@@ -103,10 +105,12 @@ function notifyAD(info, fg, bg)
     $('a.gh-i-notice').attr('title', info);
   }
 
-  $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;">举报</button></li>');
-  //$reportButton.bind('click', reportAD);
-  $('#reportAD').on('click', reportAD);
-
+  if($('#reportAD').length <= 0)
+  {
+    $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴">举报</button></li>');
+    //$reportButton.bind('click', reportAD);
+    $('#reportAD').on('click', reportAD);
+  }
 }
 
 function highlightAD(word, node, mode)
@@ -239,7 +243,7 @@ function reportAD()
 function reportADs(btn)
 {
   var reportParam = getReportParam();
-  reportParam.url = $(btn).attr('data-url');
+  reportParam.url = $(btn).attr('data-url').replace('/group', '');
   //console.log(reportParam);
   $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
@@ -263,7 +267,7 @@ function addReportButtons()
     btnPoster.bind('click', function(){reportADs($(this))});
   }
 
-  var avators = $('.pt-pic a');
+  var avators = $('.pt-pic a, .answer-usr');
   for(idx in avators)
   {
       var user = $(avators[idx]);
@@ -276,16 +280,32 @@ function addReportButtons()
           floor = $(floor[0]);
 
           var btnUserID = 'reportUSER_'+ idx;
-          floor.after('</br><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
+          floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
           var btnUser = $('#'+btnUserID);
           btnUser.attr('data-url', user[0].href.replace('/group',''));
           btnUser.bind('click', function(){reportADs($(this))});
         }
       }
+      
+      var usr = user.find('.answer-usr-name');
+      if(usr.length > 0 && isFinite(idx))
+      {
+          usr= $(usr[0]);
+          var btnUsrID = 'reportUSER_'+ idx;
+          usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
+          console.log(usr[0]);
+          
+          var btnUsr = $('#'+btnUsrID);
+          btnUsr.attr('data-url', usr[0].href.replace('/group',''));
+          //btnUsr.bind('click', function(){reportADs($(this))});
+          btnUsr.css('margin-top', '-6px');
+          btnUsr.css('margin-left', '16px');
+          btnUsr.css('margin-right', '16px');
+      }
   }
 
-  var reportLinks = $('a.ghide.red-link');
+  var reportLinks = $('a.red-link.ghide, a.red-link.answer-hover');
   for(idx in reportLinks)
   {
     var link = $(reportLinks[idx]);
@@ -306,6 +326,29 @@ function addReportButtons()
       btn.attr('data-report', link.attr('data-report'));
       btn.bind('click', function(){reportADs($(this))});
     }
+    
+    var answer = $(link.parent()).siblings('.gfl')
+    //if(like.length>0 && $.isNumeric(idx))
+    if(answer.length>0 && isFinite(idx))
+    {
+      answer = $(answer).find('.cmts-num')[0];
+      answer = $(answer);
+
+      var btnID = 'reportAD_'+ idx;
+      answer.after('<button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
+
+      var btn = $('#'+btnID);
+      btn.attr('data-img', link.attr('data-img'));
+      btn.attr('data-url', link.attr('data-url'));
+      btn.attr('data-title', link.attr('data-title'));
+      btn.attr('data-type', link.attr('data-type'));
+      btn.attr('data-report', link.attr('data-report'));
+      btn.bind('click', function(){reportADs($(this))});
+      btn.css('margin-top', '-6px');
+      btn.css('margin-left', '16px');
+      btn.css('margin-right', '16px');
+    }
+    
   }
 }
 
