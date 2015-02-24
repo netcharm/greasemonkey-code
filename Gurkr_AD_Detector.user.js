@@ -6,6 +6,9 @@
 // @include     http://*.guokr.com/post/*
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
+// @include     http://www.guokr.com/group/i/*
+// @include     
+// @include     
 // @version     1.2.5.22
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -252,6 +255,21 @@ function reportADs(btn)
       console.log($(btn).text());
     }
   }, "json");
+  
+  var blacklink = $('#addBlacklist');
+  if(blacklink.length>0)
+  {
+    var ukey = $(blacklink[0]).attr('data-ukey')
+    var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
+    http://www.guokr.com/apis/community/relationship/black.json
+    $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
+      if(data.ok)
+      {
+        $(btn).text('加入黑名单成功');
+        console.log($(btn).text());
+      }
+    }, "json");   
+  }
 }
 
 function addReportButtons()
@@ -270,39 +288,51 @@ function addReportButtons()
   var avators = $('.pt-pic a, .answer-usr');
   for(idx in avators)
   {
-      var user = $(avators[idx]);
-      var floor = user.siblings('.cmt-floor');
-      //if(floor.length>0 && $.isNumeric(idx))
-      if(floor.length>0 && isFinite(idx))
+    var user = $(avators[idx]);
+    var floor = user.siblings('.cmt-floor');
+    //if(floor.length>0 && $.isNumeric(idx))
+    if(floor.length>0 && isFinite(idx))
+    {
+      if(user.length>0)
       {
-        if(user.length>0)
-        {
-          floor = $(floor[0]);
+        floor = $(floor[0]);
 
-          var btnUserID = 'reportUSER_'+ idx;
-          floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
+        var btnUserID = 'reportUSER_'+ idx;
+        floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
-          var btnUser = $('#'+btnUserID);
-          btnUser.attr('data-url', user[0].href.replace('/group',''));
-          btnUser.bind('click', function(){reportADs($(this))});
-        }
+        var btnUser = $('#'+btnUserID);
+        btnUser.attr('data-url', user[0].href.replace('/group',''));
+        btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
+        btnUser.bind('click', function(){reportADs($(this))});
       }
-      
-      var usr = user.find('.answer-usr-name');
-      if(usr.length > 0 && isFinite(idx))
-      {
-          usr= $(usr[0]);
-          var btnUsrID = 'reportUSER_'+ idx;
-          usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
-          console.log(usr[0]);
-          
-          var btnUsr = $('#'+btnUsrID);
-          btnUsr.attr('data-url', usr[0].href.replace('/group',''));
-          //btnUsr.bind('click', function(){reportADs($(this))});
-          btnUsr.css('margin-top', '-6px');
-          btnUsr.css('margin-left', '16px');
-          btnUsr.css('margin-right', '16px');
-      }
+    }
+    
+    var usr = user.find('.answer-usr-name');
+    if(usr.length > 0 && isFinite(idx))
+    {
+        usr= $(usr[0]);
+        var btnUsrID = 'reportUSER_'+ idx;
+        usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
+        console.log(usr[0]);
+        
+        var btnUsr = $('#'+btnUsrID);
+        btnUsr.attr('data-url', usr[0].href.replace('/group',''));
+        //btnUsr.bind('click', function(){reportADs($(this))});
+        btnUsr.css('margin-top', '-6px');
+        btnUsr.css('margin-left', '16px');
+        btnUsr.css('margin-right', '16px');
+    }  
+  }
+
+  var reportUser = $('#reportUser');
+  if(reportUser.length>0)
+  {
+    $(reportUser[0]).after('<button id="reportUserDirect" class="reportUSERs" title="举报此用户">举报</button>');
+
+    var btnUserDirect = $('#reportUserDirect');
+    var dataUrl = $(reportUser[0]).attr('data-url');
+    btnUserDirect.attr('data-url', dataUrl);
+    btnUserDirect.bind('click', function(){reportADs($(this))});
   }
 
   var reportLinks = $('a.red-link.ghide, a.red-link.answer-hover');
