@@ -7,7 +7,7 @@
 // @include     http://*.guokr.com/question/*
 // @include     http://*.guokr.com/blog/*
 // @include     http://www.guokr.com/group/i/*
-// @include     
+// @include     http://www.guokr.com/ask/i/*
 // @include     
 // @version     1.2.5.22
 // @run-at      document-end
@@ -29,7 +29,7 @@ const ADS = [
   '叆鲱迪坷',
   '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
   '一小兜', 'yixiaodou.com',
-  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
+  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪',
   '咨詢熱線', '咨询热线',
   '新闻牙膏', '新闻牙刷',
   '海华伦', '扇贝王',
@@ -246,7 +246,7 @@ function reportAD()
 function reportADs(btn)
 {
   var reportParam = getReportParam();
-  reportParam.url = $(btn).attr('data-url').replace('/group', '');
+  reportParam.url = $(btn).attr('data-url').replace('/group', '').replace('/ask', '');
   //console.log(reportParam);
   $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
@@ -281,7 +281,7 @@ function addReportButtons()
     poster = $(poster[0]);
     poster.after('</br><button id="reportUSER_poster" class="reportUSERs" title="举报此用户">举报</button>');
     var btnPoster = $('#reportUSER_poster');
-    btnPoster.attr('data-url', poster[0].href);
+    btnPoster.attr('data-url', poster[0].href.replace('/group','').replace('/ask', ''));
     btnPoster.bind('click', function(){reportADs($(this))});
   }
 
@@ -301,7 +301,7 @@ function addReportButtons()
         floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
         var btnUser = $('#'+btnUserID);
-        btnUser.attr('data-url', user[0].href.replace('/group',''));
+        btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
         btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
         btnUser.bind('click', function(){reportADs($(this))});
       }
@@ -316,8 +316,8 @@ function addReportButtons()
         console.log(usr[0]);
         
         var btnUsr = $('#'+btnUsrID);
-        btnUsr.attr('data-url', usr[0].href.replace('/group',''));
-        //btnUsr.bind('click', function(){reportADs($(this))});
+        btnUsr.attr('data-url', usr[0].href.replace('/group','').replace('/group','').replace('/ask', ''));
+        btnUsr.bind('click', function(){reportADs($(this))});
         btnUsr.css('margin-top', '-6px');
         btnUsr.css('margin-left', '16px');
         btnUsr.css('margin-right', '16px');
