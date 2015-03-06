@@ -9,7 +9,7 @@
 // @include     http://www.guokr.com/group/i/*
 // @include     http://www.guokr.com/ask/i/*
 // @include     
-// @version     1.2.5.22
+// @version     1.2.5.25
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -21,13 +21,13 @@ var jQueryVersion = $.fn.jquery;
 const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
-  '中獎信息',
+  '中獎信息', '銀行卡',
   '小姐联系电话', '/..小姐/',
   '极美茵',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
   //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
   '叆鲱迪坷',
-  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦',
+  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦', '安普',
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪',
   '咨詢熱線', '咨询热线',
@@ -106,13 +106,6 @@ function notifyAD(info, fg, bg)
   else
   {
     $('a.gh-i-notice').attr('title', info);
-  }
-
-  if($('#reportAD').length <= 0)
-  {
-    $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴">举报</button></li>');
-    //$reportButton.bind('click', reportAD);
-    $('#reportAD').on('click', reportAD);
   }
 }
 
@@ -233,6 +226,7 @@ function getReportParam()
 function reportAD()
 {
   var reportParam = getReportParam();
+  reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
   //console.log(reportParam);
   $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
@@ -275,6 +269,13 @@ function reportADs(btn)
 function addReportButtons()
 {
   console.log('add button');
+
+  if($('#reportAD').length <= 0)
+  {
+    $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴">举报</button></li>');
+    $('#reportAD').on('click', reportAD);
+  } 
+  
   var poster = $('.post-pic a, .author-pic');
   if(poster.length>0)
   {
