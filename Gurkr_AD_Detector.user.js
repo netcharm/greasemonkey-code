@@ -9,7 +9,7 @@
 // @include     http://www.guokr.com/group/i/*
 // @include     http://www.guokr.com/ask/i/*
 // @include     
-// @version     1.2.5.25
+// @version     1.2.6.25
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -232,8 +232,12 @@ function reportAD()
     if(data.ok)
     {
       $('#reportAD').text('举报成功');
-      console.log($('#reportAD').text());
     }
+    else
+    {
+      $('#reportAD').text('举报失败');
+    }
+    console.log($('#reportAD').text());
   }, "json");
 }
 
@@ -246,8 +250,12 @@ function reportADs(btn)
     if(data.ok)
     {
       $(btn).text('举报成功');
-      console.log($(btn).text());
     }
+    else
+    {
+      $('#reportAD').text('举报失败');
+    }    
+    console.log($(btn).text());
   }, "json");
   
   var blacklink = $('#addBlacklist');
@@ -260,8 +268,12 @@ function reportADs(btn)
       if(data.ok)
       {
         $(btn).text('加入黑名单成功');
-        console.log($(btn).text());
       }
+      else
+      {
+        $(btn).text('加入黑名单失败');
+      }    
+      console.log($(btn).text());
     }, "json");   
   }
 }
