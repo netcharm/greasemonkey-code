@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.29
+// @version     1.3.6.30
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -215,6 +215,7 @@ function getReportParam()
   var accessToken = null;
   for(idx in ca)
   {
+    if(!isFinite(idx)) break;
     var item = ca[idx];
     var kv = item.split('=');
     var k = kv[0].trim();
@@ -241,7 +242,7 @@ function getSelectionText()
   return t;
 }
 
-function getSelectionLink()
+function getSelectionLink_bug()
 {
   var links = [];
   var selObj = window.getSelection();
@@ -263,6 +264,27 @@ function getSelectionLink()
         links.push($(link));
       if(link == end) break;
       link = link.nextSibling;
+    }
+  }
+  return links;
+}
+
+function getSelectionLink()
+{
+  var links = [];
+  var selObj = window.getSelection();
+  var range = selObj.getRangeAt(0);
+  if(selObj.rangeCount>0)
+  {
+    alinks = $('a');
+    for(idx in alinks)
+    {
+      if(!isFinite(idx)) break;
+      link = alinks[idx];
+      if(link && selObj.containsNode(link, true))
+      {
+        links.push(link);
+      }
     }
   }
   return links;
@@ -449,7 +471,7 @@ function batchReport()
   var links = getSelectionLink();
   var listbox = $('select#batchReportResult');
   listbox.empty();
-  //$.ajaxSetup({async:false});
+  var count=0;
   for(idx in links)
   {
     if(!isFinite(idx) || idx<0) break;
@@ -458,6 +480,7 @@ function batchReport()
     var text = link.text();
     reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
     $.ajaxSetup({context:link});
+    console.log(url, text);
     var posting = $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
       var link = $(this);
       var url = link[0].href;
@@ -474,9 +497,10 @@ function batchReport()
       listbox.append(new Option('[' + info + '] ' + text, url));
     }, "json");    
     //listbox.append(new Option('[' + info + '] ' + text, url));
+    count++;
   }
   var title = $('#batchReportAD').text();
-  $('#batchReportAD').text(title.replace(/\(\d+\)/ig, '('+idx+')'))
+  $('#batchReportAD').text(title.replace(/\(\d+\)/ig, '('+count+')'))
 }
 
 function addBatchReportDox()
