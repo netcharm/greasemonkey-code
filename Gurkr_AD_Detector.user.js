@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.30
+// @version     1.3.6.31
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -480,7 +480,6 @@ function batchReport()
     var text = link.text();
     reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
     $.ajaxSetup({context:link});
-    console.log(url, text);
     var posting = $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
       var link = $(this);
       var url = link[0].href;
@@ -496,7 +495,6 @@ function batchReport()
       //console.log('[' + info + '] ' + text, url);
       listbox.append(new Option('[' + info + '] ' + text, url));
     }, "json");    
-    //listbox.append(new Option('[' + info + '] ' + text, url));
     count++;
   }
   var title = $('#batchReportAD').text();
