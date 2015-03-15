@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.2.10
+// @version     1.2.2.11
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -22,7 +22,7 @@ const adkw = [
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定',
   '咨詢熱線', '咨询热线',
   '新闻牙膏', '新闻牙刷',
-  '海华伦留学',
+  '海华伦留学', '代开发票',
   '成都装修', '苹果官方',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '91y', '1908游戏', '747官网'
 ];
@@ -44,7 +44,7 @@ function makePat(words)
       }
       else
       {
-        pat = pat + ".{0,6}" + words[idx];
+        pat = pat + ".{0,8}" + words[idx];
       }
     }
   }
