@@ -8,8 +8,12 @@
 // @include     http://*.guokr.com/blog/*
 // @include     http://www.guokr.com/group/i/*
 // @include     http://www.guokr.com/ask/i/*
+// @include     http://www.guokr.com/i/*
 // @include     
-// @version     1.2.6.25
+// @include     
+// @include     
+// @include     
+// @version     1.3.6.29
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -23,7 +27,7 @@ const ADS = [
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡',
   '小姐联系电话', '/..小姐/',
-  '极美茵',
+  '极美茵', '绿瘦', '鸡皮肤', '铁未来',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
   //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
   '叆鲱迪坷',
@@ -35,6 +39,7 @@ const ADS = [
   '海华伦', '扇贝王',
   '成都装修', '苹果官方',
   //'91y',
+  '/修改.*?成绩/',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网',
   '有动静',
   '微营销',
@@ -60,7 +65,7 @@ function makePat(words)
       }
       else
       {
-        pat = pat + ".{0,6}" + words[idx];
+        pat = pat + ".{0,5}" + words[idx];
       }
     }
   }
@@ -220,11 +225,52 @@ function getReportParam()
       break;
     }
   }
-  return({url:document.location.href, reason:'垃圾广告', access_token:accessToken});
+  return({url:document.location.href, reason:'垃圾广告', access_token:accessToken, invokedata:''});
+}
+
+function getSelectionText()
+{
+  var t = '';
+  if(window.getSelection){
+    t = window.getSelection();
+  }else if(document.getSelection){
+    t = document.getSelection();
+  }else if(document.selection){
+    t = document.selection.createRange().text;
+  }
+  return t;
+}
+
+function getSelectionLink()
+{
+  var links = [];
+  var selObj = window.getSelection();
+  var range = selObj.getRangeAt(0);
+  if(selObj.rangeCount>0)
+  {
+    if(range.startContainer.nextSibling)
+      link = range.startContainer;
+    else 
+      link = range.startContainer.parentNode;
+    if(range.endContainer.nextSibling)
+      end = range.endContainer;
+    else
+      end = range.endContainer.parentNode;
+    while(link)
+    {
+      //console.log(link, link.nextSibling);
+      if(link.nodeName=='A')
+        links.push($(link));
+      if(link == end) break;
+      link = link.nextSibling;
+    }
+  }
+  return links;
 }
 
 function reportAD()
 {
+  //console.log('report button clicked')
   var reportParam = getReportParam();
   reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
   //console.log(reportParam);
@@ -280,14 +326,14 @@ function reportADs(btn)
 
 function addReportButtons()
 {
-  console.log('add button');
+  //console.log('add button');
 
   if($('#reportAD').length <= 0)
   {
     $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴">举报</button></li>');
-    $('#reportAD').on('click', reportAD);
+    $('#reportAD').bind('click', reportAD);
   } 
-  
+ 
   var poster = $('.post-pic a, .author-pic');
   if(poster.length>0)
   {
@@ -301,10 +347,12 @@ function addReportButtons()
   var avators = $('.pt-pic a, .answer-usr');
   for(idx in avators)
   {
+    //if(!$.isNumeric(idx)) break;
+    if(!isFinite(idx)) break;
+
     var user = $(avators[idx]);
     var floor = user.siblings('.cmt-floor');
-    //if(floor.length>0 && $.isNumeric(idx))
-    if(floor.length>0 && isFinite(idx))
+    if(floor.length>0)
     {
       if(user.length>0)
       {
@@ -321,7 +369,7 @@ function addReportButtons()
     }
     
     var usr = user.find('.answer-usr-name');
-    if(usr.length > 0 && isFinite(idx))
+    if(usr.length > 0)
     {
         usr= $(usr[0]);
         var btnUsrID = 'reportUSER_'+ idx;
@@ -351,10 +399,12 @@ function addReportButtons()
   var reportLinks = $('a.red-link.ghide, a.red-link.answer-hover');
   for(idx in reportLinks)
   {
+    //if(!$.isNumeric(idx)) break;
+    if(!isFinite(idx)) break;
+
     var link = $(reportLinks[idx]);
     var like = link.siblings('a.cmt-do-quote');
-    //if(like.length>0 && $.isNumeric(idx))
-    if(like.length>0 && isFinite(idx))
+    if(like.length>0)
     {
       like = $(like[0]);
 
@@ -371,8 +421,7 @@ function addReportButtons()
     }
     
     var answer = $(link.parent()).siblings('.gfl')
-    //if(like.length>0 && $.isNumeric(idx))
-    if(answer.length>0 && isFinite(idx))
+    if(answer.length>0)
     {
       answer = $(answer).find('.cmts-num')[0];
       answer = $(answer);
@@ -391,8 +440,50 @@ function addReportButtons()
       btn.css('margin-left', '16px');
       btn.css('margin-right', '16px');
     }
-    
   }
+}
+
+function batchReport()
+{
+  var reportParam = getReportParam();
+  var links = getSelectionLink();
+  var listbox = $('select#batchReportResult');
+  listbox.empty();
+  //$.ajaxSetup({async:false});
+  for(idx in links)
+  {
+    if(!isFinite(idx) || idx<0) break;
+    var link = $(links[idx]);
+    var url = link[0].href;
+    var text = link.text();
+    reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
+    $.ajaxSetup({context:link});
+    var posting = $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
+      var link = $(this);
+      var url = link[0].href;
+      var text = link.text();     
+      if(data.ok)
+      {
+        info = '举报成功';
+      }
+      else
+      {
+        info = '举报失败';
+      }
+      //console.log('[' + info + '] ' + text, url);
+      listbox.append(new Option('[' + info + '] ' + text, url));
+    }, "json");    
+    //listbox.append(new Option('[' + info + '] ' + text, url));
+  }
+  var title = $('#batchReportAD').text();
+  $('#batchReportAD').text(title.replace(/\(\d+\)/ig, '('+idx+')'))
+}
+
+function addBatchReportDox()
+{
+  $boxDiv = $('.side-handpick').after('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0)</button></div>');
+  $('#batchReportAD').after('<br/><select id="batchReportResult" name="reportResult" size="15" style="width:99%;"></select>');
+  $('#batchReportAD').bind('click', batchReport);
 }
 
 function main(loaded)
@@ -421,6 +512,7 @@ function main(loaded)
 
   findingLink(items, hasAD);
 
+  addBatchReportDox();
 }
 
 main();
