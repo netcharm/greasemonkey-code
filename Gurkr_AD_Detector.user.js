@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.32
+// @version     1.3.6.34
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -28,7 +28,7 @@ const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡',
-  '小姐联系电话', '/..小姐/',
+  '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹', 
   '极美茵', '绿瘦', '鸡皮肤', '铁未来',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
   //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
@@ -45,8 +45,8 @@ const ADS = [
   '/修改.*?成绩/',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网',
   '有动静',
-  '微营销',
-  '微商',
+  '微营销', '咔咔寿',
+  '微商', '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話',
   '华芝国际', '生命之源'
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
@@ -130,7 +130,7 @@ function notifyAD(info, fg, bg)
   }
 }
 
-function highlightAD(word, node, mode)
+function highlightAD(word, node, mode, notice)
 {
   var ad_style = 'color:white; background-color:red;';
   var link_style = 'color:white; background-color:yellow;';
@@ -146,7 +146,7 @@ function highlightAD(word, node, mode)
     style = link_style;
   }
   var html = gwrap.html().replace(word, function(m){
-    return '<span style="' + style + '">'+m+'</span>'
+    return '<span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>'
   });
   gwrap.html( html );
 }
@@ -168,7 +168,7 @@ function findingAD(items, regex, notice, mode)
     hasAD |= matchAD(text, regex);
     if(hasAD)
     {
-      highlightAD(regex, this, mode);
+      highlightAD(regex, this, mode, notice);
     }
   });
 
@@ -486,11 +486,16 @@ function getSelectionLink()
 
 function batchReport()
 {
+  var listbox = $('select#batchReportResult');
+  var btnReport = $('#batchReportAD');
+  var title = $('#batchReportAD').text();
+  
   var reportParam = getReportParam();
   var links = getSelectionLink();
-  var listbox = $('select#batchReportResult');
+
+  var count = 0;
+  var total = links.length;
   listbox.empty();
-  var count=0;
   for(idx in links)
   {
     if(!isFinite(idx) || idx<0) break;
@@ -511,14 +516,15 @@ function batchReport()
       {
         info = '举报失败';
       }
-      //console.log('[' + info + '] ' + text, url);
+      //console.log('[' + info + '] ' + text, url);      
       listbox.append(new Option('[' + info + '] ' + text, url));
+      count = listbox[0].length;
+      btnReport.text(title.replace(/\(\d+\)/ig, '('+count+'/'+total+')'))
     }, "json");    
-    count++;
+    //count++;
     listbox.stop().delay( 25 );
-  }
-  var title = $('#batchReportAD').text();
-  $('#batchReportAD').text(title.replace(/\(\d+\)/ig, '('+count+')'))
+  }  
+  //btnReport.text(title.replace(/\(\d+\)/ig, '('+count+'/'+total+')'))
 }
 
 function addBatchReportDox()

@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.2.11
+// @version     1.2.2.12
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -116,6 +116,6 @@ function addPostOrderButton(){
   //?sort=created
 };
 
+addPostOrderButton();
 hideAD_group();
 hideAD_ask();
-addPostOrderButton();
