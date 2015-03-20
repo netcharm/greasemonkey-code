@@ -13,16 +13,17 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.36
+// @version     1.3.6.37
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @grant       none
 // ==/UserScript==
 
+$.holdReady();
 var jQueryVersion = $.fn.jquery;
 //var jQueryVersion = '1.4.4';
-console.log(jQueryVersion);
+//console.log(jQueryVersion);
 
 const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
@@ -249,7 +250,7 @@ function reportAD()
 {
   //console.log('report button clicked')
   var reportParam = getReportParam();
-  reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
+  reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/(\/i\/\d+\/).*?$/ig, '$1').replace(/([\?|#].*?)$/ig, '');
   //console.log(reportParam);
   $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
@@ -474,22 +475,29 @@ function getSelectionLink()
       link = alinks[idx];
       if(link && selObj.containsNode(link, true))
       {
-        if(link.parentNode && link.parentNode.className=='title-info') continue;
-        if(link.parentNode.parentNode && link.parentNode.parentNode.className=='tab-underline') continue;
-        if(link.parentNode.parentNode && link.parentNode.parentNode.className=='post-belong') continue;
-        if(link.className=='title-like') continue;
-        if(link.parentNode && link.parentNode.className=='tab-title') continue;
+        //if(link.parentNode && link.parentNode.className=='title-info') continue;
+        //if(link.parentNode.parentNode && link.parentNode.parentNode.className=='tab-underline') continue;
+        //if(link.parentNode.parentNode && link.parentNode.parentNode.className=='post-belong') continue;
+        //if(link.className=='title-like') continue;
+        //if(link.parentNode && link.parentNode.className=='tab-title') continue;
+        if($(link).parents('.title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
 
-        if(window.location.href.startsWith('http://www.guokr.com/post/'))
-        {
-          links.push(link);
-        }
-        else
-        {
-          if(link.className=='post-reply-link') links.push(link);
-          if(link.parentNode.parentNode.className=='title-content') links.push(link);
-          if(link.parentNode.parentNode.id=='articleContent') links.push(link);
-        }
+        //if(window.location.href.startsWith('http://www.guokr.com/post/'))
+        //{
+        //  links.push(link);
+        //}
+        //else
+        //{
+        //  if(link.className=='post-reply-link') links.push(link);
+        //  if(link.parentNode.parentNode.className=='title-content') links.push(link);
+        //  if(link.parentNode.parentNode.id=='articleContent') links.push(link);
+        //}
+        if(link.className=='post-reply-link') links.push(link);
+        //if(link.parentNode.parentNode.className=='title-content') links.push(link);
+        //if(link.parentNode.parentNode.id=='articleContent') links.push(link);
+        
+        if($(link).parents('.post-detail, .cmt-content, .cmtContent').length==1) links.push(link);
+        if($(link).parents('.title-content, #articleContent').length==1) links.push(link);
       }
     }
   }
@@ -504,7 +512,9 @@ function batchReport()
   
   var reportParam = getReportParam();
   var links = getSelectionLink();
-
+  //console.log(links);
+  //return;
+  
   var count = 0;
   var total = links.length;
   listbox.empty();
@@ -541,15 +551,19 @@ function batchReport()
 
 function addBatchReportDox()
 {
+  console.log('aaabs');
+  var boxTitle = '<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0/0)</button></div>';
+  var boxResult = '<br/><select id="batchReportResult" name="reportResult" size="15" style="width:99%;"></select>';
+  console.log($('.gside').length);
   if($('.gside').length>0)
   {
-    $boxDiv = $('.gside').append('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0/0)</button></div>');
+    $boxDiv = $('.gside').append(boxTitle);
   }
   else
   {
-    $boxDiv = $('.side').append('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0/0)</button></div>');
+    $boxDiv = $('.side').append(boxTitle);
   }
-  $('#batchReportAD').after('<br/><select id="batchReportResult" name="reportResult" size="15" style="width:99%;"></select>');
+  $('#batchReportAD').after(boxResult);
   $('#batchReportAD').bind('click', batchReport);
 }
 
@@ -582,5 +596,4 @@ function main(loaded)
 
 }
 
-$.holdReady();
 main();
