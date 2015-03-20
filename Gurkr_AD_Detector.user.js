@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.34
+// @version     1.3.6.36
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -249,7 +249,7 @@ function reportAD()
 {
   //console.log('report button clicked')
   var reportParam = getReportParam();
-  reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
+  reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
   //console.log(reportParam);
   $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
@@ -475,9 +475,21 @@ function getSelectionLink()
       if(link && selObj.containsNode(link, true))
       {
         if(link.parentNode && link.parentNode.className=='title-info') continue;
+        if(link.parentNode.parentNode && link.parentNode.parentNode.className=='tab-underline') continue;
         if(link.parentNode.parentNode && link.parentNode.parentNode.className=='post-belong') continue;
         if(link.className=='title-like') continue;
-        links.push(link);
+        if(link.parentNode && link.parentNode.className=='tab-title') continue;
+
+        if(window.location.href.startsWith('http://www.guokr.com/post/'))
+        {
+          links.push(link);
+        }
+        else
+        {
+          if(link.className=='post-reply-link') links.push(link);
+          if(link.parentNode.parentNode.className=='title-content') links.push(link);
+          if(link.parentNode.parentNode.id=='articleContent') links.push(link);
+        }
       }
     }
   }
@@ -502,7 +514,7 @@ function batchReport()
     var link = $(links[idx]);
     var url = link[0].href;
     var text = link.text();
-    reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '');
+    reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
     $.ajaxSetup({context:link});
     var posting = $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
       var link = $(this);
@@ -519,7 +531,7 @@ function batchReport()
       //console.log('[' + info + '] ' + text, url);      
       listbox.append(new Option('[' + info + '] ' + text, url));
       count = listbox[0].length;
-      btnReport.text(title.replace(/\(\d+\)/ig, '('+count+'/'+total+')'))
+      btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
     }, "json");    
     //count++;
     listbox.stop().delay( 25 );
@@ -531,11 +543,11 @@ function addBatchReportDox()
 {
   if($('.gside').length>0)
   {
-    $boxDiv = $('.gside').append('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0)</button></div>');
+    $boxDiv = $('.gside').append('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0/0)</button></div>');
   }
   else
   {
-    $boxDiv = $('.side').append('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0)</button></div>');
+    $boxDiv = $('.side').append('<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0/0)</button></div>');
   }
   $('#batchReportAD').after('<br/><select id="batchReportResult" name="reportResult" size="15" style="width:99%;"></select>');
   $('#batchReportAD').bind('click', batchReport);
