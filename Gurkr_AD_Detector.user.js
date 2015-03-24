@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.40
+// @version     1.3.6.41
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -62,7 +62,7 @@ const ADS = [
   //'91y',
   '/代开.{0,10}发票/',
   '/修改.*?成绩/', '密卷', '教育咨询',
-  '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网',
+  '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
   '有动静',
   '微营销', '咔咔寿',
   '微商', '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 
@@ -331,12 +331,23 @@ function addReportButtons()
     $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴">举报</button></li>');
     $('#reportAD').bind('click', reportAD);
   } 
+
+  var user = $('.gside-head a');
+  if(user.length>0)
+  {
+    user = $(user[0]);    
+    $('a.gbtn-nobg').after('<button id="reportUSER_poster" class="reportUSERs" style="z-index:999;margin-left:8px;" title="举报此用户">举报</button>');
+    var btnUser = $('#reportUSER_poster');
+    btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
+    btnUser.bind('click', function(){reportADs($(this))});
+  }
  
-  var poster = $('.post-pic a, .author-pic, .gside-head');
+  var poster = $('.post-pic a, .author-pic');
   if(poster.length>0)
   {
     poster = $(poster[0]);
-    poster.after('</br><button id="reportUSER_poster" class="reportUSERs" title="举报此用户">举报</button>');
+    console.log(poster);
+    poster.after('<br /><button id="reportUSER_poster" class="reportUSERs" title="举报此用户">举报</button>');
     var btnPoster = $('#reportUSER_poster');
     btnPoster.attr('data-url', poster[0].href.replace('/group','').replace('/ask', ''));
     btnPoster.bind('click', function(){reportADs($(this))});
@@ -504,6 +515,8 @@ function getSelectionLink()
           if(link.className=='post-reply-link') links.push(link);
           
           if($(link).parents('.items-post').length==1) links.push(link);
+          
+          if($(link).parents('.news-main, .blog_list li h4').length==1) links.push(link);
           
           if($(link).parents('.post-detail, .cmt-content, .cmtContent').length==1) links.push(link);
           if($(link).parents('.title-content, #articleContent').length==1) links.push(link);
