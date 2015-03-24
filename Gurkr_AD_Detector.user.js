@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.41
+// @version     1.3.6.42
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -23,11 +23,11 @@
 var INITED = false;
 
 var readyStateCheckInterval = setInterval(function() {
-    if (document.readyState === "complete" || INITED) 
-    {
-        clearInterval(readyStateCheckInterval);
-        if(!INITED) main();
-    }
+  if (document.readyState === "complete" || INITED) 
+  {
+    clearInterval(readyStateCheckInterval);
+    if(!INITED) main();
+  }
 }, 10);
 
 $.holdReady();
@@ -512,14 +512,14 @@ function getSelectionLink()
           
           if($(link).parents('.title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
 
-          if(link.className=='post-reply-link') links.push(link);
+          if(link.className=='post-reply-link'){ links.push(link); continue;}
           
-          if($(link).parents('.items-post').length==1) links.push(link);
+          if($(link).parents('.items-post').length==1){ links.push(link); continue;}
           
-          if($(link).parents('.news-main, .blog_list li h4').length==1) links.push(link);
+          if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
           
-          if($(link).parents('.post-detail, .cmt-content, .cmtContent').length==1) links.push(link);
-          if($(link).parents('.title-content, #articleContent').length==1) links.push(link);
+          if($(link).parents('.post-detail, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
+          if($(link).parents('.title-content, #articleContent').length==1){ links.push(link); continue;}
         }
       }
     }
@@ -574,26 +574,7 @@ function batchReport()
         count = listbox[0].options.length;
         btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))    
       },
-    });
-    //$.ajaxSetup({context:link});
-    //var posting = $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
-    //  console.log(this);
-    //  var link = $(this);
-    //  var url = link[0].href;
-    //  var text = link.text();
-    //  if(data.ok)
-    //  {
-    //    info = '举报成功';
-    //  }
-    //  else
-    //  {
-    //    info = '举报失败';
-    //  }
-    //  //console.log('[' + info + '] ' + text, url);      
-    //  listbox.append(new Option('[' + info + '] ' + text, url));
-    //  count = listbox[0].length;
-    //  btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
-    //}, "json");    
+    }); 
     listbox.stop().delay( 25 );
   }  
 }
