@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.46
+// @version     1.3.6.47
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -514,12 +514,13 @@ function getSelectionLink()
         
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
           
+          if($(link).find('.tags').length==1) continue;
           if($(link).parents('.tags, .title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
 
           if(link.className=='post-reply-link'){ links.push(link); continue;}
           
           if($(link).parents('.items-post').length==1){ links.push(link); continue;}
-          
+          if($(link).parents('.gellipsis').length==1){ links.push(link); continue;}
           if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
           
           if($(link).parents('.ask-list-detials, .post-detail, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
