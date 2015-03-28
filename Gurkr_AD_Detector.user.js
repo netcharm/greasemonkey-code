@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.45
+// @version     1.3.6.46
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -41,7 +41,7 @@ const ADS = [
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别',
   '咨詢熱線', '咨询热线',
   '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现',
-  '海华伦', '扇贝王',
+  '海华伦', '扇贝王', '腊山烤鱼',
   '成都装修', '苹果官方',
   //'91y',
   '/代开.{0,10}发票/',
@@ -511,9 +511,10 @@ function getSelectionLink()
         link = alinks[idx];
         if(link && selObj.containsNode(link, true))
         {
+        
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
           
-          if($(link).parents('.title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
+          if($(link).parents('.tags, .title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
 
           if(link.className=='post-reply-link'){ links.push(link); continue;}
           
@@ -521,7 +522,7 @@ function getSelectionLink()
           
           if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
           
-          if($(link).parents('.post-detail, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
+          if($(link).parents('.ask-list-detials, .post-detail, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
           if($(link).parents('.title-content, #articleContent').length==1){ links.push(link); continue;}
         }
       }
