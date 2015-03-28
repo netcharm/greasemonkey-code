@@ -13,28 +13,12 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.44
+// @version     1.3.6.45
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @grant       none
 // ==/UserScript==
-
-var INITED = false;
-
-var readyStateCheckInterval = setInterval(function() {
-  if (document.readyState === "complete" || INITED) 
-  {
-    clearInterval(readyStateCheckInterval);
-    if(!INITED) main();
-  }
-}, 10);
-
-$.holdReady();
-var jQueryVersion = '';
-//$.fn.jquery;
-//var jQueryVersion = '1.4.4';
-//console.log(jQueryVersion);
 
 //①②③④⑤⑥⑦⑧⑨⑩
 //⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑
@@ -56,21 +40,40 @@ const ADS = [
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别',
   '咨詢熱線', '咨询热线',
-  '新闻牙膏', '新闻牙刷',
+  '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现',
   '海华伦', '扇贝王',
   '成都装修', '苹果官方',
   //'91y',
   '/代开.{0,10}发票/',
   '/修改.*?成绩/', '密卷', '教育咨询',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
-  '有动静',
+  '有动静', '成人电影', '成人激情',
   '微营销', '咔咔寿',
   '微商', '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 
   //0571 2829 1499
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
-  '华芝国际', '生命之源'
+  '华芝国际', '生命之源',
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
+
+var INITED = false;
+
+var jQueryVersion = '';
+//$.fn.jquery;
+//var jQueryVersion = '1.4.4';
+//console.log(jQueryVersion);
+
+var readyStateCheckInterval = setInterval(function() {
+  if (document.readyState === "complete" || INITED) 
+  {
+    clearInterval(readyStateCheckInterval);
+    if(!INITED)
+    {
+      //$.holdReady();
+      main();
+    }
+  }
+}, 10);
 
 function isnum(value)
 {
@@ -263,7 +266,7 @@ function getReportParam()
       break;
     }
   }
-  return({url:document.location.href, reason:'垃圾广告', access_token:accessToken, invokedata:''});
+  return({url:document.location.href, reason:'垃圾广告/敏感或淫秽色情信息', access_token:accessToken, invokedata:''});
 }
 
 function reportAD()
@@ -346,7 +349,7 @@ function addReportButtons()
   if(poster.length>0)
   {
     poster = $(poster[0]);
-    console.log(poster);
+    //console.log(poster);
     poster.after('<br /><button id="reportUSER_poster" class="reportUSERs" title="举报此用户">举报</button>');
     var btnPoster = $('#reportUSER_poster');
     btnPoster.attr('data-url', poster[0].href.replace('/group','').replace('/ask', ''));
@@ -383,7 +386,7 @@ function addReportButtons()
         usr= $(usr[0]);
         var btnUsrID = 'reportUSER_'+ idx;
         usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
-        console.log(usr[0]);
+        //console.log(usr[0]);
         
         var btnUsr = $('#'+btnUsrID);
         btnUsr.attr('data-url', usr[0].href.replace('/group','').replace('/group','').replace('/ask', ''));
@@ -615,6 +618,7 @@ function main(loaded)
   var hasAD = false;
 
   var regexs = makePats(ADS);
+
   var author = $('#articleAuthor');
   var title = $('#articleTitle');
   var article = $('#articleContent');
