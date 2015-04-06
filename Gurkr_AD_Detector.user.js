@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.6.47
+// @version     1.3.7.50
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -45,7 +45,7 @@ const ADS = [
   '成都装修', '苹果官方',
   //'91y',
   '/代开.{0,10}发票/',
-  '/修改.*?成绩/', '密卷', '教育咨询',
+  '/修改.{0,24}成绩/', '密卷', '教育咨询',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
   '有动静', '成人电影', '成人激情',
   '微营销', '咔咔寿',
@@ -337,12 +337,14 @@ function addReportButtons()
 
   var user = $('.gside-head a');
   if(user.length>0)
-  {
+  {   
     user = $(user[0]);    
     $('a.gbtn-nobg').after('<button id="reportUSER_poster" class="reportUSERs" style="z-index:999;margin-left:8px;" title="举报此用户">举报</button>');
     var btnUser = $('#reportUSER_poster');
     btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
     btnUser.bind('click', function(){reportADs($(this))});
+    
+    $('#gtopBtns').append('<a class="gbtn-nobg" href="'+user[0].href.replace('.com/i/', '.com/group/i/')+'">统合信息</a>');
   }
  
   var poster = $('.post-pic a, .author-pic');
@@ -468,33 +470,6 @@ function getSelectionText()
   return t;
 }
 
-function getSelectionLink_bug()
-{
-  var links = [];
-  var selObj = window.getSelection();
-  var range = selObj.getRangeAt(0);
-  if(selObj.rangeCount>0)
-  {
-    if(range.startContainer.nextSibling)
-      link = range.startContainer;
-    else 
-      link = range.startContainer.parentNode;
-    if(range.endContainer.nextSibling)
-      end = range.endContainer;
-    else
-      end = range.endContainer.parentNode;
-    while(link)
-    {
-      //console.log(link, link.nextSibling);
-      if(link.nodeName=='A')
-        links.push($(link));
-      if(link == end) break;
-      link = link.nextSibling;
-    }
-  }
-  return links;
-}
-
 function getSelectionLink()
 {
   var links = [];
@@ -510,21 +485,24 @@ function getSelectionLink()
         if(!isFinite(idx)) break;
         link = alinks[idx];
         if(link && selObj.containsNode(link, true))
-        {
-        
+        {        
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
           
           if($(link).find('.tags').length==1) continue;
+          if(link.className=='tag') continue;
+          
           if($(link).parents('.tags, .title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
 
           if(link.className=='post-reply-link'){ links.push(link); continue;}
+          
+          if(link.className=='gactive-hd-title'){ links.push(link); continue;}
           
           if($(link).parents('.items-post').length==1){ links.push(link); continue;}
           if($(link).parents('.gellipsis').length==1){ links.push(link); continue;}
           if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
           
           if($(link).parents('.ask-list-detials, .post-detail, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
-          if($(link).parents('.title-content, #articleContent').length==1){ links.push(link); continue;}
+          if($(link).parents('.titles-txt, .title-content, #articleContent').length==1){ links.push(link); continue;}
         }
       }
     }
