@@ -13,7 +13,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.7.50
+// @version     1.3.7.53
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -30,13 +30,14 @@
 const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
-  '中獎信息', '銀行卡',
+  '中獎信息', '銀行卡', '气功',
+  '1040工程',
   '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹', 
-  '极美茵', '绿瘦', '鸡皮肤', '铁未来',
+  '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
   //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
   '叆鲱迪坷',
-  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦', '安普', '玛卡粉',
+  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦', '安普', '玛卡粉', '洛神花', '丰韵霜', '蓓卡露',
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别',
   '咨詢熱線', '咨询热线',
@@ -45,7 +46,7 @@ const ADS = [
   '成都装修', '苹果官方',
   //'91y',
   '/代开.{0,10}发票/',
-  '/修改.{0,24}成绩/', '密卷', '教育咨询',
+  '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
   '有动静', '成人电影', '成人激情',
   '微营销', '咔咔寿',
@@ -410,7 +411,7 @@ function addReportButtons()
     btnUserDirect.bind('click', function(){reportADs($(this))});
   }
 
-  var reportLinks = $('a.red-link.ghide, a.red-link.answer-hover');
+  var reportLinks = $('a.red-link.ghide, a.red-link.answer-hover, a.report-btn');
   for(idx in reportLinks)
   {
     //if(!$.isNumeric(idx)) break;
