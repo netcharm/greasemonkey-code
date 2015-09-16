@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description music.163.com cover image
 // @include     http://music.163.com/*
-// @version     1.2.0.0
+// @version     1.2.1.0
 // @grant       none
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js
@@ -97,7 +97,16 @@ function main()
   $(mask).on('mouseout', function(){$.fancybox.close();});
 }
 
+function hideBobo()
+{
+  items = $('.list li');
+  items.each(function(index, value){
+    console.log(index+' : '+value);
+  });
+}
+
 $(document).ready(function(){
   addFancyBox();
   $('iframe').on('load', main);
+  hideBobo();
 });
