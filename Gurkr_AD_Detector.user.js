@@ -14,7 +14,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.7.64
+// @version     1.3.7.66
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -45,7 +45,8 @@ const ADS = [
   '咨詢熱線', '咨询热线', '伊顿风尚', '网上赌场', '澳门赌钱', '博纳娱乐',
   '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现',
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨','掌灵膏',
-  '成都装修', '苹果官方',
+  '成都装修', '苹果官方', '微宝', '顶我给大家发红包哦', 
+  '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
   //'91y',
   '/代开.{0,10}发票/',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案',
@@ -173,7 +174,14 @@ function highlightAD(word, node, mode, notice)
     style = link_style;
   }
   var html = gwrap.html().replace(word, function(m){
-    return '<span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>'
+    if(m.startsWith('>http'))
+    {
+      return '><span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m.substring(1)+'</span>';
+    }
+    else
+    {
+      return '<span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>'
+    }
   });
   gwrap.html( html );
 }
