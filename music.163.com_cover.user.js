@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description music.163.com cover image
 // @include     http://music.163.com/*
-// @version     1.2.1.1
+// @version     1.2.1.9
 // @grant       none
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js
@@ -51,7 +51,7 @@ function popupThumb()
   var thumbLeft = Math.max(0, cover_mini_pos.left + (cover_mini_width / 2) - (177 / 2) - 2.5 );
   var thumbLeftRatio = Math.max(0, (cover_mini_pos.left + (cover_mini_width / 2) ) / view_width);
   
-  var cover_thumb = cover_mini.attr('src').replace('34x34', '177y177');
+  var cover_thumb = cover_mini.attr('src').replace('34x34', '177x177').replace('34y34', '177y177');
   var thumb_options = {
     closeClick : true, 
     overlayShow : false, 
