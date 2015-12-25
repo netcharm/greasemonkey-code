@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description music.163.com cover image
 // @include     http://music.163.com/*
-// @version     1.2.1.9
+// @version     1.2.2.1
 // @grant       none
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js
@@ -91,7 +91,8 @@ function main()
   //
   // show large cover thumb when mouse over player cover thumb
   //
-  var mask = $('#g_player > div.head > .mask');
+  //var mask = $('#g_player > div.head > .mask');
+  var mask = $('#g_player > div.head');
 
   $(mask).on('mouseover', function(){popupThumb();});
   $(mask).on('mouseout', function(){$.fancybox.close();});
