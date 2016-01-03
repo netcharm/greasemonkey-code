@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name           HotKey Next Page
 // @namespace      scottxp@126.com
-// @author         scottxp
-// @version        1.1.1.0
+// @author         scottxp, netcharm
+// @version        1.1.1.11
 // @description    按左右键翻页，可以自己针对网站定制xpath规则
+// @grant          None
 // @include        http://*
 // @include        https://*
 // ==/UserScript==
@@ -25,6 +26,8 @@ const nextStrs = [
           '[››]',
           '[>]',
           'next',
+          'Next',
+          'NEXT',
           'Next »',
           'next page',
           'Next Page',
@@ -37,10 +40,12 @@ const nextStrs = [
           '后一頁',
           '翻下页',
           '翻下頁',
+          '后篇',
           '后页',
           '后页 >',
           '后頁',
           '后頁 >',
+          '次へ>',
           '下翻',
           '下一个',
           '下一张',
@@ -58,7 +63,10 @@ const nextStrs = [
           '下一頁 ›',
           '下一頁 >>',
           '下一頁 >',
-          '下一页→'
+          '下一页→',
+          '下一幅图片',
+          '下一幅图片>>',
+          '次のページ →'
 ];
 
 const lastStrs = [
@@ -79,6 +87,8 @@ const lastStrs = [
           '[<]',
           'previous',
           '« Previous',
+          'PREV',
+          'Prev',
           'prev',
           'previous page',
           'Previous Page',
@@ -91,10 +101,12 @@ const lastStrs = [
           '前一頁',
           '翻上页',
           '翻上頁',
+          '前篇',
           '前页',
           '< 前页',
           '前頁',
           '< 前頁',
+          '<前へ',
           '上翻',
           '上一个',
           '上一张',
@@ -112,11 +124,15 @@ const lastStrs = [
           '‹ 上一頁',
           '<< 上一頁',
           '< 上一頁',
-          '←上一页'
+          '←上一页',
+          '上一幅图片',
+          '<<上一幅图片',
+          '← 前へ'
 ];
 
 const GeneralXpaths = [
   ["//a[(text()='","')]"],
+  ["//a[@id='", "_page']"],
   ["//input[@type='button' and @value='","']"],
   ["//a/span[(text()='","')]"],
   ["//a/font[(text()='","')]"],
@@ -252,10 +268,14 @@ function checkXpathUrl(urls){
       return true;
   return false;
 }
-if (top.location != self.location)
-  return;
-  
-window.addEventListener("keydown", checkKey, false);
-//unsafeWindow.document.addEventListener('keydown', checkKey, false);
-//document.addEventListener('keydown', checkKey, false);
 
+function main()
+{
+  if (top.location != self.location)
+    return;
+    
+  window.addEventListener("keydown", checkKey, false);
+  //unsafeWindow.document.addEventListener('keydown', checkKey, false);
+  //document.addEventListener('keydown', checkKey, false);
+}
+main()
