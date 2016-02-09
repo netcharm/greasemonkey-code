@@ -1,0 +1,172 @@
+﻿// ==UserScript==
+// @name        Novel Content Link Remover
+// @namespace   NetCharm
+// @description Novel Content Link Remover
+// @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
+// @version     1.0.0.16
+// @grant       none
+// @run-at      document-end
+// @include     http://read.qidian.com/BookReaderNew/*
+// @include     http://www.123yq.com/read/*
+// @include     http://www.123yq.org/read/*
+// @include     http://www.23zw.com/*
+// @include     http://www.50zw.com/book_*
+// @include     http://www.6yzw.com/*
+// @include     http://www.aszw.com/book/*
+// @include     http://www.binhuo.com/html/*
+// @include     http://www.cfwx.net/files/article/html/*
+// @include     http://www.daomengren.com/*
+// @include     http://www.fhxs.com/read/*
+// @include     http://www.geiliwx.com/GeiLi/*
+// @include     http://www.lwxs520.com/books/*
+// @include     http://www.mianhuatang.cc/*
+// @include     http://www.piaotian.net/html/*
+// @include     http://www.qiuwu.net/html/*
+// @include     http://www.shumilou.com/*
+// @include     http://www.sqsxs.com/*
+// @include     http://www.wanshuba.com/Html/*
+// @include     http://www.wcxiaoshuo.com/*
+// @include     http://www.xiangcunxiaoshuo.com/shu/*
+// @include     http://www.xs84.com/*
+// @include     http://www.yunlaige.com/*
+// @include     http://www.zashu.net/*
+// @include     http://www.zhuzhudao.com/txt/*
+// @include     http://www.snwx.com/book/*
+// @include     http://www.vodtw.com/Html/Book/*
+// @include     http://www.dhzw.com/book/*
+// @include     http://www.shumilou.co/*
+// @include     
+// @include     
+// @include     
+// @include     
+// @include     
+// @include     
+// @include     
+// @include     
+// ==/UserScript==
+
+const floats = [
+ '[class^="reader_mark"]',
+ '[class^="ad336"]',
+ '[class^="ad250"]',
+ '.show', '.hot',
+];
+floatAD = floats.join(', ');
+
+const contents = [
+  '#chapter_content',
+  '[id^="content_"]',
+  '#BookText',
+  '#htmlContent',
+  '#content',
+  '#contents',
+  '#contentts',
+  '#TXT',
+  '.zhangjieTXT',
+  '.content',
+  '.contents',
+  '#mynovelreader-content',
+];
+content = contents.join(', ');
+
+
+function removeLink(s)
+{
+  chapter = $(s);
+  if(chapter.length>0)
+  {
+    console.log('Found : ' + s)
+  }
+  chapter.each(function(i, node)
+  {
+    console.log('Node  : ', node);
+
+    plist = $(node).find("p");
+    plist.each(function(j, pn)
+    {
+      pn.innerHTML = pn.innerHTML.replace(/<a.*?>.*?<\/a>/gi, "");
+      pn.innerHTML = pn.innerHTML.replace(/<a.*?>/gi, "");
+      pn.innerHTML = pn.innerHTML.replace(/<\a.*?>/gi, "");
+      pn.innerHTML = pn.innerHTML.replace(/[‘|’]/gi, "");
+      pn.innerHTML = pn.innerHTML.replace(/&nbp;/mgi, "");
+      pn.innerHTML = pn.innerHTML.replace(/&amp;nbp;/mgi, "");
+    });
+    
+    node.innerHTML = node.innerHTML.replace(/<div .*?>热门推荐.*?\/div>/gi, "");
+    node.innerHTML = node.innerHTML.replace(/.*?猪.*?猪.*?岛.*?小说.*?[w|W]{3,3}\..*?\.c[o|Ｏ]m/mgi, "");
+    
+    if(plist.length<2)
+    {
+      node.innerHTML = node.innerHTML.replace(/<a.*?>.*?<\/a>/gi, "");
+      node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
+      node.innerHTML = node.innerHTML.replace(/<a.*?>/gi, "");
+      node.innerHTML = node.innerHTML.replace(/<\a.*?>/gi, "");
+      //chapter.innerHTML = chapter.innerHTML.replace(/<a.*?>(.*?)<\/a.*?>/gi, "$1"); 
+      node.innerHTML = node.innerHTML.replace(/[‘|’]/gi, "");
+      node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
+      node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
+    }
+    // remove qidian ad text
+    node.innerHTML = node.innerHTML.replace(/ps：看.*?关注起点中文网公众号.*?，悄悄告诉我吧！/gi, "");
+    node.innerHTML = node.innerHTML.replace(/ps：想听到更.*?更多支持！/gi, "");
+    node.innerHTML = node.innerHTML.replace(/起点中文网.*?手机用户请到m\.qidian\.com阅读。/gi, "");
+    node.innerHTML = node.innerHTML.replace(/&amp;#x770B;&amp;#x672C;.*?#xFF09;/gi, "");
+    node.innerHTML = node.innerHTML.replace(/APP软件已经开发完毕.*?APP】/gi, "");
+    
+    node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
+    node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
+    
+  });
+}
+
+function removeFloat(s)
+{
+  console.log(s);
+  floating = $(s);
+  console.log(floating);
+  floating.hide();
+  floating.remove();
+}
+
+function resizeFont(s)
+{
+  chapter = $(s);
+  //chapter.css('font-size', '18px !important');
+  //chapter.style('font-size', '18px', 'important');
+
+  var font_family = 'font-family: Monaco,Consolas,"Hiragino Sans GB","Microsoft YaHei",Tahoma,Arial!important;';
+  var font_size = 'font-size: 22px !important;font-weight:300 !important;';
+  chapter.attr('style', font_family+font_size+'width:95% !important;');
+  
+  console.log('Font  : Resize to 22px');
+}
+
+//function addFontAwesome()
+//{
+//  var font_css = document.createElement('link');
+//  font_css.setAttribute('id', 'FontAwesom');
+//  font_css.setAttribute('type', 'text/css');
+//  font_css.setAttribute('rel', 'stylesheet');
+//  font_css.setAttribute('media', 'screen');
+//  font_css.setAttribute('href', 'http://cdn.netcharm.local/static/fonts/font-awesome/css/font-awesome.min.css');
+//  //font_css.setAttribute('href', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+//  document.head.appendChild(font_css);
+//
+//  return(false);
+//}
+
+function main()
+{
+  //$(contents).each(function(i, s)
+  //{
+  //  removeLink(s);
+  //  resizeFont(s);
+  //});
+  //addFontAwesome();
+  removeLink(content);
+  resizeFont(content);
+  removeFloat(floatAD);
+}
+
+main();
