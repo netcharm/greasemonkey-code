@@ -2,7 +2,7 @@
 // @name           HotKey Next Page
 // @namespace      scottxp@126.com
 // @author         scottxp, netcharm
-// @version        1.1.1.11
+// @version        1.1.1.12
 // @description    按左右键翻页，可以自己针对网站定制xpath规则
 // @grant          None
 // @include        http://*
@@ -183,6 +183,16 @@ const SpecialXpaths = [
     last : "//td[@class='prev']/a",
     //下一页节点的xpath
     next : "//td[@class='next']/a"
+  },
+  {
+    //匹配的url
+    urls : [
+      "http://g.e-hentai.org/"
+    ],
+    //上一页节点的xpath
+    last : "//a/img[@src='http://ehgt.org/g/p.png']/..",
+    //下一页节点的xpath
+    next : "//a/img[@src='http://ehgt.org/g/n.png']/.."
   }
 ];
 const LEFT = 37;

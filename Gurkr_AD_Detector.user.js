@@ -14,7 +14,7 @@
 // @include     
 // @include     
 // @include     
-// @version     1.3.7.66
+// @version     1.3.8.67
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -599,6 +599,24 @@ function addBatchReportDox()
   $('#batchReportAD').bind('click', batchReport);
 }
 
+function removeBlankline()
+{
+  $('.gbbcode-content p').each(function(){
+    //var node = $(this);
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/<br><\/br>/gi, '');
+    node.innerHTML = node.innerHTML.trim().replace(/<br>/gi, '');
+    node.innerHTML = node.innerHTML.trim().replace(/<br *?(\/){0,1}>/gi, '');
+  });
+  $('.cmts-list').each(function(){
+    //var node = $(this);
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/(<p><\/p>){2,}/gi, '<p></p>');
+  });
+  
+  return(false);
+}
+
 function main(loaded)
 {
   if(INITED) return;
@@ -627,9 +645,12 @@ function main(loaded)
     hasAD |= findingAD(items, regexs[idx], '广告:'+AD);
   }
 
+  removeBlankline();
+
   findingLink(items, hasAD);
   INITED = true;
   jQueryVersion = $.fn.jquery;
+  
 }
 
 //main();
