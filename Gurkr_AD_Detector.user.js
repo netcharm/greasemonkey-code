@@ -11,10 +11,10 @@
 // @include     http://*.guokr.com/i/*
 // @include     http://*.guokr.com/search/*
 // @include     http://*.guokr.com/article/*
+// @include     http://*.guokr.com/group/*
 // @include     
 // @include     
-// @include     
-// @version     1.3.8.67
+// @version     1.3.9.81
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -49,7 +49,7 @@ const ADS = [
   '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
   //'91y',
   '/代开.{0,10}发票/',
-  '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案',
+  '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
   '有动静', '成人电影', '成人激情', '帮助打架', '/\[[Q|Ｑ|电].*?联系\]/', '执业考试答案', '真题包过',
   '微营销', '咔咔寿',
@@ -617,6 +617,52 @@ function removeBlankline()
   return(false);
 }
 
+function getUKeyByName(uname)
+{
+  var ukey = false;
+  $('span.icon-user').each(function(){
+    var user = $(this).next();
+    var user_name = user.text();
+    if(uname === user_name)
+    {
+      ukey = user.attr('data-ukey');
+      return( false );
+    }
+  }); 
+  return(ukey);
+}
+
+function detectNameCard()
+{
+  var ucards = $('div.name_card');
+  if(ucards.length > 0)
+  {
+    var ulink = $($(ucards[0]).find('div.card-user_info-name > a')[0]);
+    var uname = ulink.text();
+    //console.log(ulink.attr('href'));
+   
+    var btnUserID = 'reportUSER_namecard';
+    if( $('#'+btnUserID).length == 0 ) 
+    {
+      var ukey = getUKeyByName(uname);
+      if( ukey != false)
+      {
+        //console.log(ukey, ' ? ', uname);
+      
+        var nuts = $('span.card-user_info-nuts');
+        nuts.after('&nbsp;<button id="'+ btnUserID +'" title="举报此用户">举报</button>');
+
+        var btnUser = $('#'+btnUserID);
+        btnUser.attr('data-url', ulink.attr('href').replace('/group','').replace('/ask', ''));
+        btnUser.attr('data-ukey', ukey);
+        btnUser.bind('click', function(){reportADs($(this))});    
+      }
+    }
+  }
+  
+  setTimeout(detectNameCard, 1000);
+}
+
 function main(loaded)
 {
   if(INITED) return;
@@ -651,6 +697,7 @@ function main(loaded)
   INITED = true;
   jQueryVersion = $.fn.jquery;
   
+  setTimeout(detectNameCard, 1000);
 }
 
 //main();
