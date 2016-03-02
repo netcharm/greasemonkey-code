@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     
 // @include     
-// @version     1.3.9.71
+// @version     1.3.9.85
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -658,7 +658,6 @@ function detectNameCard()
   {
     var ulink = $($(ucards[0]).find('div.card-user_info-name > a')[0]);
     var uname = ulink.text();
-    //console.log(ulink.attr('href'));
    
     var btnUserID = 'reportUSER_namecard';
     if( $('#'+btnUserID).length == 0 ) 
@@ -667,20 +666,16 @@ function detectNameCard()
       if( ukey != false)
       {
         //console.log(ukey, ' ? ', uname);
-      
         var nuts = $('span.card-user_info-nuts');
         nuts.after('&nbsp;<button id="'+ btnUserID +'" title="举报此用户">举报</button>');
 
         var btnUser = $('#'+btnUserID);
         btnUser.attr('data-url', ulink.attr('href').replace('/group','').replace('/ask', ''));
         btnUser.attr('data-ukey', ukey);
-        //btnUser.bind('click', function(){reportADs($(this));});    
-        btnUser.bind('click', function(){reportADs(btnUser);});    
+        btnUser.bind('click', function(){reportADs(this);});
       }
     }
   }
-  
-  setTimeout(detectNameCard, 1000);
 }
 
 function main(loaded)
@@ -690,6 +685,13 @@ function main(loaded)
   addBatchReportDox();
   addReportButtons();
 
+  $("body").on("DOMNodeInserted", 'div.name_card', function(e){
+    if ($(e.target).attr('class') === 'name_card')
+    {
+      detectNameCard();
+    }
+  });
+  
   var hasAD = false;
 
   var regexs = makePats(ADS);
@@ -717,7 +719,6 @@ function main(loaded)
   INITED = true;
   jQueryVersion = $.fn.jquery;
   
-  setTimeout(detectNameCard, 1000);
 }
 
 //main();
