@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     
 // @include     
-// @version     1.3.9.85
+// @version     1.3.9.91
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -380,21 +380,24 @@ function addReportButtonsUser()
 
     var user = $(avators[idx]);
     var floor = user.siblings('.cmt-floor');
-    if(floor.length>0)
+    if(user.length>0)
     {
-      if(user.length>0)
+      if(floor.length>0)
       {
         floor = $(floor[0]);
-
-        var btnUserID = 'reportUSER_'+ idx;
-        floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
-
-        var btnUser = $('#'+btnUserID);
-        btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
-        btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
-        //btnUser.bind('click', function(){reportADs(btnUser);});
-        jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});
       }
+      else
+      {
+        floor = $(user);
+      }
+      var btnUserID = 'reportUSER_'+ idx;
+      floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
+
+      var btnUser = $('#'+btnUserID);
+      btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
+      btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
+      //btnUser.bind('click', function(){reportADs(btnUser);});
+      jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});
     }
     
     var usr = user.find('.answer-usr-name');
@@ -647,7 +650,16 @@ function getUKeyByName(uname)
       ukey = user.attr('data-ukey');
       return( false );
     }
-  }); 
+  });
+  $('a#articleAuthor, a.cmtAuthor').each(function(){
+    var user = $(this);
+    var user_name = user.text();
+    if(uname === user_name)
+    {
+      ukey = user.attr('data-ukey');
+      return( false );
+    }
+  });
   return(ukey);
 }
 
@@ -665,14 +677,14 @@ function detectNameCard()
       var ukey = getUKeyByName(uname);
       if( ukey != false)
       {
-        //console.log(ukey, ' ? ', uname);
+        //console.log(ukey, ' ? ', uname);    
         var nuts = $('span.card-user_info-nuts');
         nuts.after('&nbsp;<button id="'+ btnUserID +'" title="举报此用户">举报</button>');
 
         var btnUser = $('#'+btnUserID);
         btnUser.attr('data-url', ulink.attr('href').replace('/group','').replace('/ask', ''));
         btnUser.attr('data-ukey', ukey);
-        btnUser.bind('click', function(){reportADs(this);});
+        btnUser.bind('click', function(){reportADs(this);});    
       }
     }
   }
