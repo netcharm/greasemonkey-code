@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     
 // @include     
-// @version     1.3.9.91
+// @version     1.3.9.92
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -382,39 +382,44 @@ function addReportButtonsUser()
     var floor = user.siblings('.cmt-floor');
     if(user.length>0)
     {
-      if(floor.length>0)
+      if($(user[0]).attr('class') === 'answer-usr')
       {
-        floor = $(floor[0]);
+        var usr = user.find('a.answer-usr-name');
+        console.log(usr);
+        if(usr.length > 0)
+        {
+            usr= $(usr[0]);
+            var btnUsrID = 'reportUSER_'+ idx;
+            usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
+            
+            var btnUsr = $('#'+btnUsrID);
+            btnUsr.css('margin-top', '-6px');
+            btnUsr.css('margin-left', '16px');
+            btnUsr.css('margin-right', '16px');
+            btnUsr.attr('data-url', usr[0].href.replace('/group','').replace('/group','').replace('/ask', ''));        
+            jQuery(document).on('click', '#'+btnUsrID, function(){reportADs(this);});
+        }        
       }
       else
       {
-        floor = $(user);
-      }
-      var btnUserID = 'reportUSER_'+ idx;
-      floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
+        if(floor.length>0)
+        {
+          floor = $(floor[0]);
+        }
+        else
+        {
+          floor = $(user);
+        }      
+        var btnUserID = 'reportUSER_'+ idx;
+        floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
-      var btnUser = $('#'+btnUserID);
-      btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
-      btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
-      //btnUser.bind('click', function(){reportADs(btnUser);});
-      jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});
+        var btnUser = $('#'+btnUserID);
+        console.log(user[0]);
+        btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
+        btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
+        jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});      
+      }
     }
-    
-    var usr = user.find('.answer-usr-name');
-    if(usr.length > 0)
-    {
-        usr= $(usr[0]);
-        var btnUsrID = 'reportUSER_'+ idx;
-        usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
-        
-        var btnUsr = $('#'+btnUsrID);
-        btnUsr.css('margin-top', '-6px');
-        btnUsr.css('margin-left', '16px');
-        btnUsr.css('margin-right', '16px');
-        btnUsr.attr('data-url', usr[0].href.replace('/group','').replace('/group','').replace('/ask', ''));        
-        //btnUsr.bind('click', function(){reportADs(btnUsr);});
-        jQuery(document).on('click', '#'+btnUsrID, function(){reportADs(this);});
-    }  
   }
 
   var reportUser = $('#reportUser');
@@ -425,28 +430,28 @@ function addReportButtonsUser()
     var btnUserDirect = $('#reportUserDirect');
     var dataUrl = $(reportUser[0]).attr('data-url');
     btnUserDirect.attr('data-url', dataUrl);
-    //btnUserDirect.bind('click', function(){reportADs(btnUserDirect);});
     jQuery(document).on('click', '#reportUserDirect', function(){reportADs(this);});
   }
 }
 
 function addReportButtonsLink()
 {
-  var reportLinks = $('a.red-link.ghide, a.red-link.answer-hover, a.report-btn');
+  var reportLinks = $('a.red-link, a.report-btn');
   for(idx in reportLinks)
   {
     //if(!$.isNumeric(idx)) break;
     if(!isFinite(idx)) break;
 
     var link = $(reportLinks[idx]);
-    var like = link.siblings('a.cmt-do-quote');
+    var like = link.siblings('a.cmt-do-quote, a.cmts-t-grey');
+    like = $(like[0]).next().next();
     if(like.length>0)
     {
       like = $(like[0]);
 
       var btnID = 'reportAD_'+ idx;
-      like.before('<button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
-      //like.before('<input type="button" id="'+ btnID +'" class="reportADs" title="举报此回帖" value="举报" />');
+      like.before('<span class="gsplit">|</span><button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
+      //like.before('<span class="gsplit">|</span><input type="button" id="'+ btnID +'" class="reportADs" title="举报此回帖" value="举报" />');
 
       var btn = $('#'+btnID);
       btn.attr('data-img', link.attr('data-img'));
@@ -455,7 +460,7 @@ function addReportButtonsLink()
       btn.attr('data-type', link.attr('data-type'));
       btn.attr('data-report', link.attr('data-report'));
       //btn.on('click', function(){reportADs(this);});
-      jQuery(document).on('click', '#'+btnID, function(){reportADs(this);});
+      jQuery('body').on('click', '#'+btnID, function(){reportADs(this);});
     }
     
     var answer = $(link.parent()).siblings('.gfl')
@@ -485,7 +490,12 @@ function addReportButtonsLink()
 function addReportButtons()
 {
   //console.log('add button');
-  addReportButtonsPoster();
+  var href = document.location.href;
+  if(!href.startsWith('http://www.guokr.com/group/') && 
+     !href.startsWith('https://www.guokr.com/group/') )
+  {
+    addReportButtonsPoster();
+  }
   addReportButtonsUser();
   addReportButtonsLink();  
 }
@@ -651,7 +661,7 @@ function getUKeyByName(uname)
       return( false );
     }
   });
-  $('a#articleAuthor, a.cmtAuthor').each(function(){
+  $('a#articleAuthor, a.cmtAuthor, a.answer-usr-name').each(function(){
     var user = $(this);
     var user_name = user.text();
     if(uname === user_name)
@@ -670,7 +680,8 @@ function detectNameCard()
   {
     var ulink = $($(ucards[0]).find('div.card-user_info-name > a')[0]);
     var uname = ulink.text();
-   
+    //console.log(uname);
+    
     var btnUserID = 'reportUSER_namecard';
     if( $('#'+btnUserID).length == 0 ) 
     {
@@ -694,9 +705,6 @@ function main(loaded)
 {
   if(INITED) return;
   
-  addBatchReportDox();
-  addReportButtons();
-
   $("body").on("DOMNodeInserted", 'div.name_card', function(e){
     if ($(e.target).attr('class') === 'name_card')
     {
@@ -704,6 +712,9 @@ function main(loaded)
     }
   });
   
+  addBatchReportDox();
+  addReportButtons();
+
   var hasAD = false;
 
   var regexs = makePats(ADS);
