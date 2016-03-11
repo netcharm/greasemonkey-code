@@ -3,39 +3,38 @@
 // @namespace   NetCharm
 // @description Novel Content Link Remover
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @version     1.0.0.16
+// @version     1.0.0.17
 // @grant       none
 // @run-at      document-end
 // @include     http://read.qidian.com/BookReaderNew/*
 // @include     http://www.123yq.com/read/*
 // @include     http://www.123yq.org/read/*
-// @include     http://www.23zw.com/*
+// @include     http://www.23zw.com/olread/*
 // @include     http://www.50zw.com/book_*
 // @include     http://www.6yzw.com/*
 // @include     http://www.aszw.com/book/*
 // @include     http://www.binhuo.com/html/*
 // @include     http://www.cfwx.net/files/article/html/*
-// @include     http://www.daomengren.com/*
+// @include     http://www.dhzw.com/book/*
 // @include     http://www.fhxs.com/read/*
 // @include     http://www.geiliwx.com/GeiLi/*
 // @include     http://www.lwxs520.com/books/*
 // @include     http://www.mianhuatang.cc/*
 // @include     http://www.piaotian.net/html/*
 // @include     http://www.qiuwu.net/html/*
-// @include     http://www.shumilou.com/*
+// @include     http://www.snwx.com/book/*
 // @include     http://www.sqsxs.com/*
+// @include     http://www.vodtw.com/Html/Book/*
 // @include     http://www.wanshuba.com/Html/*
 // @include     http://www.wcxiaoshuo.com/*
 // @include     http://www.xiangcunxiaoshuo.com/shu/*
 // @include     http://www.xs84.com/*
-// @include     http://www.yunlaige.com/*
+// @include     http://www.yunlaige.com/html/*
 // @include     http://www.zashu.net/*
 // @include     http://www.zhuzhudao.com/txt/*
-// @include     http://www.snwx.com/book/*
-// @include     http://www.vodtw.com/Html/Book/*
-// @include     http://www.dhzw.com/book/*
-// @include     http://www.shumilou.co/*
-// @include     
+// @include     /^http:\/\/www\.daomengren\.com\/\d+_\d+\/.*$/
+// @include     /^http:\/\/www\.shumilou\.co\/.*?\/\d+\.html$/
+// @include     /^http:\/\/www\.shumilou\.com\/.*?\/\d+\.html$/
 // @include     
 // @include     
 // @include     
@@ -112,6 +111,8 @@ function removeLink(s)
     node.innerHTML = node.innerHTML.replace(/起点中文网.*?手机用户请到m\.qidian\.com阅读。/gi, "");
     node.innerHTML = node.innerHTML.replace(/&amp;#x770B;&amp;#x672C;.*?#xFF09;/gi, "");
     node.innerHTML = node.innerHTML.replace(/APP软件已经开发完毕.*?APP】/gi, "");
+    node.innerHTML = node.innerHTML.replace(/强烈推荐一家.*?超级美味！/gi, "");
+    
     
     node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
     node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
