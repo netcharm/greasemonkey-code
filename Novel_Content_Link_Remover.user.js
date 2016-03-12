@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description Novel Content Link Remover
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @version     1.0.0.17
+// @version     1.0.0.18
 // @grant       none
 // @run-at      document-end
 // @include     http://read.qidian.com/BookReaderNew/*
@@ -53,6 +53,7 @@ const floats = [
 floatAD = floats.join(', ');
 
 const contents = [
+  'article[id^="page"]',
   '#chapter_content',
   '[id^="content_"]',
   '#BookText',
@@ -84,39 +85,39 @@ function removeLink(s)
     plist.each(function(j, pn)
     {
       pn.innerHTML = pn.innerHTML.replace(/<a.*?>.*?<\/a>/gi, "");
+      pn.innerHTML = pn.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
       pn.innerHTML = pn.innerHTML.replace(/<a.*?>/gi, "");
       pn.innerHTML = pn.innerHTML.replace(/<\a.*?>/gi, "");
       pn.innerHTML = pn.innerHTML.replace(/[‘|’]/gi, "");
       pn.innerHTML = pn.innerHTML.replace(/&nbp;/mgi, "");
       pn.innerHTML = pn.innerHTML.replace(/&amp;nbp;/mgi, "");
     });
-    
-    node.innerHTML = node.innerHTML.replace(/<div .*?>热门推荐.*?\/div>/gi, "");
-    node.innerHTML = node.innerHTML.replace(/.*?猪.*?猪.*?岛.*?小说.*?[w|W]{3,3}\..*?\.c[o|Ｏ]m/mgi, "");
-    
+      
     if(plist.length<2)
     {
       node.innerHTML = node.innerHTML.replace(/<a.*?>.*?<\/a>/gi, "");
       node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
       node.innerHTML = node.innerHTML.replace(/<a.*?>/gi, "");
       node.innerHTML = node.innerHTML.replace(/<\a.*?>/gi, "");
-      //chapter.innerHTML = chapter.innerHTML.replace(/<a.*?>(.*?)<\/a.*?>/gi, "$1"); 
       node.innerHTML = node.innerHTML.replace(/[‘|’]/gi, "");
       node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
       node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
     }
+    
     // remove qidian ad text
+    node.innerHTML = node.innerHTML.replace(/<div .*?>热门推荐.*?\/div>/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/.*?猪.*?猪.*?岛.*?小说.*?[w|W]{3,3}\..*?\.c[o|Ｏ]m/mgi, "");
     node.innerHTML = node.innerHTML.replace(/ps：看.*?关注起点中文网公众号.*?，悄悄告诉我吧！/gi, "");
     node.innerHTML = node.innerHTML.replace(/ps：想听到更.*?更多支持！/gi, "");
     node.innerHTML = node.innerHTML.replace(/起点中文网.*?手机用户请到m\.qidian\.com阅读。/gi, "");
     node.innerHTML = node.innerHTML.replace(/&amp;#x770B;&amp;#x672C;.*?#xFF09;/gi, "");
     node.innerHTML = node.innerHTML.replace(/APP软件已经开发完毕.*?APP】/gi, "");
-    node.innerHTML = node.innerHTML.replace(/强烈推荐一家.*?超级美味！/gi, "");
-    
-    
+    node.innerHTML = node.innerHTML.replace(/强烈推荐一家.*?超级美味.*?！.*?<br><br>/mgi, "");
+       
     node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
     node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
     node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/(&nbsp;){2,}/mgi, "$1");
     
   });
 }
