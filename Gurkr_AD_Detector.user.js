@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     
 // @include     
-// @version     1.3.9.99
+// @version     1.3.9.100
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -326,7 +326,7 @@ function reportADs(btn)
   {
     var ukey = $(blacklink[0]).attr('data-ukey')
     var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
-    http://www.guokr.com/apis/community/relationship/black.json
+    //http://www.guokr.com/apis/community/relationship/black.json
     $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
       if(data.ok)
       {
@@ -574,6 +574,7 @@ function batchReport()
     if(!isFinite(idx) || idx<0) break;
     var link = links[idx];
     var url = link.href;
+    if(url.contains('/topic/')) continue;
     reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
     var request = $.ajax({
       url: 'http://www.guokr.com/apis/censor/report.json',
