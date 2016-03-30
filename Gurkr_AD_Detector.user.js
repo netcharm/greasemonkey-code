@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     
 // @include     
-// @version     1.3.9.94
+// @version     1.3.9.99
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -45,10 +45,11 @@ const ADS = [
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别', '多兰恩',
   '咨詢熱線', '咨询热线', '伊顿风尚', '网上赌场', '澳门赌钱', '博纳娱乐',
   '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现',
-  '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨','掌灵膏',
+  '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨', '掌灵膏', '网赚',
   '成都装修', '苹果官方', '微宝', '顶我给大家发红包哦', 
   '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
-  //'91y',
+  //'91y', '９１y游戏', 
+  '/游戏[币|钱|银子]/',
   '/代开.{0,10}发票/',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
@@ -58,6 +59,7 @@ const ADS = [
   //0571 2829 1499
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '华芝国际', '生命之源', '赛维片',
+  '老中医',
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
 
@@ -422,7 +424,7 @@ function addReportButtonsUser()
     }
   }
 
-  var reportUser = $('#reportUser');
+  var reportUser = $('#reportUser, .report-user');
   if(reportUser.length>0)
   {
     $(reportUser[0]).after('<button id="reportUserDirect" class="reportUSERs" title="举报此用户">举报</button>');
@@ -492,7 +494,7 @@ function addReportButtons()
   //console.log('add button');
   var href = document.location.href;
   if(!href.startsWith('http://www.guokr.com/group/') && 
-     !href.startsWith('https://www.guokr.com/group/') )
+     !href.startsWith('https://www.guokr.com/group/')  )
   {
     addReportButtonsPoster();
   }
@@ -698,20 +700,34 @@ function detectNameCard()
         btnUser.bind('click', function(){reportADs(this);});    
       }
     }
+    
+    var upic = $('.card-user_pic > img')[0];
+    upic.src = upic.src.replace('/w/48/h/48', '/w/160/h/160');
+    $(upic).css('width', 160);
+    $(upic).css('height', 160);
+    
+    var upiclink = $('.card-user_pic')[0];
+    $(upiclink).css('width', 160);
+    $(upiclink).css('height', 160);
+    
+    //$(ucards[0]).css('width', $(ucards[0]).css('width')+112);
+    $(ucards[0]).attr('style', $(ucards[0]).attr('style').replace('width: 300px;', 'width: 450px;'));
   }
 }
 
 function main(loaded)
 {
   if(INITED) return;
-  
-  $("body").on("DOMNodeInserted", 'div.name_card', function(e){
+
+  //$("body").on("DOMNodeInserted", 'div.name_card', function(e){
+  // because guokr using jquery 1.4.4 at www.guokr.com/i/userid so must using bind to replace on method
+  $("body").bind("DOMNodeInserted", 'div.name_card', function(e){
     if ($(e.target).attr('class') === 'name_card')
     {
       detectNameCard();
     }
   });
-  
+ 
   addBatchReportDox();
   addReportButtons();
 

@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.3.12
+// @version     1.2.3.15
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -28,7 +28,8 @@ const ADS = [
   '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现',
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨','掌灵膏',
   '成都装修', '苹果官方',
-  //'91y',
+  //'91y', '９１y游戏', 
+  '/游戏.*?[币|钱|银子]/',
   '/代开.{0,10}发票/',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
@@ -101,18 +102,14 @@ function matchAD(text, regex)
 }
 
 
-function highlightAD(word, node, notice)
+function highlightAD(word, node, mode, notice)
 {
   var ad_style = 'color:white; background-color:red;';
   var style = ad_style;
 
-  var gwrap = $('div.gwrap');
-  if(node)
-  {
-    gwrap = $(node);
-  }
-  var html = gwrap.html().replace(word, function(m){
-    return '<span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>'
+  var gwrap = $(node) || $('div.gwrap');
+    var html = gwrap.html().replace(word, function(m){
+    return '<span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>';
   });
   gwrap.html( html );
 }
@@ -123,9 +120,21 @@ function hideAD_group(){
   var post_list = $('ul.titles > li.gclear');
   var post = null;
   var title = '';
+  console.log(title);
   post_list.each(function(){
     post = $(this);
-    title = post.find('h4 > a.title-link').text();
+    //nsel = 'h4 > a.title-link';
+    nsel = 'h4 > a';
+    tnode = post.find(nsel);
+    if(tnode.length>1)
+    {
+      tnode = $(post.find(nsel)[1])
+    }
+    else
+    {
+      tnode = $(post.find(nsel)[0])
+    }
+    title = tnode.text();
 
     $.each(adpats,function(i,n)
     {
@@ -133,7 +142,7 @@ function hideAD_group(){
       {
         //post.hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
-        highlightAD(ADS[i], post.find('h4 > a.title-link'), 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
+        highlightAD(n, tnode, 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
         return false;
       }
     });
@@ -153,7 +162,7 @@ function hideAD_ask(){
       {
         ask.parent().hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
-        highlightAD(regex, this, mode, notice);
+        highlightAD(n, this, 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
         return false;
       }
     });

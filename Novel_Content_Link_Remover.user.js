@@ -158,6 +158,18 @@ function resizeFont(s)
 //  return(false);
 //}
 
+function decodeUnicode(s)
+{
+  nodes = $(s);
+  console.log(nodes);
+  nodes.each(function(i, node){
+    $(node).find('p').each(function(i, p){
+      console.log(p.textContent);
+      p.textContent = unescape(p.textContent.replace(/&#x(.*?);/mgi, '%u$1'));
+    });
+  });  
+}
+
 function main()
 {
   //$(contents).each(function(i, s)
@@ -167,6 +179,7 @@ function main()
   //});
   //addFontAwesome();
   removeLink(content);
+  decodeUnicode(content);
   resizeFont(content);
   removeFloat(floatAD);
 }
