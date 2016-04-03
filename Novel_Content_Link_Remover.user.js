@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description Novel Content Link Remover
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @version     1.0.0.18
+// @version     1.0.0.19
 // @grant       none
 // @run-at      document-end
 // @include     http://read.qidian.com/BookReaderNew/*
@@ -42,6 +42,8 @@
 // @include     
 // @include     
 // @include     
+// @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Novel_Content_Link_Remover.user.js
+// @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Novel_Content_Link_Remover.user.js
 // ==/UserScript==
 
 const floats = [
@@ -118,6 +120,12 @@ function removeLink(s)
     node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
     node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
     node.innerHTML = node.innerHTML.replace(/(&nbsp;){2,}/mgi, "$1");
+    node.innerHTML = node.innerHTML.replace(/br((&nbsp;)+)/mgi, "<br/>$2");
+    node.innerHTML = node.innerHTML.replace("br ", "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/([ |&nbsp;]br[ |&nbsp;])+/mgi, "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/(br[ |&nbsp;])+/mgi, "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/(\\br[ |\&nbsp;])+/mgi, "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/nbsp; /mgi, " ");
     
   });
 }
