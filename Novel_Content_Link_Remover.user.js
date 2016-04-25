@@ -115,6 +115,8 @@ function removeLink(s)
     node.innerHTML = node.innerHTML.replace(/&amp;#x770B;&amp;#x672C;.*?#xFF09;/gi, "");
     node.innerHTML = node.innerHTML.replace(/APP软件已经开发完毕.*?APP】/gi, "");
     node.innerHTML = node.innerHTML.replace(/强烈推荐一家.*?超级美味.*?！.*?<br><br>/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/防盗版章节.*?显示正确的内容。/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/正版读者若是.*?重新下载。/mgi, "");
        
     node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
     node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
