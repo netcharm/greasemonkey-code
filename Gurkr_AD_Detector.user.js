@@ -12,9 +12,9 @@
 // @include     http://*.guokr.com/search/*
 // @include     http://*.guokr.com/article/*
 // @include     http://*.guokr.com/group/*
+// @include     http://www.guokr.com/post/search/*
 // @include     
-// @include     
-// @version     1.3.9.100
+// @version     1.3.11.101
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -33,7 +33,7 @@ const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
-  '1040工程', '爱营销', '聚份子', 'jfenz',
+  '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10',
   '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹', 
   '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
@@ -48,7 +48,7 @@ const ADS = [
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨', '掌灵膏', '网赚',
   '成都装修', '苹果官方', '微宝', '顶我给大家发红包哦', 
   '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
-  //'91y', '９１y游戏', 
+  //'91y', '９１y游戏',
   '/游戏[币|钱|银子]/',
   '/代开.{0,10}发票/',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案',
@@ -279,7 +279,8 @@ function getReportParam()
     if(k.endsWith('access_token'))
     {
       accessToken = v;
-      break;
+      //console.log(v);
+      //break;
     }
   }
   return({url:document.location.href, reason:'垃圾广告/敏感或淫秽色情信息', access_token:accessToken, invokedata:''});
@@ -546,7 +547,7 @@ function getSelectionLink()
           if($(link).parents('.gellipsis').length==1){ links.push(link); continue;}
           if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
           
-          if($(link).parents('.ask-list-detials, .post-detail, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
+          if($(link).parents('.ask-list-detials, .post-detail, .post-title, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
           if($(link).parents('.titles-txt, .title-content, #articleContent').length==1){ links.push(link); continue;}
         }
       }
@@ -617,7 +618,18 @@ function addBatchReportDox()
 
   if(floating)
   {
-    $('.gside, .side').append(boxFloat);
+    console.log(floating);
+    if($('.gside, .side').length>0)
+    {
+      $('.gside, .side').append(boxFloat);
+    }
+    else
+    {
+      $boxDiv = $('.gmain').append(boxFloat);
+      box = $('#batchReportBox');
+      box.css('float', 'right');
+      box.css('right', '120px');
+    }
   }
   else
   {
@@ -625,10 +637,14 @@ function addBatchReportDox()
     {
       $boxDiv = $('.gside').append(boxFixed);
     }
-    else
+    else if ($('.side').length>0)
     {
       $boxDiv = $('.side').append(boxFixed);
     }
+    else
+    {
+      $boxDiv = $('.gmain').append(boxFixed);
+    }    
   }
   $('#batchReportAD').after(adResult);
   $('#batchReportAD').bind('click', batchReport);
