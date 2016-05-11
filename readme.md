@@ -1,3 +1,3 @@
 Note
 ====
-all files is tested on greasemonkey for firefox
+all user script files is tested on greasemonkey for firefox

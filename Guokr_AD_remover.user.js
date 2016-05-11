@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.3.16
+// @version     1.2.3.17
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -38,7 +38,7 @@ const ADS = [
   '微商', '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 
   //0571 2829 1499
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
-  '华芝国际', '生命之源',
+  '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖',
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
 
