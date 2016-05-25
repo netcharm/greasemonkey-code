@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     http://www.guokr.com/post/search/*
 // @include     
-// @version     1.3.11.102
+// @version     1.3.11.103
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -50,7 +50,7 @@ const ADS = [
   '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
   //'91y', '９１y游戏',
   '/游戏[币|钱|银子]/',
-  '/代开.{0,10}发票/',
+  '/代开.{0,10}发票/', '假证','做假',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
   '有动静', '成人电影', '成人激情', '帮助打架', '/\[[Q|Ｑ|电].*?联系\]/', '执业考试答案', '真题包过',
