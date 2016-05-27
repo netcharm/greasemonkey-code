@@ -14,7 +14,7 @@
 // @include     http://*.guokr.com/group/*
 // @include     http://www.guokr.com/post/search/*
 // @include     
-// @version     1.3.11.103
+// @version     1.3.13.106
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -71,6 +71,8 @@ var jQueryVersion = '';
 //$.fn.jquery;
 //var jQueryVersion = '1.4.4';
 //console.log(jQueryVersion);
+
+var accessToken = getAccessToken();
 
 var readyStateCheckInterval = setInterval(function() {
   if (document.readyState === "complete" || INITED) 
@@ -265,10 +267,11 @@ function findingLink(items, hasAD)
   return(hasLink);
 }
 
-function getReportParam()
+function getAccessToken()
 {
   var ca = document.cookie.split(';');
-  var accessToken = null;
+  var token = null;
+  var found = false;
   for(idx in ca)
   {
     if(!isFinite(idx)) break;
@@ -278,11 +281,71 @@ function getReportParam()
     var v = kv[1].trim();
     if(k.endsWith('access_token'))
     {
-      accessToken = v;
-      //console.log(v);
-      //break;
+      // http://www.guokr.com/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token=xxx
+      var url = "http://www.guokr.com/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token="+v;
+      var iv = v;
+      if(typeof(jQuery)=='undefined' && typeof($)=='undefined'){
+        //jquery未載入
+        token = null;
+        console.log('jquery未載入');
+      }
+      else{
+        //jquery已載入       
+        $.ajax({
+          type: "GET",
+          url: url,
+          dataType: "json",
+          async: false,
+          success : function(data) {
+                      if(data.ok)
+                      {
+                        token = iv;
+                        found = true;
+                      }
+                    }
+        });
+        //$.getJSON(url, function( data ){
+        //  if(data.ok)
+        //  {        
+        //    token = iv;
+        //    console.log(token);
+        //    found = true;
+        //    return;
+        //  }
+        //  else
+        //  {
+        //    token = null;
+        //  }     
+        //});
+      }
     }
+    if(found) break;
   }
+  //console.log(token);
+  return(token);
+}
+
+function getReportParam()
+{
+  if(accessToken == null) accessToken = getAccessToken();
+ 
+  // var ca = document.cookie.split(';');
+  // //var accessToken = null;
+  // for(idx in ca)
+  // {
+  //   if(!isFinite(idx)) break;
+  //   var item = ca[idx];
+  //   var kv = item.split('=');
+  //   var k = kv[0].trim();
+  //   var v = kv[1].trim();
+  //   if(k.endsWith('_32353_access_token'))
+  //   {
+  //     //accessToken = v;
+  //     //console.log(v);
+  //     //break;
+  //   }
+  // } 
+  //console.log({url:document.location.href, reason:'垃圾广告/敏感或淫秽色情信息', access_token:accessToken, invokedata:''});
   return({url:document.location.href, reason:'垃圾广告/敏感或淫秽色情信息', access_token:accessToken, invokedata:''});
 }
 
@@ -618,7 +681,7 @@ function addBatchReportDox()
 
   if(floating)
   {
-    console.log(floating);
+    //console.log(floating);
     if($('.gside, .side').length>0)
     {
       $('.gside, .side').append(boxFloat);
@@ -734,7 +797,10 @@ function detectNameCard()
 
 function main(loaded)
 {
+  //if(accessToken==null) return;
   if(INITED) return;
+  
+  console.log(accessToken);
 
   //$("body").on("DOMNodeInserted", 'div.name_card', function(e){
   // because guokr using jquery 1.4.4 at www.guokr.com/i/userid so must using bind to replace on method
@@ -774,7 +840,6 @@ function main(loaded)
   findingLink(items, hasAD);
   INITED = true;
   jQueryVersion = $.fn.jquery;
-  
 }
 
 //main();

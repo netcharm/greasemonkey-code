@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.3.18
+// @version     1.2.3.19
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -120,7 +120,7 @@ function hideAD_group(){
   var post_list = $('ul.titles > li.gclear');
   var post = null;
   var title = '';
-  console.log(title);
+
   post_list.each(function(){
     post = $(this);
     //nsel = 'h4 > a.title-link';
