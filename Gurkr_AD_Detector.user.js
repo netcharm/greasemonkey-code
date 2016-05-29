@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.14.109
+// @version     1.3.15.110
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -392,10 +392,18 @@ function reportADs(btn)
     console.log($(btn).text());
   }, "json");
   
-  var blacklink = $('#addBlacklist');
-  if(blacklink.length>0)
+  var ukey = $(btn).attr('data-ukey');
+  if(typeof(ukey) == 'undefined')
   {
-    var ukey = $(blacklink[0]).attr('data-ukey')
+    var blacklink = $('#addBlacklist');
+    if(blacklink.length>0)
+    {
+      ukey = $(blacklink[0]).attr('data-ukey')
+    }
+  }
+  
+  if(typeof(ukey) != 'undefined')
+  {
     var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
     //http://www.guokr.com/apis/community/relationship/black.json
     $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
