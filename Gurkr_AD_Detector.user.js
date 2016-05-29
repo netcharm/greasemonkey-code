@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.15.110
+// @version     1.3.15.111
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -409,11 +409,13 @@ function reportADs(btn)
     $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
       if(data.ok)
       {
-        $(btn).text('加入黑名单成功');
+        //$(btn).text('加入黑名单成功');
+        $(btn).attr('title', '加入黑名单成功');
       }
       else
       {
-        $(btn).text('加入黑名单失败');
+        //$(btn).text('加入黑名单失败');
+        $(btn).attr('title', '加入黑名单失败');
       }    
       console.log($(btn).text());
     }, "json");   
