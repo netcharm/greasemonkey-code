@@ -4,17 +4,27 @@
 // @author      netcharm
 // @description Guokr AD Detector
 // @include     http://*.guokr.com/post/*
-// @include     http://*.guokr.com/question/*
-// @include     http://*.guokr.com/blog/*
-// @include     http://*.guokr.com/group/i/*
-// @include     http://*.guokr.com/ask/i/*
-// @include     http://*.guokr.com/i/*
-// @include     http://*.guokr.com/search/*
+// @include     https://*.guokr.com/post/*
 // @include     http://*.guokr.com/article/*
+// @include     https://*.guokr.com/article/*
+// @include     http://*.guokr.com/question/*
+// @include     https://*.guokr.com/question/*
+// @include     http://*.guokr.com/blog/*
+// @include     https://*.guokr.com/blog/*
 // @include     http://*.guokr.com/group/*
-// @include     http://www.guokr.com/post/search/*
+// @include     https://*.guokr.com/group/*
+// @include     http://*.guokr.com/search/*
+// @include     https://*.guokr.com/search/*
+// @include     http://*.guokr.com/post/search/*
+// @include     https://*.guokr.com/post/search/*
+// @include     http://*.guokr.com/group/i/*
+// @include     https://*.guokr.com/group/i/*
+// @include     http://*.guokr.com/ask/i/*
+// @include     https://*.guokr.com/ask/i/*
+// @include     http://*.guokr.com/i/*
+// @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.13.106
+// @version     1.3.14.107
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -48,8 +58,8 @@ const ADS = [
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨', '掌灵膏', '网赚',
   '成都装修', '苹果官方', '微宝', '顶我给大家发红包哦', 
   '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
-  //'91y', '９１y游戏',
-  '/游戏[币|钱|银子]/',
+  //'91y', '９１y游戏',  
+  '/游戏[币|钱|银子]/','戏子软件',
   '/代开.{0,10}发票/', '假证','做假',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
