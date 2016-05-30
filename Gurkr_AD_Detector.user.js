@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.15.111
+// @version     1.3.16.113
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -44,7 +44,7 @@ const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
-  '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10',
+  '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10', '小觅手机伴侣',
   '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹', 
   '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫', '叆鲱迪坷',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
@@ -806,6 +806,20 @@ function detectNameCard()
     var upiclink = $('.card-user_pic')[0];
     $(upiclink).css('width', 160);
     $(upiclink).css('height', 160);
+    
+    $('.card-focus_complete-btn').css('width', 60);
+    $('.card-focus_complete-btn').css('margin-left', 4);
+    $('.card-focus_complete-btn > span').css('width', 52);
+
+    $('.card-focus-num').css('width', 44);
+    $('.card-focus-num').css('margin-left', 2);
+    $('.card-focus-num').css('margin-right', 2);
+    
+    $('.card-focus').css('margin-left', 180);
+    $('.card-focus').css('padding-left', 4);
+    $('.card-focus').css('width', 240);
+    
+    $('.card-desp').css('min-height', '3em');
     
     //$(ucards[0]).css('width', $(ucards[0]).css('width')+112);
     $(ucards[0]).attr('style', $(ucards[0]).attr('style').replace('width: 300px;', 'width: 450px;'));

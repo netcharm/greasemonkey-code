@@ -4,7 +4,7 @@
 // @description Hide Guokr AD in post list & customizer it.
 // @include     http://*.guokr.com/group/*
 // @include     http://*.guokr.com/ask/*
-// @version     1.2.3.20
+// @version     1.2.3.21
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -16,7 +16,7 @@ const ADS = [
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
-  '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10',
+  '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10','小觅手机伴侣',
   '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹', 
   '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫', '叆鲱迪坷',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
@@ -160,7 +160,7 @@ function hideAD_ask(){
     {
       if(n && title.match(n))
       {
-        ask.parent().hide();
+        //ask.parent().hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
         highlightAD(n, this, 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
         return false;
