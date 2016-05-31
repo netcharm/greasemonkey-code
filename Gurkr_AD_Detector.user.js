@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.16.113
+// @version     1.3.17.114
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -291,13 +291,15 @@ function getAccessToken()
       // http://www.guokr.com/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token=xxx
       var url = "http://www.guokr.com/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token="+v;
       var iv = v;
-      if(typeof(jQuery)=='undefined' && typeof($)=='undefined'){
-        //jquery未載入
+      if(typeof(jQuery)=='undefined' && typeof($)=='undefined')
+      {
+        //jQuery未載入
         token = null;
-        console.log('jquery未載入');
+        console.log('jQuery未載入');
       }
-      else{
-        //jquery已載入       
+      else
+      {
+        //jQuery已載入       
         $.ajax({
           type: "GET",
           url: url,
@@ -311,19 +313,6 @@ function getAccessToken()
                       }
                     }
         });
-        //$.getJSON(url, function( data ){
-        //  if(data.ok)
-        //  {        
-        //    token = iv;
-        //    console.log(token);
-        //    found = true;
-        //    return;
-        //  }
-        //  else
-        //  {
-        //    token = null;
-        //  }     
-        //});
       }
     }
     if(found) break;
@@ -373,6 +362,35 @@ function reportAD()
     }
     console.log($('#reportAD').text());
   }, "json");
+  
+  var ukey = $(btn).attr('data-ukey');
+  if(typeof(ukey) == 'undefined')
+  {
+    var blacklink = $('#addBlacklist');
+    if(blacklink.length>0)
+    {
+      ukey = $(blacklink[0]).attr('data-ukey')
+    }
+  }
+  
+  if(typeof(ukey) != 'undefined')
+  {
+    var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
+    //http://www.guokr.com/apis/community/relationship/black.json
+    $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
+      if(data.ok)
+      {
+        //$(btn).text('加入黑名单成功');
+        $(btn).attr('title', '加入黑名单成功');
+      }
+      else
+      {
+        //$(btn).text('加入黑名单失败');
+        $(btn).attr('title', '加入黑名单失败');
+      }    
+      console.log($(btn).text());
+    }, "json");   
+  }  
 }
 
 function reportADs(btn)
@@ -437,6 +455,11 @@ function addReportButtonsPoster()
     $('a.gbtn-nobg').after('<button id="reportUSER_poster" class="reportUSERs" style="z-index:999;margin-left:8px;" title="举报此用户">举报</button>');
     var btnUser = $('#reportUSER_poster');
     btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
+    ukey = $(user[0]).attr('data-ukey');
+    if(typeof(ukey) !== typeof(undefined) && ukey !== false)
+    {
+      btnUser.attr('data-ukey', ukey);
+    }
     btnUser.bind('click', function(){reportADs(this);});
     
     $('#gtopBtns').append('<a class="gbtn-nobg" href="'+user[0].href.replace('.com/i/', '.com/group/i/')+'">统合信息</a>');
@@ -449,6 +472,11 @@ function addReportButtonsPoster()
     poster.after('<br /><button id="reportUSER_poster" class="reportUSERs" title="举报此用户">举报</button>');
     var btnPoster = $('#reportUSER_poster');
     btnPoster.attr('data-url', poster[0].href.replace('/group','').replace('/ask', ''));
+    ukey = $(poster[0]).attr('data-ukey');
+    if(typeof(ukey) !== typeof(undefined) && ukey !== false)
+    {
+      btnPoster.attr('data-ukey', ukey);
+    }
     btnPoster.bind('click', function(){reportADs(this);});
   }
 }
@@ -834,7 +862,7 @@ function main(loaded)
   console.log(accessToken);
 
   //$("body").on("DOMNodeInserted", 'div.name_card', function(e){
-  // because guokr using jquery 1.4.4 at www.guokr.com/i/userid so must using bind to replace on method
+  // because guokr using jQuery 1.4.4 at www.guokr.com/i/userid so must using bind to replace on method
   $("body").bind("DOMNodeInserted", 'div.name_card', function(e){
     if ($(e.target).attr('class') === 'name_card')
     {
