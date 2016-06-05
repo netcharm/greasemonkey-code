@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.17.115
+// @version     1.3.17.117
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -39,8 +39,9 @@
 //壹贰叁肆伍陆柒捌玖拾零
 //ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ
 //ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹ
-const ADS = [
+var ADS = [
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
+  '/q{1,2}.{1,4}\\d{6,16}/','/[W|V]X.{1,4}\\d{6,16}/',
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
@@ -58,7 +59,7 @@ const ADS = [
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨', '掌灵膏', '网赚',
   '成都装修', '苹果官方', '顶我给大家发红包哦', '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
   //'91y', '９１y游戏',  
-  '/游戏[币|钱|银子]/', '戏子软件',
+  '/游戏[币|钱|银子]/', '戏子软件', '营销软件', '爆粉神器', 'app定做', 'app开发',
   '/代开.{0,10}发票/', '假证','做假',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案', '执业考试答案', '真题包过',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
@@ -66,9 +67,13 @@ const ADS = [
   '微商', '薇伤', '微宝', '微小蜜', '微营销', '咔咔寿', '赢消软件', '营销软件', '爆粉神器',
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
-  '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针',
+  '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
+
+var ADS_EXTRA = new Array();
+//ADS_EXTRA[ADS_EXTRA.length] = 'QQ ';
+//ADS_EXTRA[ADS_EXTRA.length] = '老中医';
 
 var INITED = false;
 
@@ -92,6 +97,35 @@ var readyStateCheckInterval = setInterval(function() {
     }
   }
 }, 10);
+
+function getExtraADS()
+{
+  var url = 'https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/guokr_extra_ad_words.json';
+  
+  if(typeof(jQuery)=='undefined' && typeof($)=='undefined')
+  {
+    //jQuery未載入
+    console.log('jQuery未載入');
+  }
+  else
+  {
+    //jQuery已載入
+    console.log(url);
+    $.ajax({
+      type: "GET",
+      url: url,
+      dataType: "json",
+      async: false,
+      success : function(data) {
+                  console.log(data);
+                  if(data.ok)
+                  {
+                    console.log(data);
+                  }
+                }
+    });
+  } 
+}
 
 function isnum(value)
 {
@@ -127,7 +161,7 @@ function makePat(words)
       }
     }
   }
-  return(new RegExp(pat, 'gi'));
+  return(new RegExp(pat, 'gim'));
 }
 
 function makePats(words)
@@ -145,6 +179,7 @@ function matchAD(text, regex)
 {
   var hasAD = false;
   var results = text.match(regex);
+  //console.log(results, text, regex);
   if(results && (results.length>0))
   {
     hasAD = true;
@@ -325,24 +360,8 @@ function getReportParam()
 {
   if(accessToken == null) accessToken = getAccessToken();
  
-  // var ca = document.cookie.split(';');
-  // //var accessToken = null;
-  // for(idx in ca)
-  // {
-  //   if(!isFinite(idx)) break;
-  //   var item = ca[idx];
-  //   var kv = item.split('=');
-  //   var k = kv[0].trim();
-  //   var v = kv[1].trim();
-  //   if(k.endsWith('_32353_access_token'))
-  //   {
-  //     //accessToken = v;
-  //     //console.log(v);
-  //     //break;
-  //   }
-  // } 
-  //console.log({url:document.location.href, reason:'垃圾广告/敏感或淫秽色情信息', access_token:accessToken, invokedata:''});
-  return({url:document.location.href, reason:'垃圾广告/敏感或淫秽色情信息', access_token:accessToken, invokedata:''});
+  //console.log({url:document.location.href, reason:'垃圾广告/淫秽色情信息/人身攻击', access_token:accessToken, invokedata:''});
+  return({url:document.location.href, reason:'垃圾广告/淫秽色情信息/人身攻击', access_token:accessToken, invokedata:''});
 }
 
 function reportAD()
@@ -776,6 +795,19 @@ function removeBlankline()
   return(false);
 }
 
+function fixedGroupTooltip()
+{
+  $('.side-list-item a.item-name').each(function(){
+    var item = $(this);
+    item.attr('title', item.text());
+    item.css('max-width', '55px');
+    item.css('font-size', '10px');
+    item.css('font-size', '-3');
+  });
+
+  $('.side-list-item .gicon-super').css('margin', 0);
+}
+
 function getUKeyByName(uname)
 {
   var ukey = false;
@@ -875,7 +907,16 @@ function main(loaded)
 
   var hasAD = false;
 
+  //getExtraADS();
+  for(idx in ADS_EXTRA)
+  {
+    if(!ADS.includes(ADS_EXTRA[idx]))
+    {
+      ADS[ADS.length] = ADS_EXTRA[idx];
+    }
+  } 
   var regexs = makePats(ADS);
+
 
   var author = $('#articleAuthor');
   var title = $('#articleTitle');
@@ -895,7 +936,8 @@ function main(loaded)
   }
 
   removeBlankline();
-
+  fixedGroupTooltip();
+  
   findingLink(items, hasAD);
   INITED = true;
   jQueryVersion = $.fn.jquery;
