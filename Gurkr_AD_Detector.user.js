@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.17.117
+// @version     1.3.17.118
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -41,7 +41,7 @@
 //ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹ
 var ADS = [
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
-  '/q{1,2}.{1,4}\\d{6,16}/','/[W|V]X.{1,4}\\d{6,16}/',
+  '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/',
   '爸爸去哪儿', '爸爸去哪兒',
   '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
@@ -370,46 +370,51 @@ function reportAD()
   var reportParam = getReportParam();
   reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/(\/i\/\d+\/).*?$/ig, '$1').replace(/([\?|#].*?)$/ig, '');
   //console.log(reportParam);
-  $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
-    if(data.ok)
-    {
-      $('#reportAD').text('举报成功');
-    }
-    else
-    {
-      $('#reportAD').text('举报失败');
-    }
-    console.log($('#reportAD').text());
-  }, "json");
-  
-  var ukey = $(btn).attr('data-ukey');
-  if(typeof(ukey) == 'undefined')
+  btns = $('#reportAD');
+  if(btns.length>0)
   {
-    var blacklink = $('#addBlacklist');
-    if(blacklink.length>0)
-    {
-      ukey = $(blacklink[0]).attr('data-ukey')
-    }
-  }
-  
-  if(typeof(ukey) != 'undefined')
-  {
-    var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
-    //http://www.guokr.com/apis/community/relationship/black.json
-    $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
+    btn = btns[0];
+    $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
       if(data.ok)
       {
-        //$(btn).text('加入黑名单成功');
-        $(btn).attr('title', '加入黑名单成功');
+        $(btn).text('举报成功');
       }
       else
       {
-        //$(btn).text('加入黑名单失败');
-        $(btn).attr('title', '加入黑名单失败');
-      }    
-      console.log($(btn).text());
-    }, "json");   
-  }  
+        $(btn).text('举报失败');
+      }
+      console.log($('#reportAD').text());
+    }, "json");
+    
+    var ukey = $(btn).attr('data-ukey');
+    if(typeof(ukey) == 'undefined')
+    {
+      var blacklink = $('#addBlacklist');
+      if(blacklink.length>0)
+      {
+        ukey = $(blacklink[0]).attr('data-ukey')
+      }
+    }
+    
+    if(typeof(ukey) != 'undefined')
+    {
+      var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
+      //http://www.guokr.com/apis/community/relationship/black.json
+      $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
+        if(data.ok)
+        {
+          //$(btn).text('加入黑名单成功');
+          $(btn).attr('title', '加入黑名单成功');
+        }
+        else
+        {
+          //$(btn).text('加入黑名单失败');
+          $(btn).attr('title', '加入黑名单失败');
+        }    
+        console.log($(btn).text());
+      }, "json");   
+    }  
+  }
 }
 
 function reportADs(btn)
@@ -424,7 +429,8 @@ function reportADs(btn)
     }
     else
     {
-      $('#reportAD').text('举报失败');
+      //$('#reportAD').text('举报失败');
+      $(btn).text('举报失败');
     }    
     console.log($(btn).text());
   }, "json");
@@ -461,12 +467,6 @@ function reportADs(btn)
 
 function addReportButtonsPoster()
 {
- if($('#reportAD').length <= 0)
-  {
-    $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴">举报</button></li>');
-    $('#reportAD').bind('click', reportAD);
-  } 
-
   var user = $('.gside-head a');
   if(user.length>0)
   {   
@@ -485,6 +485,7 @@ function addReportButtonsPoster()
   }
  
   var poster = $('.post-pic a, .author-pic');
+  var ukey_str = "";
   if(poster.length>0)
   {
     poster = $(poster[0]);
@@ -495,9 +496,17 @@ function addReportButtonsPoster()
     if(typeof(ukey) !== typeof(undefined) && ukey !== false)
     {
       btnPoster.attr('data-ukey', ukey);
+      ukey_str = ' data-ukey="'+ukey+'"';
     }
     btnPoster.bind('click', function(){reportADs(this);});
   }
+
+  if($('#reportAD').length <= 0)
+  {
+    $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴"'+ukey_str+'>举报</button></li>');
+    $('#reportAD').bind('click', reportAD);
+  } 
+
 }
 
 function addReportButtonsUser()
