@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.18.120
+// @version     1.3.18.121
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -618,25 +618,7 @@ function addReportButtonsLink()
 
     var link = $(reportLinks[idx]);
     var like = link.siblings('a.cmt-do-quote, a.cmts-t-grey');
-    like = $(like[0]).next().next();
-    if(like.length>0)
-    {
-      like = $(like[0]);
 
-      var btnID = 'reportAD_'+ idx;
-      like.before('<span class="gsplit">|</span><button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
-      //like.before('<span class="gsplit">|</span><input type="button" id="'+ btnID +'" class="reportADs" title="举报此回帖" value="举报" />');
-
-      var btn = $('#'+btnID);
-      btn.attr('data-img', link.attr('data-img'));
-      btn.attr('data-url', link.attr('data-url'));
-      btn.attr('data-title', link.attr('data-title'));
-      btn.attr('data-type', link.attr('data-type'));
-      btn.attr('data-report', link.attr('data-report'));
-      //btn.on('click', function(){reportADs(this);});
-      jQuery('body').on('click', '#'+btnID, function(){reportADs(this);});
-    }
-    
     var answer = $(link.parent()).siblings('.gfl')
     if(answer.length>0)
     {
@@ -658,6 +640,28 @@ function addReportButtonsLink()
       //btn.bind('click', function(){reportADs(this);});
       jQuery(document).on('click', '#'+btnID, function(){reportADs(this);});
     }
+
+    like = $(like[0]).next().next();
+    if(like.length>0)
+    {
+      like = $(like[0]);
+
+      var btnID = 'reportAD_'+ idx;
+      if($('#'+btnID).length>0) continue;
+      
+      like.before('<span class="gsplit">|</span><button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
+      //like.before('<span class="gsplit">|</span><input type="button" id="'+ btnID +'" class="reportADs" title="举报此回帖" value="举报" />');
+
+      var btn = $('#'+btnID);
+      btn.attr('data-img', link.attr('data-img'));
+      btn.attr('data-url', link.attr('data-url'));
+      btn.attr('data-title', link.attr('data-title'));
+      btn.attr('data-type', link.attr('data-type'));
+      btn.attr('data-report', link.attr('data-report'));
+      //btn.on('click', function(){reportADs(this);});
+      jQuery('body').on('click', '#'+btnID, function(){reportADs(this);});      
+    }
+    
   }
 }
 
