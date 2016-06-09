@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.18.121
+// @version     1.3.18.122
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -978,7 +978,10 @@ function main(loaded)
 
   $("body").on("DOMNodeInserted", 'ul.cmts-list li', function(e){
       //console.log(e.target);
-      addReportButtonAskReply(e.target);
+      if(e.target.id == '')
+      {
+        addReportButtonAskReply(e.target);
+      }
   });
 
   for(idx in regexs)
