@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.17.118
+// @version     1.3.17.119
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -67,7 +67,7 @@ var ADS = [
   '微商', '薇伤', '微宝', '微小蜜', '微营销', '咔咔寿', '赢消软件', '营销软件', '爆粉神器',
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
-  '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
+  '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
 
@@ -277,7 +277,7 @@ function findingLink(items, hasAD)
   var fgcolor = 'red';
   var hasLink = false;
   var notice = '外链';
-  var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gi');
+  var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gim');
 
   items.each(function(){
     var links = $(this).find('a');
@@ -287,8 +287,10 @@ function findingLink(items, hasAD)
       if(isExtLink && isExtLink.length>0)
       {
         hasLink = true;
+        //console.log(link);
         link.css('background-color', bgcolor);
         link.css('color', fgcolor);
+        link.attr('style', 'background-color:'+bgcolor+'!important;color:'+fgcolor+'!important;');
       }
     });
   });
@@ -307,6 +309,11 @@ function findingLink(items, hasAD)
     console.info(info);
   }
   return(hasLink);
+}
+
+function findingHideText(items)
+{
+
 }
 
 function getAccessToken()
@@ -550,10 +557,12 @@ function addReportButtonsUser()
           floor = $(user);
         }      
         var btnUserID = 'reportUSER_'+ idx;
+        if($('#'+btnUserID).length>0) continue;
+        
         floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
         var btnUser = $('#'+btnUserID);
-        console.log(user[0]);
+        //console.log(user[0]);
         btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
         btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
         jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});      
@@ -947,7 +956,11 @@ function main(loaded)
   removeBlankline();
   fixedGroupTooltip();
   
+  //console.log(items);
   findingLink(items, hasAD);
+  
+  findingHideText(items);
+  
   INITED = true;
   jQueryVersion = $.fn.jquery;
 }
