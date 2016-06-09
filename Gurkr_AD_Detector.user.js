@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.17.119
+// @version     1.3.18.120
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -472,6 +472,32 @@ function reportADs(btn)
   }
 }
 
+var replayIdx = 0;
+function addReportButtonAskReply(item)
+{
+  var btnID = 'reportADAskReply_'+ replayIdx;
+  var reportlink = $(item).find('a.red-link');
+  if(reportlink.length > 0)
+  {
+    var link = $(reportlink[0]);
+    link.before('<button id="'+ btnID +'" class="reportADs" title="举报此回答">举报</button>');
+  
+    var btn = $('#'+btnID);
+    btn.css('margin-top', '-6px');
+    btn.css('margin-left', '16px');
+    btn.css('margin-right', '16px');
+    btn.attr('data-img', link.attr('data-img'));
+    btn.attr('data-url', link.attr('data-url'));
+    btn.attr('data-title', link.attr('data-title'));
+    btn.attr('data-type', link.attr('data-type'));
+    btn.attr('data-report', link.attr('data-report'));
+    //btn.bind('click', function(){reportADs(this);});
+    jQuery(document).on('click', '#'+btnID, function(){reportADs(this);});
+
+    replayIdx++;
+  }
+}
+
 function addReportButtonsPoster()
 {
   var user = $('.gside-head a');
@@ -531,7 +557,7 @@ function addReportButtonsUser()
       if($(user[0]).attr('class') === 'answer-usr')
       {
         var usr = user.find('a.answer-usr-name');
-        console.log(usr);
+        //console.log(usr);
         if(usr.length > 0)
         {
             usr= $(usr[0]);
@@ -838,7 +864,7 @@ function getUKeyByName(uname)
       return( false );
     }
   });
-  $('a#articleAuthor, a.cmtAuthor, a.answer-usr-name').each(function(){
+  $('a#articleAuthor, a.cmtAuthor, a.answer-usr-name, ul.cmts-list li a').each(function(){
     var user = $(this);
     var user_name = user.text();
     if(uname === user_name)
@@ -853,6 +879,7 @@ function getUKeyByName(uname)
 function detectNameCard()
 {
   var ucards = $('div.name_card');
+  //console.log(ucards);
   if(ucards.length > 0)
   {
     var ulink = $($(ucards[0]).find('div.card-user_info-name > a')[0]);
@@ -865,7 +892,7 @@ function detectNameCard()
       var ukey = getUKeyByName(uname);
       if( ukey != false)
       {
-        //console.log(ukey, ' ? ', uname);    
+        //console.log(ukey, ' ? ', uname);
         var nuts = $('span.card-user_info-nuts');
         nuts.after('&nbsp;<button id="'+ btnUserID +'" title="举报此用户">举报</button>');
 
@@ -916,6 +943,7 @@ function main(loaded)
   $("body").bind("DOMNodeInserted", 'div.name_card', function(e){
     if ($(e.target).attr('class') === 'name_card')
     {
+      console.log('namecard popuped.');
       detectNameCard();
     }
   });
@@ -941,9 +969,13 @@ function main(loaded)
   var article = $('#articleContent');
   //var posts = $('.post-txt');
   var comments = $('.cmtContent, .answerTxt');
-
-  //var items = $.extend({}, author, title, article, comments);
+  
   var items = $.merge($.merge($.merge(author, title), article), comments);
+
+  $("body").on("DOMNodeInserted", 'ul.cmts-list li', function(e){
+      //console.log(e.target);
+      addReportButtonAskReply(e.target);
+  });
 
   for(idx in regexs)
   {
