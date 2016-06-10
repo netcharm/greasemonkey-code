@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.18.122
+// @version     1.3.18.123
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -68,6 +68,7 @@ var ADS = [
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
+  '/又木.{0,16}果冻/', '又木黑糖', '又木瘦身', '又木精华',
   //'/((华芝国际){0,1}(生命之源){0,1})/'
 ];
 
@@ -77,7 +78,7 @@ var ADS_EXTRA = new Array();
 
 var INITED = false;
 
-var jQuery = window.jQuery;  
+var jQuery = window.jQuery;
 
 var jQueryVersion = '';
 //$.fn.jquery;
