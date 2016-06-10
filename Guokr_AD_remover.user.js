@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.28
+// @version     1.2.4.29
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -163,11 +163,12 @@ function hideAD_group(){
 
     $.each(adpats,function(i,n)
     {
-      if(n && title.match(n))
+      var matchTitle = title.match(n);
+      if(n && matchTitle)
       {
         //post.hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
-        highlightAD(n, tnode, 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
+        highlightAD(n, tnode, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+matchTitle.toString());
         return false;
       }
     });
@@ -183,11 +184,12 @@ function hideAD_ask(){
     title = ask.find('h2 > a').text();
     $.each(adpats,function(i,n)
     {
-      if(n && title.match(n))
+      var matchTitle = title.match(n);
+      if(n && matchTitle)
       {
         //ask.parent().hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
-        highlightAD(n, ask, 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
+        highlightAD(n, ask, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+matchTitle.toString());
         return false;
       }
     });
@@ -224,7 +226,7 @@ function hideAD_search(){
       }
       if(n && (foundTitle || foundContent))
       {
-        highlightAD(n, search, 'text', '已发现广告词: '+ ADS[i] +', 帖子标题:'+title+'\n已匹配广告词:'+matchWords.toString());
+        highlightAD(n, search, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+matchWords.toString());
         return(false);
       }
     });      
