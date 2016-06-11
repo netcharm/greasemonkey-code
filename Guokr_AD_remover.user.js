@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.29
+// @version     1.2.4.30
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -43,6 +43,7 @@ const ADS = [
   //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
   '/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华',
+  '一面湖水', '壹面湖水', '青汁', '清汁', '道田',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/'  
