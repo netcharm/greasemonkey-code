@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.32
+// @version     1.2.4.34
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -42,7 +42,7 @@ const ADS = [
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
-  '/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然',
+  '/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
   '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
@@ -134,7 +134,7 @@ function highlightAD(word, node, mode, notice)
   var gwrap = $(node) || $('div.gwrap');
   //console.log(gwrap.html());
   var html = gwrap.html().replace(/\<\/{0,1}strong\>/gim,'').replace(word, function(m){
-    return '<span style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>';
+    return '<span class="ads_word" style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>';
   });
   //console.log(html);
   gwrap.html( html );
