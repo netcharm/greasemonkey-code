@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.18.132
+// @version     1.3.18.133
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -67,10 +67,11 @@ var ADS = [
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
   '/又.{0,6}木.{0,32}[茶|黑糖|布丁|果冻|减肥|瘦身|精华|道法|自然]/', '道法瘦身',
   //'/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
-  '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片',
+  '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
-  '/[Q|W|V|微|威|维]{0,1}.{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{6,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/'
+  //'/[Q|W|V|微|威|维]{0,1}.{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{6,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/'
+  '/[Q|W|V|微|威|维].{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{6,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/'
 ];
 
 var ADS_EXTRA = new Array();
@@ -85,6 +86,9 @@ var jQueryVersion = '';
 //$.fn.jquery;
 //var jQueryVersion = '1.4.4';
 //console.log(jQueryVersion);
+
+var ad_style = 'color:white!important; background-color:red!important;';
+var link_style = 'color:red!important; background-color:yellow!important;';
 
 var accessToken = getAccessToken();
 
@@ -211,8 +215,6 @@ function notifyAD(info, fg, bg)
 
 function highlightAD(word, node, mode, notice)
 {
-  var ad_style = 'color:white!important; background-color:red!important;';
-  var link_style = 'color:red!important; background-color:yellow!important;';
   var style = ad_style;
 
   var gwrap = $('div.gwrap');
@@ -225,7 +227,11 @@ function highlightAD(word, node, mode, notice)
     style = link_style;
   }
   var html = gwrap.html().replace(word, function(m){
-    if(m.startsWith('>http'))
+    console.log(m);
+    if(m.match(/\/i\/\d+\/{0,1}$/gim))
+    {
+    }
+    else if(m.startsWith('>http'))
     {
       return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+m.substring(1)+'</span>';
     }
