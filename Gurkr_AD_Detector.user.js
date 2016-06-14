@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.18.133
+// @version     1.3.18.134
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -216,6 +216,7 @@ function notifyAD(info, fg, bg)
 function highlightAD(word, node, mode, notice)
 {
   var style = ad_style;
+  var word_in_tag = new RegExp('<((a)|(span)).*?('+word+'){1,}.*?>', 'gim');
 
   var gwrap = $('div.gwrap');
   if(node)
@@ -227,9 +228,16 @@ function highlightAD(word, node, mode, notice)
     style = link_style;
   }
   var html = gwrap.html().replace(word, function(m){
-    console.log(m);
     if(m.match(/\/i\/\d+\/{0,1}$/gim))
     {
+      //console.log(m);
+      return(m);
+    }
+    else if(m.match(word_in_tag))
+    {
+      //console.log(gwrap);
+      //console.log(m);
+      return(m);
     }
     else if(m.startsWith('>http'))
     {
@@ -286,19 +294,18 @@ function findingLink(items, hasAD)
   var hasLink = false;
   var notice = '外链';
   var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gim');
-
+ 
   items.each(function(){
-    var links = $(this).find('a');
-    links.each(function(){
-      var link = $(this);
-      var isExtLink = link[0].href.match(link_pat);
+    $(this).find('a').each(function(idx, aobj){
+      var link = $(aobj);
+      var isExtLink = aobj.href.match(link_pat);
       if(isExtLink && isExtLink.length>0)
       {
         hasLink = true;
-        //console.log(link);
         link.css('background-color', bgcolor);
         link.css('color', fgcolor);
         link.attr('style', 'background-color:'+bgcolor+'!important;color:'+fgcolor+'!important;');
+        link.addClass('extlink');
       }
     });
   });
@@ -979,11 +986,13 @@ function main(loaded)
   var author = $('#articleAuthor');
   var title = $('#articleTitle');
   var article = $('#articleContent');
-  //var posts = $('.post-txt');
-  var comments = $('.cmtContent, .answerTxt');
-  
+  var comments = $('#comments .cmtContent, .answerTxt');
+
   var items = $.merge($.merge($.merge(author, title), article), comments);
 
+  //console.log(items);
+  findingLink(items, hasAD);
+  
   $("body").on("DOMNodeInserted", 'ul.cmts-list li', function(e){
       //console.log(e.target);
       if(e.target.id == '')
@@ -1000,9 +1009,6 @@ function main(loaded)
 
   removeBlankline();
   fixedGroupTooltip();
-  
-  //console.log(items);
-  findingLink(items, hasAD);
   
   findingHideText(items);
   
