@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include     
-// @version     1.3.18.134
+// @version     1.3.18.135
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -65,7 +65,7 @@ var ADS = [
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
-  '/又.{0,6}木.{0,32}[茶|黑糖|布丁|果冻|减肥|瘦身|精华|道法|自然]/', '道法瘦身',
+  '/(又.{0,6}木)+.*?((茶)|(黑糖)|(布丁)|(果冻)|(减肥)|(瘦身)|(精华)|(道法)|(自然))+/', '道法瘦身',
   //'/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
   '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
@@ -185,12 +185,14 @@ function matchAD(text, regex)
 {
   var hasAD = false;
   var results = text.match(regex);
+  var matchWords = [];
   //console.log(results, text, regex);
   if(results && (results.length>0))
   {
     hasAD = true;
+    matchWords = $.merge(matchWords, results);
   }
-  return(hasAD);
+  return({hasAD:hasAD, word: matchWords.toString()});
 }
 
 function notifyAD(info, fg, bg)
@@ -216,8 +218,41 @@ function notifyAD(info, fg, bg)
 function highlightAD(word, node, mode, notice)
 {
   var style = ad_style;
-  var word_in_tag = new RegExp('<((a)|(span)).*?('+word+'){1,}.*?>', 'gim');
+  //var word_in_tag = new RegExp('<((a)|(span)).*?('+word+'){1,}.*?>', 'gim');
+  var word_in_tag = new RegExp('<((a)|(span)).*?title="(.*?)('+word+')+(.*?)".*?>', 'gim');
 
+  function replacer(match, offset, string) {
+    var html = gwrap.html();
+    var idxS = html.lastIndexOf('<', offset);
+    if(idxS<0) return(match);
+    
+    var idxE = html.indexOf('">', offset+1);
+    if(idxE-idxS < 75) return(match);
+    console.log(match, offset, idxS, idxE);
+    
+    var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
+    //console.log(st);
+    //mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+match+')+(.*?)".*?>', 'gim'))
+    //console.log(mr);
+    
+    if(match.match(/\/i\/\d+\/{0,1}$/gim))
+    {
+      return(match);
+    }
+    else if(st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+match+')+(.*?)".*?>', 'gim')))
+    {
+      return(match);
+    }
+    else if(match.startsWith('>http'))
+    {      
+      return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+match.substring(1)+'</span>';
+    }
+    else
+    {
+      return '<span class="ads_word" style="' + style + '" title="'+ notice +'">'+match+'</span>'
+    }
+  }
+  
   var gwrap = $('div.gwrap');
   if(node)
   {
@@ -227,27 +262,7 @@ function highlightAD(word, node, mode, notice)
   {
     style = link_style;
   }
-  var html = gwrap.html().replace(word, function(m){
-    if(m.match(/\/i\/\d+\/{0,1}$/gim))
-    {
-      //console.log(m);
-      return(m);
-    }
-    else if(m.match(word_in_tag))
-    {
-      //console.log(gwrap);
-      //console.log(m);
-      return(m);
-    }
-    else if(m.startsWith('>http'))
-    {
-      return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+m.substring(1)+'</span>';
-    }
-    else
-    {
-      return '<span class="ads_word" style="' + style + '" title="'+ notice +'">'+m+'</span>'
-    }
-  });
+  var html = gwrap.html().replace(word, replacer);
   gwrap.html( html );
 }
 
@@ -265,10 +280,12 @@ function findingAD(items, regex, notice, mode)
     {
       text = this.textContent;
     }
-    hasAD |= matchAD(text, regex);
+    var matchResult = matchAD(text, regex);
+    hasAD |= matchResult.hasAD;
     if(hasAD)
     {
-      highlightAD(regex, this, mode, notice);
+      //console.log(matchResult.word);
+      highlightAD(regex, this, mode, notice + '\n匹配: '+matchResult.word);
     }
   });
 
@@ -982,7 +999,6 @@ function main(loaded)
   } 
   var regexs = makePats(ADS);
 
-
   var author = $('#articleAuthor');
   var title = $('#articleTitle');
   var article = $('#articleContent');
@@ -990,9 +1006,6 @@ function main(loaded)
 
   var items = $.merge($.merge($.merge(author, title), article), comments);
 
-  //console.log(items);
-  findingLink(items, hasAD);
-  
   $("body").on("DOMNodeInserted", 'ul.cmts-list li', function(e){
       //console.log(e.target);
       if(e.target.id == '')
@@ -1007,10 +1020,12 @@ function main(loaded)
     hasAD |= findingAD(items, regexs[idx], '广告: '+AD);
   }
 
-  removeBlankline();
-  fixedGroupTooltip();
+  findingLink(items, hasAD);
   
   findingHideText(items);
+  
+  removeBlankline();
+  fixedGroupTooltip();
   
   INITED = true;
   jQueryVersion = $.fn.jquery;
