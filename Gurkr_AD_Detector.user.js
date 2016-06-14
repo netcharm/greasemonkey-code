@@ -23,8 +23,8 @@
 // @include     https://*.guokr.com/ask/i/*
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
-// @include     
-// @version     1.3.18.135
+// @include
+// @version     1.3.18.136
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -43,11 +43,11 @@ var ADS = [
   '爸爸去哪儿', '爸爸去哪兒', '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
   '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10', '小觅手机伴侣',
-  '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹', 
+  '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹',
   '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫', '叆鲱迪坷',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
-  //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',  
-  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦', '安普', '玛卡粉', '洛神花', 
+  //'伯来世特', '伯莱狮特', '博来狮特', '蚾梾轼忒', '秡猍狮特', '渤俫史特', '伯庲是特', '卜婡时慝', '伯俫世特', '箔婡式忑',
+  '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦', '安普', '玛卡粉', '洛神花',
   '丰韵霜', '蓓卡露', '抹药老方', '袁爱荣快瘦汤', '袁医生瘦身汤', '快瘦汤',
   '一小兜', 'yixiaodou.com',
   '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别', '多兰恩',
@@ -55,7 +55,7 @@ var ADS = [
   '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现',
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨', '掌灵膏', '网赚',
   '成都装修', '苹果官方', '顶我给大家发红包哦', '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
-  //'91y', '９１y游戏',  
+  //'91y', '９１y游戏',
   '/游戏[币|钱|银子]/', '戏子软件', '营销软件', '爆粉神器', 'app定做', 'app开发',
   '/代开.{0,10}发票/', '假证','做假',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案', '执业考试答案', '真题包过',
@@ -93,7 +93,7 @@ var link_style = 'color:red!important; background-color:yellow!important;';
 var accessToken = getAccessToken();
 
 var readyStateCheckInterval = setInterval(function() {
-  if (document.readyState === "complete" || INITED) 
+  if (document.readyState === "complete" || INITED)
   {
     clearInterval(readyStateCheckInterval);
     if(!INITED)
@@ -107,7 +107,7 @@ var readyStateCheckInterval = setInterval(function() {
 function getExtraADS()
 {
   var url = 'https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/guokr_extra_ad_words.json';
-  
+
   if(typeof(jQuery)=='undefined' && typeof($)=='undefined')
   {
     //jQuery未載入
@@ -130,7 +130,7 @@ function getExtraADS()
                   }
                 }
     });
-  } 
+  }
 }
 
 function isnum(value)
@@ -224,27 +224,31 @@ function highlightAD(word, node, mode, notice)
   function replacer(match, offset, string) {
     var html = gwrap.html();
     var idxS = html.lastIndexOf('<', offset);
-    if(idxS<0) return(match);
-    
-    var idxE = html.indexOf('">', offset+1);
-    if(idxE-idxS < 75) return(match);
-    console.log(match, offset, idxS, idxE);
-    
-    var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
-    //console.log(st);
-    //mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+match+')+(.*?)".*?>', 'gim'))
-    //console.log(mr);
-    
+    //if(idxS<0) return(match);
+    var mr = null;
+    if(idxS>=0)
+    {
+        var idxE = html.indexOf('">', offset+1);
+        if(idxE-idxS > 20)
+        {
+            //console.log(match, offset, idxS, idxE);
+            var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
+            //console.log(st);
+            mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+match+')+(.*?)".*?>', 'gim'))
+            //console.log(mr);
+        }
+    }
+
     if(match.match(/\/i\/\d+\/{0,1}$/gim))
     {
       return(match);
     }
-    else if(st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+match+')+(.*?)".*?>', 'gim')))
+    else if(mr && mr.length>0)
     {
       return(match);
     }
     else if(match.startsWith('>http'))
-    {      
+    {
       return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+match.substring(1)+'</span>';
     }
     else
@@ -252,7 +256,7 @@ function highlightAD(word, node, mode, notice)
       return '<span class="ads_word" style="' + style + '" title="'+ notice +'">'+match+'</span>'
     }
   }
-  
+
   var gwrap = $('div.gwrap');
   if(node)
   {
@@ -311,7 +315,7 @@ function findingLink(items, hasAD)
   var hasLink = false;
   var notice = '外链';
   var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gim');
- 
+
   items.each(function(){
     $(this).find('a').each(function(idx, aobj){
       var link = $(aobj);
@@ -373,7 +377,7 @@ function getAccessToken()
       }
       else
       {
-        //jQuery已載入       
+        //jQuery已載入
         $.ajax({
           type: "GET",
           url: url,
@@ -398,7 +402,7 @@ function getAccessToken()
 function getReportParam()
 {
   if(accessToken == null) accessToken = getAccessToken();
- 
+
   //console.log({url:document.location.href, reason:'垃圾广告/淫秽色情信息/人身攻击', access_token:accessToken, invokedata:''});
   return({url:document.location.href, reason:'垃圾广告/淫秽色情信息/人身攻击', access_token:accessToken, invokedata:''});
 }
@@ -424,7 +428,7 @@ function reportAD()
       }
       console.log($('#reportAD').text());
     }, "json");
-    
+
     var ukey = $(btn).attr('data-ukey');
     if(typeof(ukey) == 'undefined')
     {
@@ -434,7 +438,7 @@ function reportAD()
         ukey = $(blacklink[0]).attr('data-ukey')
       }
     }
-    
+
     if(typeof(ukey) != 'undefined')
     {
       var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
@@ -449,10 +453,10 @@ function reportAD()
         {
           //$(btn).text('加入黑名单失败');
           $(btn).attr('title', '加入黑名单失败');
-        }    
+        }
         console.log($(btn).text());
-      }, "json");   
-    }  
+      }, "json");
+    }
   }
 }
 
@@ -463,17 +467,17 @@ function reportADs(btn)
   //console.log(reportParam);
   $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
-    {     
+    {
       $(btn).text('举报成功');
     }
     else
     {
       //$('#reportAD').text('举报失败');
       $(btn).text('举报失败');
-    }    
+    }
     console.log($(btn).text());
   }, "json");
-  
+
   var ukey = $(btn).attr('data-ukey');
   if(typeof(ukey) == 'undefined')
   {
@@ -483,7 +487,7 @@ function reportADs(btn)
       ukey = $(blacklink[0]).attr('data-ukey')
     }
   }
-  
+
   if(typeof(ukey) != 'undefined')
   {
     var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
@@ -498,9 +502,9 @@ function reportADs(btn)
       {
         //$(btn).text('加入黑名单失败');
         $(btn).attr('title', '加入黑名单失败');
-      }    
+      }
       console.log($(btn).text());
-    }, "json");   
+    }, "json");
   }
 }
 
@@ -513,7 +517,7 @@ function addReportButtonAskReply(item)
   {
     var link = $(reportlink[0]);
     link.before('<button id="'+ btnID +'" class="reportADs" title="举报此回答">举报</button>');
-  
+
     var btn = $('#'+btnID);
     btn.css('margin-top', '-6px');
     btn.css('margin-left', '16px');
@@ -534,8 +538,8 @@ function addReportButtonsPoster()
 {
   var user = $('.gside-head a');
   if(user.length>0)
-  {   
-    user = $(user[0]);    
+  {
+    user = $(user[0]);
     $('a.gbtn-nobg').after('<button id="reportUSER_poster" class="reportUSERs" style="z-index:999;margin-left:8px;" title="举报此用户">举报</button>');
     var btnUser = $('#reportUSER_poster');
     btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
@@ -545,10 +549,10 @@ function addReportButtonsPoster()
       btnUser.attr('data-ukey', ukey);
     }
     btnUser.bind('click', function(){reportADs(this);});
-    
+
     $('#gtopBtns').append('<a class="gbtn-nobg" href="'+user[0].href.replace('.com/i/', '.com/group/i/')+'">统合信息</a>');
   }
- 
+
   var poster = $('.post-pic a, .author-pic');
   var ukey_str = "";
   if(poster.length>0)
@@ -570,7 +574,7 @@ function addReportButtonsPoster()
   {
     $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴"'+ukey_str+'>举报</button></li>');
     $('#reportAD').bind('click', reportAD);
-  } 
+  }
 
 }
 
@@ -595,14 +599,14 @@ function addReportButtonsUser()
             usr= $(usr[0]);
             var btnUsrID = 'reportUSER_'+ idx;
             usr.after('<button id="'+ btnUsrID +'" class="reportUSERs" title="举报此用户">举报</button>');
-            
+
             var btnUsr = $('#'+btnUsrID);
             btnUsr.css('margin-top', '-6px');
             btnUsr.css('margin-left', '16px');
             btnUsr.css('margin-right', '16px');
-            btnUsr.attr('data-url', usr[0].href.replace('/group','').replace('/group','').replace('/ask', ''));        
+            btnUsr.attr('data-url', usr[0].href.replace('/group','').replace('/group','').replace('/ask', ''));
             jQuery(document).on('click', '#'+btnUsrID, function(){reportADs(this);});
-        }        
+        }
       }
       else
       {
@@ -613,17 +617,17 @@ function addReportButtonsUser()
         else
         {
           floor = $(user);
-        }      
+        }
         var btnUserID = 'reportUSER_'+ idx;
         if($('#'+btnUserID).length>0) continue;
-        
+
         floor.after('<br /><button id="'+ btnUserID +'" class="reportUSERs" title="举报此用户">举报</button>');
 
         var btnUser = $('#'+btnUserID);
         //console.log(user[0]);
         btnUser.attr('data-url', user[0].href.replace('/group','').replace('/ask', ''));
         btnUser.attr('data-ukey', $(user[0]).attr('data-ukey'));
-        jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});      
+        jQuery(document).on('click', '#'+btnUserID, function(){reportADs(this);});
       }
     }
   }
@@ -680,7 +684,7 @@ function addReportButtonsLink()
 
       var btnID = 'reportAD_'+ idx;
       if($('#'+btnID).length>0) continue;
-      
+
       like.before('<span class="gsplit">|</span><button id="'+ btnID +'" class="reportADs" title="举报此回帖">举报</button>');
       //like.before('<span class="gsplit">|</span><input type="button" id="'+ btnID +'" class="reportADs" title="举报此回帖" value="举报" />');
 
@@ -691,9 +695,9 @@ function addReportButtonsLink()
       btn.attr('data-type', link.attr('data-type'));
       btn.attr('data-report', link.attr('data-report'));
       //btn.on('click', function(){reportADs(this);});
-      jQuery('body').on('click', '#'+btnID, function(){reportADs(this);});      
+      jQuery('body').on('click', '#'+btnID, function(){reportADs(this);});
     }
-    
+
   }
 }
 
@@ -701,13 +705,13 @@ function addReportButtons()
 {
   //console.log('add button');
   var href = document.location.href;
-  if(!href.startsWith('http://www.guokr.com/group/') && 
+  if(!href.startsWith('http://www.guokr.com/group/') &&
      !href.startsWith('https://www.guokr.com/group/')  )
   {
     addReportButtonsPoster();
   }
   addReportButtonsUser();
-  addReportButtonsLink();  
+  addReportButtonsLink();
 }
 
 function getSelectionText()
@@ -738,22 +742,22 @@ function getSelectionLink()
         if(!isFinite(idx)) break;
         link = alinks[idx];
         if(link && selObj.containsNode(link, true))
-        {        
+        {
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
-          
+
           if($(link).find('.tags').length==1) continue;
           if(link.className=='tag') continue;
-          
+
           if($(link).parents('.tags, .title-info, .title-like, .tab-title, .tab-underline, .post-belong').length==1) continue;
 
           if(link.className=='post-reply-link'){ links.push(link); continue;}
-          
+
           if(link.className=='gactive-hd-title'){ links.push(link); continue;}
-          
+
           if($(link).parents('.items-post').length==1){ links.push(link); continue;}
           if($(link).parents('.gellipsis').length==1){ links.push(link); continue;}
           if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
-          
+
           if($(link).parents('.ask-list-detials, .post-detail, .post-title, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
           if($(link).parents('.titles-txt, .title-content, #articleContent').length==1){ links.push(link); continue;}
         }
@@ -768,12 +772,12 @@ function batchReport()
   var listbox = $('select#batchReportResult');
   var btnReport = $('#batchReportAD');
   var title = $('#batchReportAD').text();
-  
+
   var reportParam = getReportParam();
   var links = getSelectionLink();
   //console.log(links);
   //return;
-  
+
   var count = 0;
   var total = links.length;
   listbox.empty();
@@ -799,7 +803,7 @@ function batchReport()
         listbox.append(new Option('[' + info + '] ' + text, url));
         listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
         count = listbox[0].options.length;
-        btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))    
+        btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
       },
       error: function( data, textStatus ) {
         var link = $(this);
@@ -809,17 +813,17 @@ function batchReport()
         listbox.append(new Option('[' + info + '] ' + text, url));
         listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
         count = listbox[0].options.length;
-        btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))    
+        btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
       },
-    }); 
+    });
     listbox.stop().delay( 25 );
-  }  
+  }
 }
 
 function addBatchReportDox()
 {
   var floating = true;
-  var boxFloat = '<div id="batchReportBox" style="position:fixed;bottom:10px;width:290px;z-index:999;"><button id="batchReportAD" title="批量举报所选链接">批量举报所选链接(0/0)</button></div><div style="clear:both;"></div>';  
+  var boxFloat = '<div id="batchReportBox" style="position:fixed;bottom:10px;width:290px;z-index:999;"><button id="batchReportAD" title="批量举报所选链接">批量举报所选链接(0/0)</button></div><div style="clear:both;"></div>';
   var boxFixed = '<div id="batchReportBox"><button id="batchReportAD" style="margin-top:8px;" title="批量举报所选链接">批量举报所选链接(0/0)</button></div>';
   var adResult = '<br/><select id="batchReportResult" name="reportResult" size="10" style="width:99%;"></select>';
 
@@ -851,7 +855,7 @@ function addBatchReportDox()
     else
     {
       $boxDiv = $('.gmain').append(boxFixed);
-    }    
+    }
   }
   $('#batchReportAD').after(adResult);
   $('#batchReportAD').bind('click', batchReport);
@@ -871,7 +875,7 @@ function removeBlankline()
     var node = this;
     node.innerHTML = node.innerHTML.trim().replace(/(<p><\/p>){2,}/gi, '<p></p>');
   });
-  
+
   return(false);
 }
 
@@ -921,9 +925,9 @@ function detectNameCard()
     var ulink = $($(ucards[0]).find('div.card-user_info-name > a')[0]);
     var uname = ulink.text();
     //console.log(uname);
-    
+
     var btnUserID = 'reportUSER_namecard';
-    if( $('#'+btnUserID).length == 0 ) 
+    if( $('#'+btnUserID).length == 0 )
     {
       var ukey = getUKeyByName(uname);
       if( ukey != false)
@@ -935,19 +939,19 @@ function detectNameCard()
         var btnUser = $('#'+btnUserID);
         btnUser.attr('data-url', ulink.attr('href').replace('/group','').replace('/ask', ''));
         btnUser.attr('data-ukey', ukey);
-        btnUser.bind('click', function(){reportADs(this);});    
+        btnUser.bind('click', function(){reportADs(this);});
       }
     }
-    
+
     var upic = $('.card-user_pic > img')[0];
     upic.src = upic.src.replace('/w/48/h/48', '/w/160/h/160');
     $(upic).css('width', 160);
     $(upic).css('height', 160);
-    
+
     var upiclink = $('.card-user_pic')[0];
     $(upiclink).css('width', 160);
     $(upiclink).css('height', 160);
-    
+
     $('.card-focus_complete-btn').css('width', 60);
     $('.card-focus_complete-btn').css('margin-left', 4);
     $('.card-focus_complete-btn > span').css('width', 52);
@@ -955,13 +959,13 @@ function detectNameCard()
     $('.card-focus-num').css('width', 44);
     $('.card-focus-num').css('margin-left', 2);
     $('.card-focus-num').css('margin-right', 2);
-    
+
     $('.card-focus').css('margin-left', 180);
     $('.card-focus').css('padding-left', 4);
     $('.card-focus').css('width', 240);
-    
+
     $('.card-desp').css('min-height', '3em');
-    
+
     //$(ucards[0]).css('width', $(ucards[0]).css('width')+112);
     $(ucards[0]).attr('style', $(ucards[0]).attr('style').replace('width: 300px;', 'width: 450px;'));
   }
@@ -971,7 +975,7 @@ function main(loaded)
 {
   //if(accessToken==null) return;
   if(INITED) return;
-  
+
   console.log(accessToken);
 
   //$("body").on("DOMNodeInserted", 'div.name_card', function(e){
@@ -983,7 +987,7 @@ function main(loaded)
       detectNameCard();
     }
   });
- 
+
   addBatchReportDox();
   addReportButtons();
 
@@ -996,7 +1000,7 @@ function main(loaded)
     {
       ADS[ADS.length] = ADS_EXTRA[idx];
     }
-  } 
+  }
   var regexs = makePats(ADS);
 
   var author = $('#articleAuthor');
@@ -1021,12 +1025,12 @@ function main(loaded)
   }
 
   findingLink(items, hasAD);
-  
+
   findingHideText(items);
-  
+
   removeBlankline();
   fixedGroupTooltip();
-  
+
   INITED = true;
   jQueryVersion = $.fn.jquery;
 }
