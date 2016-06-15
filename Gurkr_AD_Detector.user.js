@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.136
+// @version     1.3.18.137
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -70,8 +70,8 @@ var ADS = [
   '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
-  //'/[Q|W|V|微|威|维]{0,1}.{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{6,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/'
-  '/[Q|W|V|微|威|维].{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{6,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{6,16}/'
+  //'/[Q|W|V|微|威|维]{0,1}.{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{7,16}/'
+  '/[Q|W|V|微|威|维].{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}\\d{7,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{7,16}/'
 ];
 
 var ADS_EXTRA = new Array();
@@ -193,6 +193,8 @@ function matchAD(text, regex)
     matchWords = $.merge(matchWords, results);
   }
   return({hasAD:hasAD, word: matchWords.toString()});
+  //console.log(matchWords.join('\n').trim());
+  //return({hasAD:hasAD, word: matchWords.join('\n')});
 }
 
 function notifyAD(info, fg, bg)
@@ -218,42 +220,74 @@ function notifyAD(info, fg, bg)
 function highlightAD(word, node, mode, notice)
 {
   var style = ad_style;
-  //var word_in_tag = new RegExp('<((a)|(span)).*?('+word+'){1,}.*?>', 'gim');
-  var word_in_tag = new RegExp('<((a)|(span)).*?title="(.*?)('+word+')+(.*?)".*?>', 'gim');
 
-  function replacer(match, offset, string) {
-    var html = gwrap.html();
-    var idxS = html.lastIndexOf('<', offset);
-    //if(idxS<0) return(match);
+  function replacer(text, offset, html) {
     var mr = null;
-    if(idxS>=0)
+    var idxN0 = html.lastIndexOf('">@', offset);
+    var idxN1 = html.lastIndexOf('nickname="', offset);
+    var idxT = html.lastIndexOf('>', offset);
+    var idxS = html.lastIndexOf('<', offset);
+    var idxE = html.indexOf('">', offset+1);
+    console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
+    //console.log(html.substring(idxS, idxT+1));
+    if(idxT == offset-1)
     {
-        var idxE = html.indexOf('">', offset+1);
-        if(idxE-idxS > 20)
-        {
-            //console.log(match, offset, idxS, idxE);
-            var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
-            //console.log(st);
-            mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+match+')+(.*?)".*?>', 'gim'))
-            //console.log(mr);
-        }
+      //console.log('----> span mr');
+      var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
+      mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
+      //console.log(mr, text, mt);
+    }
+    else if(idxT == offset-8)
+    {
+      //console.log('----> a mr');
+      var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
+      mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
+      //console.log(mr, text, mt);
+    }
+    else if(idxN0 == offset-3 || idxN1 == offset-10)
+    {
+      //console.log('----> @ nick');
+      var mt = html.substring(idxS, idxE+2).replace('\n',', ').replace('\r', ', ');
+      mr = mt.match(new RegExp('<a.*?('+text+')+(.*?)".*?>', 'gim'));
+      //console.log(mr, text, mt);
+      //console.log('----< @ nick');
+    }
+    else if(idxS>=0 && idxS<offset && idxE>offset) // && idxT>offset)
+    {
+      //console.log('----> st mr');
+      if(idxE-idxS > 5)
+      {
+          //console.log(text, offset, idxS, idxE);
+          var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
+          //console.log(st);
+          mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+text+')+(.*?)".*?>', 'gim'))
+          //console.log(mr);
+      }
     }
 
-    if(match.match(/\/i\/\d+\/{0,1}$/gim))
+    if(mr && mr.length>0)
     {
-      return(match);
+      return(text);
     }
-    else if(mr && mr.length>0)
+    else if(text.match(/www\.guokr\.com/gim))
     {
-      return(match);
+      return(text);
     }
-    else if(match.startsWith('>http'))
+    else if(text.match(/\/i\/\d+\/{0,1}$/gim))
     {
-      return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+match.substring(1)+'</span>';
+      return(text);
+    }
+    else if(text.match(/">@/gim))
+    {
+      return(text);
+    }
+    else if(text.startsWith('>http'))
+    {
+      return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+text.substring(1)+'</span>';
     }
     else
     {
-      return '<span class="ads_word" style="' + style + '" title="'+ notice +'">'+match+'</span>'
+      return '<span class="ads_word" style="' + style + '" title="'+ notice +'">'+text+'</span>'
     }
   }
 
@@ -289,7 +323,7 @@ function findingAD(items, regex, notice, mode)
     if(hasAD)
     {
       //console.log(matchResult.word);
-      highlightAD(regex, this, mode, notice + '\n匹配: '+matchResult.word);
+      highlightAD(regex, this, mode, notice + '\n匹配: '+ matchResult.word);
     }
   });
 
@@ -314,7 +348,7 @@ function findingLink(items, hasAD)
   var fgcolor = 'red';
   var hasLink = false;
   var notice = '外链';
-  var link_pat = new RegExp('http://(?!.*?\.guokr\.com).*?$', 'gim');
+  var link_pat = new RegExp('http(s){0,1}://(?!.*?\.guokr\.com).*?$', 'gim');
 
   items.each(function(){
     $(this).find('a').each(function(idx, aobj){
