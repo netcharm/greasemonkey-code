@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.40
+// @version     1.2.4.41
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -42,7 +42,7 @@ const ADS = [
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
-  '/(又.{0,6}木)+.*?((茶)|(黑糖)|(布丁)|(果冻)|(减肥)|(瘦身)|(精华)|(道法)|(自然))+/', '道法瘦身',
+  '/(又.{0,4}木).*?((总代)|(代理)|(茶)|(布丁)|(果冻)|(黑糖)|(减肥)|(瘦身)|(精华)|(道法)|(自然))/', '道法瘦身',
   //'/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
   '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
   //'/((华芝国际){0,1}(生命之源){0,1})/',

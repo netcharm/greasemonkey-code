@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.139
+// @version     1.3.18.141
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -65,7 +65,7 @@ var ADS = [
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
   //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
-  '/(又.{0,6}木)+.*?((茶)|(黑糖)|(布丁)|(果冻)|(减肥)|(瘦身)|(精华)|(道法)|(自然))+/', '道法瘦身',
+  '/(又.{0,4}木).*?((总代)|(代理)|(茶)|(布丁)|(果冻)|(黑糖)|(减肥)|(瘦身)|(精华)|(道法)|(自然))/', '道法瘦身',
   //'/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
   '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
@@ -188,7 +188,7 @@ function matchAD(text, regex)
   if(results && (results.length>0))
   {
     hasAD = true;
-    matchWords = $.merge(matchWords, results);
+    matchWords = $.unique($.merge(matchWords, results));
   }
   return({hasAD:hasAD, word: matchWords.toString()});
   //console.log(matchWords.join('\n').trim());
@@ -226,7 +226,7 @@ function highlightAD(word, node, mode, notice)
     var idxT = html.lastIndexOf('>', offset);
     var idxS = html.lastIndexOf('<', offset);
     var idxE = html.indexOf('">', offset+1);
-    console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
+    //console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
     //console.log(html.substring(idxS, idxT+1));
     if(idxT == offset-1)
     {
@@ -275,17 +275,17 @@ function highlightAD(word, node, mode, notice)
     {
       return(text);
     }
-    else if(text.match(/">@/gim))
+    else if(text.match(/">/gim))
     {
       return(text);
     }
     else if(text.startsWith('>http'))
     {
-      return '><span class="ads_link" style="' + style + '" title="'+ notice +'">'+text.substring(1)+'</span>';
+      return '><span class="ads_link" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text.substring(1)+'</span>';
     }
     else
     {
-      return '<span class="ads_word" style="' + style + '" title="'+ notice +'">'+text+'</span>'
+      return '<span class="ads_word" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text+'</span>'
     }
   }
 
@@ -299,7 +299,8 @@ function highlightAD(word, node, mode, notice)
     style = link_style;
   }
   var html = gwrap.html().replace(word, replacer);
-  gwrap.html( html );
+  //gwrap.html( $(html));
+  gwrap.html( $(html.replace('<br>', '<p></p>')) );
 }
 
 function findingAD(items, regex, notice, mode)
@@ -321,7 +322,8 @@ function findingAD(items, regex, notice, mode)
     if(hasAD)
     {
       //console.log(matchResult.word);
-      highlightAD(regex, this, mode, notice + '\n匹配: '+ matchResult.word);
+      //highlightAD(regex, this, mode, notice + '\n匹配: '+ matchResult.word);
+      highlightAD(regex, this, mode, notice);
     }
   });
 
@@ -776,6 +778,9 @@ function getSelectionLink()
         if(link && selObj.containsNode(link, true))
         {
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
+          if(link.href.search("guokr.com/ask/newest/")>=0) continue;
+          if(link.href.search("guokr.com/scientific/")>=0) continue;
+          if(link.href.search(/guokr\.com\/i\/\d+/gim)>=0) continue;
 
           if($(link).find('.tags').length==1) continue;
           if(link.className=='tag') continue;
