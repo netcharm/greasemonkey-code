@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.41
+// @version     1.2.4.42
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -20,6 +20,8 @@ const ADS = [
   '爸爸去哪儿', '爸爸去哪兒', '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
   '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10', '小觅手机伴侣',
+  '/((小.{1,8}(姐|妹))|(美.{1,8}女)|(鸡.{1,8}婆)|(包.{1,8}夜)).*?((服.{1,8}务)|(全.{1,8}套)|(包.{1,8}夜)|(援.{1,8}交)|(按.{1,8}摩)|(微.{1,8}信))/',
+  '/((服.{1,8}务)|(全.{1,8}套)|(包.{1,8}夜)|(援.{1,8}交)|(按.{1,8}摩)|(微.{1,8}信)).*?((小.{1,8}(姐|妹))|(美.{1,8}女)|(鸡.{1,8}婆)|(包.{1,8}夜))/',
   '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹',
   '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫', '叆鲱迪坷',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
