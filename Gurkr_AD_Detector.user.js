@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.142
+// @version     1.3.18.144
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -43,8 +43,8 @@ var ADS = [
   '爸爸去哪儿', '爸爸去哪兒', '中国好声音', '中國好聲音',
   '中獎信息', '銀行卡', '气功',
   '1040工程', '爱营销', '聚份子', 'jfenz', 'HTC 10', '小觅手机伴侣',
-  '/((小.{1,8}(姐|妹))|(美.{1,8}女)|(鸡.{1,8}婆)|(包.{1,8}夜)).*?((服.{1,8}务)|(全.{1,8}套)|(包.{1,8}夜)|(援.{1,8}交)|(按.{1,8}摩)|(微.{1,8}信))/',
-  '/((服.{1,8}务)|(全.{1,8}套)|(包.{1,8}夜)|(援.{1,8}交)|(按.{1,8}摩)|(微.{1,8}信)).*?((小.{1,8}(姐|妹))|(美.{1,8}女)|(鸡.{1,8}婆)|(包.{1,8}夜))/',
+  '/((((学.{1,8}生)|小).{1,8}(姐|妹))|([美|妓].{1,8}女)|([妹|婊].{1,8}子)|([鸡|富].{1,8}婆)|(包.{1,8}夜)|(约.{1,8}炮)).*?((服.{1,8}务)|(全.{1,8}套)|(包.{1,8}[夜|养])|(援.{1,8}交)|(按.{1,8}摩)|(微.{1,8}信)|(电.{1,8}话)|(方.{1,8}[式|法])|(信.{1,8}息)|(兼.{1,8}职))/',
+  '/((服.{1,8}务)|(全.{1,8}套)|(包.{1,8}夜)|(援.{1,8}交)|(按.{1,8}摩)|(微.{1,8}信)|(真.{1,8}正)|(漂.{1,8}亮)|(约.{1,8}炮)|(找)).*?((((学.{1,8}生)|小).{1,8}(姐|妹))|([美|妓].{1,8}女)|([妹|婊].{1,8}子)|(鸡.{1,8}婆)|(包.{1,8}夜))/',
   '小姐联系电话', '/..小姐/', '援交', '約炮', '一夜情', '找女人', '約妹妹',
   '极美茵', '绿瘦', '鸡皮肤', '铁未来', '格列卫', '叆鲱迪坷',
   '/[伯博蚾秡渤卜箔].{0,6}[来莱梾俫庲婡].{0,6}[世狮轼史是时式試].{0,6}[特忒慝忑]/',
@@ -65,15 +65,14 @@ var ADS = [
   '有动静', '成人电影', '成人激情', '帮助打架', '/\[[Q|Ｑ|电].*?联系\]/',
   '微商', '薇伤', '微宝', '微小蜜', '微营销', '咔咔寿', '赢消软件', '营销软件', '爆粉神器',
   '投诉电话', '售后热线', '退款电话', '总代微信', '客服电话', '客服電話', '服务投诉', '服务退款', 'wei xin公众号', '微信公众号',
-  //0571 2829 1499
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
-  '/(又.{0,4}木).*?((总代)|(代理)|(茶)|(布丁)|(果冻)|(黑糖)|(减肥)|(瘦身)|(精华)|(道法)|(自然))/', '道法瘦身',
+  '/(又木).*?((总代)|(代理)|(茶)|(布丁)|(果冻)|(黑糖)|(减肥)|(瘦身)|(精华)|(道法)|(自然))/', '道法瘦身',
   //'/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
   '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
-  //'/[Q|W|V|微|威|维]{0,1}.{0,12}[Q|X|信|新|我]{0,1}:{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}\\d{6,16}/','/[W|V|微][X|信|我|:].{0,4}\\d{7,16}/'
-  '/[Q|W|V|微|威|维|薇]{1,12}[Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/','/[W|V|微][X|信|我|:|：| ]{1,4}\\d{7,16}/', '总代'
+  '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
+  '总代'
 ];
 
 var ADS_EXTRA = new Array();
@@ -220,51 +219,61 @@ function notifyAD(info, fg, bg)
 function highlightAD(word, node, mode, notice)
 {
   var style = ad_style;
-
   function replacer(text, offset, html) {
     var mr = null;
-    var idxN0 = html.lastIndexOf('">@', offset);
-    var idxN1 = html.lastIndexOf('nickname="', offset);
-    var idxT = html.lastIndexOf('>', offset);
-    var idxS = html.lastIndexOf('<', offset);
-    var idxE = html.indexOf('">', offset+1);
-    //console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
-    //console.log(html.substring(idxS, idxT+1));
-    if(idxT == offset-1)
+    if(typeof(offset) == 'number')
     {
-      //console.log('----> span mr');
-      var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
-      mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
-      //console.log(mr, text, mt);
-    }
-    else if(idxT == offset-8)
-    {
-      //console.log('----> a mr');
-      var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
-      mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
-      //console.log(mr, text, mt);
-    }
-    else if(idxN0 == offset-3 || idxN1 == offset-10)
-    {
-      //console.log('----> @ nick');
-      var mt = html.substring(idxS, idxE+2).replace('\n',', ').replace('\r', ', ');
-      mr = mt.match(new RegExp('<a.*?('+text+')+(.*?)".*?>', 'gim'));
-      //console.log(mr, text, mt);
-      //console.log('----< @ nick');
-    }
-    else if(idxS>=0 && idxS<offset && idxE>offset) // && idxT>offset)
-    {
-      //console.log('----> st mr');
-      if(idxE-idxS > 5)
+      var idxN0 = html.lastIndexOf('">@', offset);
+      var idxN1 = html.lastIndexOf('nickname="', offset);
+      var idxT = html.lastIndexOf('>', offset);
+      var idxS = html.lastIndexOf('<', offset);
+      var idxE = html.indexOf('">', offset+1);
+      //console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
+      //console.log(html.substring(idxS, idxT+1));
+      if(idxT == offset-1)
       {
-          //console.log(text, offset, idxS, idxE);
-          var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
-          //console.log(st);
-          mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+text+')+(.*?)".*?>', 'gim'))
-          //console.log(mr);
+        //console.log('----> span mr');
+        var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
+        mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
+        //console.log(mr, text, mt);
+      }
+      else if(idxT == offset-8)
+      {
+        //console.log('----> a mr');
+        var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
+        mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
+        //console.log(mr, text, mt);
+      }
+      else if(idxN0 == offset-3 || idxN1 == offset-10)
+      {
+        //console.log('----> @ nick');
+        var mt = html.substring(idxS, idxE+2).replace('\n',', ').replace('\r', ', ');
+        mr = mt.match(new RegExp('<a.*?('+text+')+(.*?)".*?>', 'gim'));
+        //console.log(mr, text, mt);
+        //console.log('----< @ nick');
+      }
+      else if(idxS>=0 && idxS<offset && idxE>offset) // && idxT>offset)
+      {
+        //console.log('----> st mr');
+        if(idxE-idxS > 5)
+        {
+            //console.log(text, offset, idxS, idxE);
+            var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
+            //console.log(st);
+            mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+text+')+(.*?)".*?>', 'gim'));
+            //console.log(mr);
+            if(mr == null)
+            {
+              mr = st.match(new RegExp('<a.*?href="\/group\/', 'gim'));
+            }
+            if(mr == null)
+            {
+              mr = st.match(new RegExp('<a.*?href=".*?\.guokr\.com\/', 'gim'));
+            }
+        }
       }
     }
-
+    
     if(mr && mr.length>0)
     {
       return(text);
@@ -283,11 +292,11 @@ function highlightAD(word, node, mode, notice)
     }
     else if(text.startsWith('>http'))
     {
-      return '><span class="ads_link" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text.substring(1)+'</span>';
+      return('><span class="ads_link" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text.substring(1)+'</span>');
     }
     else
     {
-      return '<span class="ads_word" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text+'</span>'
+      return('<span class="ads_word" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text+'</span>');
     }
   }
 
@@ -302,8 +311,7 @@ function highlightAD(word, node, mode, notice)
   }
   var html = gwrap.html().replace(word, replacer);
   //gwrap.html( $(html));
-  gwrap.html( $(html.replace('<br>', '<p></p>')) );
-}
+  gwrap.html( html );}
 
 function findingAD(items, regex, notice, mode)
 {
