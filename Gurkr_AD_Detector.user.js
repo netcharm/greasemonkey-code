@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.144
+// @version     1.3.18.145
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -59,7 +59,7 @@ var ADS = [
   '成都装修', '苹果官方', '顶我给大家发红包哦', '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
   //'91y', '９１y游戏',
   '/游戏[币|钱|银子]/', '戏子软件', '营销软件', '爆粉神器', 'app定做', 'app开发',
-  '/代开.{0,10}发票/', '假证','做假',
+  '/代开.{0,10}发票/', '假证', '做假', '代检', '体检',
   '/修改.{0,24}成绩/', '密卷', '教育咨询', '高考答案', '/考试.*?必过/', '考试答案', '执业考试答案', '真题包过',
   '贝贝游戏', '贝贝银子', '贝贝酒吧', '贝贝棋牌', '1908游戏', '747官网', '游戏上分',
   '有动静', '成人电影', '成人激情', '帮助打架', '/\[[Q|Ｑ|电].*?联系\]/',
@@ -960,6 +960,12 @@ function getUKeyByName(uname)
       return( false );
     }
   });
+  $('#articleTitle, #questionDesc').each(function(){
+    //var node = $(this);
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/[\uE700-\uFFFF]/gim, '');
+  });
+  
   return(ukey);
 }
 
@@ -1025,6 +1031,9 @@ function main(loaded)
 
   console.log(accessToken);
 
+  removeBlankline();
+  fixedGroupTooltip();
+
   //$("body").on("DOMNodeInserted", 'div.name_card', function(e){
   // because guokr using jQuery 1.4.4 at www.guokr.com/i/userid so must using bind to replace on method
   $("body").bind("DOMNodeInserted", 'div.name_card', function(e){
@@ -1074,9 +1083,6 @@ function main(loaded)
   findingLink(items, hasAD);
 
   findingHideText(items);
-
-  removeBlankline();
-  fixedGroupTooltip();
 
   INITED = true;
   jQueryVersion = $.fn.jquery;
