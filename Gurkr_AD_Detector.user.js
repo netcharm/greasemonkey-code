@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.145
+// @version     1.3.18.146
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -926,6 +926,17 @@ function removeBlankline()
   return(false);
 }
 
+function removeUnreadableCharacter()
+{
+  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
+    //var node = $(this);
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/[\uE700-\uFFFF]/gim, '');
+  });
+
+  return(false);
+}
+
 function fixedGroupTooltip()
 {
   $('.side-list-item a.item-name').each(function(){
@@ -960,12 +971,7 @@ function getUKeyByName(uname)
       return( false );
     }
   });
-  $('#articleTitle, #questionDesc').each(function(){
-    //var node = $(this);
-    var node = this;
-    node.innerHTML = node.innerHTML.trim().replace(/[\uE700-\uFFFF]/gim, '');
-  });
-  
+ 
   return(ukey);
 }
 
@@ -1032,6 +1038,7 @@ function main(loaded)
   console.log(accessToken);
 
   removeBlankline();
+  removeUnreadableCharacter();
   fixedGroupTooltip();
 
   //$("body").on("DOMNodeInserted", 'div.name_card', function(e){
