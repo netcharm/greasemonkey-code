@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.44
+// @version     1.2.4.45
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -174,7 +174,7 @@ function hideAD_group(){
       {
         //post.hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
-        highlightAD(n, tnode, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+matchTitle.toString());
+        highlightAD(n, tnode, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+$.unique(matchTitle).toString());
         return false;
       }
     });
@@ -195,7 +195,7 @@ function hideAD_ask(){
       {
         //ask.parent().hide();
         console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
-        highlightAD(n, ask, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+matchTitle.toString());
+        highlightAD(n, ask, 'text', '广告问答标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+$.unique(matchTitle).toString());
         return false;
       }
     });
@@ -221,14 +221,14 @@ function hideAD_search(){
       if(n && matchTitle)
       {
         foundTitle = true;
-        matchWords = $.merge(matchWords, matchTitle);
-        console.log('已发现贴子标题中的广告词: '+ ADS[i] +', 帖子标题:'+title+', 匹配词汇:'+matchTitle.toString());
+        matchWords = $.unique($.merge(matchWords, matchTitle));
+        console.log('已发现贴子标题中的广告词: '+ ADS[i] +', 帖子标题:'+title+', 匹配词汇:'+$.unique(matchTitle).toString());
       }
       if(n && matchContent)
       {
         foundContent = true;
-        matchWords = $.merge(matchWords, matchContent);
-        console.log('已发现正文摘要中的广告词: '+ ADS[i] +', 帖子标题:'+title+', 匹配词汇:'+matchContent.toString());
+        matchWords = $.unique($.merge(matchWords, matchContent));
+        console.log('已发现正文摘要中的广告词: '+ ADS[i] +', 帖子标题:'+title+', 匹配词汇:'+$.unique(matchContent).toString());
       }
       if(n && (foundTitle || foundContent))
       {
