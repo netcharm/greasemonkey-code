@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.147
+// @version     1.3.18.148
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -311,7 +311,8 @@ function highlightAD(word, node, mode, notice)
   }
   var html = gwrap.html().replace(word, replacer);
   //gwrap.html( $(html));
-  gwrap.html( html );}
+  gwrap.html( html );
+}
 
 function findingAD(items, regex, notice, mode)
 {
@@ -460,10 +461,9 @@ function tagAD(link)
     //putUrl = link.href;
     putUrl = link;
   }
-  console.log(putUrl);
   putUrl = putUrl.replace(/(http:.*?\.com)\/(question)\/(\d+)\//gim, '$1/apis/ask/$2/$3.json');
   tagParam = {tags:'恶意广告', tag_op:'add', access_token:reportParam.access_token};
-  console.log(putUrl, tagParam);
+  //console.log(putUrl, tagParam);
   var tags = $('p#tags span.tag');
   var tr = tags.text().match('恶意广告');
   if(tr == null || tr.length<=0)
@@ -481,10 +481,12 @@ function tagAD(link)
           tagItem += '<a itemprop="http://rdfs.org/sioc/ns#has_container" href="http://www.guokr.com/ask/tag/%E6%81%B6%E6%84%8F%E5%B9%BF%E5%91%8A/" data-id="恶意广告">恶意广告</a>';
           tagItem += '</span>';
           tags.after(tagItem);
+          return(true);
         }
         else
         {
           //
+          return(false);
         }
       }
     });
@@ -492,6 +494,7 @@ function tagAD(link)
   else
   {
     //console.log('Already Taged.')
+    return(false);
   };
 
 }
@@ -917,7 +920,8 @@ function batchReport()
         btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
       },
     });
-    tagAD(link.href);
+    var taged = tagAD(link.href);
+    //console.log(taged);
     listbox.stop().delay( 25 );
   }
 }
