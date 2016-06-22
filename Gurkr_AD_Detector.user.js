@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.146
+// @version     1.3.18.147
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -273,7 +273,7 @@ function highlightAD(word, node, mode, notice)
         }
       }
     }
-    
+
     if(mr && mr.length>0)
     {
       return(text);
@@ -451,10 +451,56 @@ function getReportParam()
   return({url:document.location.href, reason:'垃圾广告/淫秽色情信息/人身攻击', access_token:accessToken, invokedata:''});
 }
 
+function tagAD(link)
+{
+  var reportParam = getReportParam();
+  var putUrl = reportParam.url;
+  if(typeof(link) != 'undefined')
+  {
+    //putUrl = link.href;
+    putUrl = link;
+  }
+  console.log(putUrl);
+  putUrl = putUrl.replace(/(http:.*?\.com)\/(question)\/(\d+)\//gim, '$1/apis/ask/$2/$3.json');
+  tagParam = {tags:'恶意广告', tag_op:'add', access_token:reportParam.access_token};
+  console.log(putUrl, tagParam);
+  var tags = $('p#tags span.tag');
+  var tr = tags.text().match('恶意广告');
+  if(tr == null || tr.length<=0)
+  {
+    $.ajax({
+      url: putUrl,
+      type: 'PUT',
+      data: tagParam,
+      dataType: 'json',
+      success: function(data) {
+        if(data.ok)
+        {
+          var tagItem = '<span class="tag">';
+          tagItem += '<a href="javascript: void 0;" class="gnicon-close-small" title="移除标签" data-operation="delete">X</a>';
+          tagItem += '<a itemprop="http://rdfs.org/sioc/ns#has_container" href="http://www.guokr.com/ask/tag/%E6%81%B6%E6%84%8F%E5%B9%BF%E5%91%8A/" data-id="恶意广告">恶意广告</a>';
+          tagItem += '</span>';
+          tags.after(tagItem);
+        }
+        else
+        {
+          //
+        }
+      }
+    });
+  }
+  else
+  {
+    //console.log('Already Taged.')
+  };
+
+}
+
 function reportAD()
 {
   //console.log('report button clicked')
   var reportParam = getReportParam();
+  var dataUrl = reportParam.url;
   reportParam.url = reportParam.url.replace('/group', '').replace('/ask', '').replace(/(\/i\/\d+\/).*?$/ig, '$1').replace(/([\?|#].*?)$/ig, '');
   //console.log(reportParam);
   btns = $('#reportAD');
@@ -500,6 +546,13 @@ function reportAD()
         }
         console.log($(btn).text());
       }, "json");
+    }
+
+    if(reportParam.url.match(/(http:.*?\.com)\/(question)\/(\d+)\//gim))
+    {
+      var btn = $('#reportAD');
+      btn.attr('data-url', dataUrl);
+      tagAD(dataUrl);
     }
   }
 }
@@ -572,7 +625,7 @@ function addReportButtonAskReply(item)
     btn.attr('data-type', link.attr('data-type'));
     btn.attr('data-report', link.attr('data-report'));
     //btn.bind('click', function(){reportADs(this);});
-    jQuery(document).on('click', '#'+btnID, function(){reportADs(this);});
+    jQuery(document).on('click', '#'+btnID, function(){reportADs(this);tagAD();});
 
     replayIdx++;
   }
@@ -614,7 +667,8 @@ function addReportButtonsPoster()
     btnPoster.bind('click', function(){reportADs(this);});
   }
 
-  if($('#reportAD').length <= 0)
+  var canReport = $('.post').length > 0 && $('#reportAD').length <= 0;
+  if(canReport)
   {
     $reportButton = $('.gh-notice li:first').before('<li><button id="reportAD" style="margin-top:8px;" title="举报主贴"'+ukey_str+'>举报</button></li>');
     $('#reportAD').bind('click', reportAD);
@@ -863,6 +917,7 @@ function batchReport()
         btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
       },
     });
+    tagAD(link.href);
     listbox.stop().delay( 25 );
   }
 }
@@ -971,7 +1026,7 @@ function getUKeyByName(uname)
       return( false );
     }
   });
- 
+
   return(ukey);
 }
 
