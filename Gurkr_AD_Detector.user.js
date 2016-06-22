@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.148
+// @version     1.3.18.149
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -142,6 +142,13 @@ function isnum(value)
   {
     return(isNumber(value));
   }
+}
+
+function delay(ms)
+{
+  setTimeout(function(){
+      //do something special
+  }, ms);
 }
 
 function makePat(words)
@@ -890,7 +897,8 @@ function batchReport()
     if(!isFinite(idx) || idx<0) break;
     var link = links[idx];
     var url = link.href;
-    if(url.contains('/topic/')) continue;
+    //if(url.contains('/topic/')) continue;
+    if(url.toString().match('/topic/')) continue;
     reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
     var request = $.ajax({
       url: 'http://www.guokr.com/apis/censor/report.json',
@@ -920,9 +928,12 @@ function batchReport()
         btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
       },
     });
+    delay(25);
+    //listbox.stop().delay( 25 );
     var taged = tagAD(link.href);
     //console.log(taged);
-    listbox.stop().delay( 25 );
+    delay(25);
+    //listbox.stop().delay( 25 );
   }
 }
 
