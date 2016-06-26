@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description Novel Content Link Remover
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @version     1.0.0.19
+// @version     1.0.0.20
 // @grant       none
 // @run-at      document-end
 // @include     http://read.qidian.com/BookReaderNew/*
@@ -67,7 +67,7 @@ const contents = [
   '.zhangjieTXT',
   '.content',
   '.contents',
-  '#mynovelreader-content',
+  '#mynovelreader-content'
 ];
 content = contents.join(', ');
 
@@ -119,9 +119,10 @@ function removeLink(s)
     node.innerHTML = node.innerHTML.replace(/正版读者若是.*?重新下载。/mgi, "");
        
     node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
+    node.innerHTML = node.innerHTML.replace(/(&nbsp;){2,}/mgi, "$1");
     node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
     node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
-    node.innerHTML = node.innerHTML.replace(/(&nbsp;){2,}/mgi, "$1");
+    node.innerHTML = node.innerHTML.replace(/(&amp;nbsp)+/mgi, " ");
     node.innerHTML = node.innerHTML.replace(/br((&nbsp;)+)/mgi, "<br/>$2");
     node.innerHTML = node.innerHTML.replace("br ", "<br/>");
     //node.innerHTML = node.innerHTML.replace(/([ |&nbsp;]br[ |&nbsp;])+/mgi, "<br/>");
