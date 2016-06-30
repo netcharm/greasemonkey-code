@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.47
+// @version     1.2.4.48
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -263,7 +263,8 @@ function removeUnreadableCharacter()
   $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
     //var node = $(this);
     var node = this;
-    node.innerHTML = node.innerHTML.trim().replace(/[\uE700-\uFFFF]/gim, '');
+    //node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF, \uE700-\uFF00,\uFFA0-\uFFFF]/gim, '');
+    node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
   });
 
   return(false);

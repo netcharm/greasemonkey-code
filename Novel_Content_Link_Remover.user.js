@@ -3,7 +3,7 @@
 // @namespace   NetCharm
 // @description Novel Content Link Remover
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @version     1.0.0.20
+// @version     1.0.0.21
 // @grant       none
 // @run-at      document-end
 // @include     http://read.qidian.com/BookReaderNew/*
@@ -91,8 +91,8 @@ function removeLink(s)
       pn.innerHTML = pn.innerHTML.replace(/<a.*?>/gi, "");
       pn.innerHTML = pn.innerHTML.replace(/<\a.*?>/gi, "");
       pn.innerHTML = pn.innerHTML.replace(/[‘|’]/gi, "");
-      pn.innerHTML = pn.innerHTML.replace(/&nbp;/mgi, "");
-      pn.innerHTML = pn.innerHTML.replace(/&amp;nbp;/mgi, "");
+      pn.innerHTML = pn.innerHTML.replace(/&nbp;/gim, "");
+      pn.innerHTML = pn.innerHTML.replace(/&amp;nbp;/gim, "");
     });
       
     if(plist.length<2)
@@ -102,35 +102,35 @@ function removeLink(s)
       node.innerHTML = node.innerHTML.replace(/<a.*?>/gi, "");
       node.innerHTML = node.innerHTML.replace(/<\a.*?>/gi, "");
       node.innerHTML = node.innerHTML.replace(/[‘|’]/gi, "");
-      node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
-      node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
+      node.innerHTML = node.innerHTML.replace(/&nbp;/gim, "");
+      node.innerHTML = node.innerHTML.replace(/&amp;nbp;/gim, "");
     }
     
     // remove qidian ad text
-    node.innerHTML = node.innerHTML.replace(/<div .*?>热门推荐.*?\/div>/mgi, "");
-    node.innerHTML = node.innerHTML.replace(/.*?猪.*?猪.*?岛.*?小说.*?[w|W]{3,3}\..*?\.c[o|Ｏ]m/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/<div .*?>热门推荐.*?\/div>/gim, "");
+    node.innerHTML = node.innerHTML.replace(/.*?猪.*?猪.*?岛.*?小说.*?[w|W]{3,3}\..*?\.c[o|Ｏ]m/gim, "");
     node.innerHTML = node.innerHTML.replace(/ps：看.*?关注起点中文网公众号.*?，悄悄告诉我吧！/gi, "");
     node.innerHTML = node.innerHTML.replace(/ps：想听到更.*?更多支持！/gi, "");
     node.innerHTML = node.innerHTML.replace(/起点中文网.*?手机用户请到m\.qidian\.com阅读。/gi, "");
     node.innerHTML = node.innerHTML.replace(/&amp;#x770B;&amp;#x672C;.*?#xFF09;/gi, "");
     node.innerHTML = node.innerHTML.replace(/APP软件已经开发完毕.*?APP】/gi, "");
-    node.innerHTML = node.innerHTML.replace(/强烈推荐一家.*?超级美味.*?！.*?<br><br>/mgi, "");
-    node.innerHTML = node.innerHTML.replace(/防盗版章节.*?显示正确的内容。/mgi, "");
-    node.innerHTML = node.innerHTML.replace(/正版读者若是.*?重新下载。/mgi, "");
+    node.innerHTML = node.innerHTML.replace(/强烈推荐一家.*?超级美味.*?！.*?<br><br>/gim, "");
+    node.innerHTML = node.innerHTML.replace(/防盗版章节.*?显示正确的内容。/gim, "");
+    node.innerHTML = node.innerHTML.replace(/正版读者若是.*?重新下载。/gim, "");
        
     node.innerHTML = node.innerHTML.replace(/<a.*?href=".*?".*?>(.*?)<\/a>/gi, "$1");
-    node.innerHTML = node.innerHTML.replace(/(&nbsp;){2,}/mgi, "$1");
-    node.innerHTML = node.innerHTML.replace(/&nbp;/mgi, "");
-    node.innerHTML = node.innerHTML.replace(/&amp;nbp;/mgi, "");
-    node.innerHTML = node.innerHTML.replace(/(&amp;nbsp)+/mgi, " ");
-    node.innerHTML = node.innerHTML.replace(/br((&nbsp;)+)/mgi, "<br/>$2");
+    node.innerHTML = node.innerHTML.replace(/(&nbsp;){2,}/gim, "$1");
+    node.innerHTML = node.innerHTML.replace(/&nbp;/gim, "");
+    node.innerHTML = node.innerHTML.replace(/&amp;nbp;/gim, "");
+    node.innerHTML = node.innerHTML.replace(/(&amp;nbsp)+/gim, " ");
+    node.innerHTML = node.innerHTML.replace(/br((&nbsp;)+)/gim, "<br/>$2");
     node.innerHTML = node.innerHTML.replace("br ", "<br/>");
-    //node.innerHTML = node.innerHTML.replace(/([ |&nbsp;]br[ |&nbsp;])+/mgi, "<br/>");
-    //node.innerHTML = node.innerHTML.replace(/(br[ |&nbsp;])+/mgi, "<br/>");
-    //node.innerHTML = node.innerHTML.replace(/(\\br[ |\&nbsp;])+/mgi, "<br/>");
-    //node.innerHTML = node.innerHTML.replace(/nbsp; /mgi, " ");
-    
-  });
+    //node.innerHTML = node.innerHTML.replace(/([ |&nbsp;]br[ |&nbsp;])+/gim, "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/(br[ |&nbsp;])+/gim, "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/(\\br[ |\&nbsp;])+/gim, "<br/>");
+    //node.innerHTML = node.innerHTML.replace(/nbsp; /gim, " ");
+
+    node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
 }
 
 function removeFloat(s)
@@ -176,7 +176,7 @@ function decodeUnicode(s)
   nodes.each(function(i, node){
     $(node).find('p').each(function(i, p){
       console.log(p.textContent);
-      p.textContent = unescape(p.textContent.replace(/&#x(.*?);/mgi, '%u$1'));
+      p.textContent = unescape(p.textContent.replace(/&#x(.*?);/gim, '%u$1'));
     });
   });  
 }

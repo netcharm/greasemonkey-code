@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.150
+// @version     1.3.18.151
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -979,48 +979,6 @@ function addBatchReportDox()
   $('#batchReportAD').bind('click', batchReport);
 }
 
-function removeBlankline()
-{
-  $('.gbbcode-content p').each(function(){
-    //var node = $(this);
-    var node = this;
-    node.innerHTML = node.innerHTML.trim().replace(/<br><\/br>/gi, '');
-    node.innerHTML = node.innerHTML.trim().replace(/<br>/gi, '');
-    node.innerHTML = node.innerHTML.trim().replace(/<br *?(\/){0,1}>/gi, '');
-  });
-  $('.cmts-list').each(function(){
-    //var node = $(this);
-    var node = this;
-    node.innerHTML = node.innerHTML.trim().replace(/(<p><\/p>){2,}/gi, '<p></p>');
-  });
-
-  return(false);
-}
-
-function removeUnreadableCharacter()
-{
-  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
-    //var node = $(this);
-    var node = this;
-    node.innerHTML = node.innerHTML.trim().replace(/[\uE700-\uFFFF]/gim, '');
-  });
-
-  return(false);
-}
-
-function fixedGroupTooltip()
-{
-  $('.side-list-item a.item-name').each(function(){
-    var item = $(this);
-    item.attr('title', item.text());
-    item.css('max-width', '55px');
-    item.css('font-size', '10px');
-    item.css('font-size', '-3');
-  });
-
-  $('.side-list-item .gicon-super').css('margin', 0);
-}
-
 function getUKeyByName(uname)
 {
   var ukey = false;
@@ -1099,6 +1057,46 @@ function detectNameCard()
     //$(ucards[0]).css('width', $(ucards[0]).css('width')+112);
     $(ucards[0]).attr('style', $(ucards[0]).attr('style').replace('width: 300px;', 'width: 450px;'));
   }
+}
+
+function removeBlankline()
+{
+  $('.gbbcode-content p').each(function(){
+    //var node = $(this);
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/<br><\/br>/gi, '');
+    node.innerHTML = node.innerHTML.trim().replace(/<br>/gi, '');
+    node.innerHTML = node.innerHTML.trim().replace(/<br *?(\/){0,1}>/gi, '');
+  });
+  $('.cmts-list').each(function(){
+    //var node = $(this);
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/(<p><\/p>){2,}/gi, '<p></p>');
+  });
+
+  return(false);
+}
+
+function fixedGroupTooltip()
+{
+  $('.side-list-item a.item-name').each(function(){
+    var item = $(this);
+    item.attr('title', item.text());
+    item.css('max-width', '55px');
+    item.css('font-size', '10px');
+    item.css('font-size', '-3');
+  });
+
+  $('.side-list-item .gicon-super').css('margin', 0);
+}
+
+function removeUnreadableCharacter()
+{
+  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
+  });
+  return(false);
 }
 
 function main(loaded)
