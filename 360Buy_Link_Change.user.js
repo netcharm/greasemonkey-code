@@ -2,16 +2,20 @@
 // @name           360Buy Link Change
 // @namespace      NetCharm
 // @description    360Buy Link Change
+// @version        1.0.0.5
 // @include        http://www.360buy.com/*
 // @include        http://webmail.mail.163.com/*
 // @include        http://twebmail.mail.163.com/*
 // @include        http://click.union.360buy.com/*
 // @include        http://market.360buy.com/*
+// @include        http://search.jd.com/*
+// @include        http://www.jd.com/*
+// @include        http://item.jd.com/*
 // ==/UserScript==
 
 function changeLink(link)
 {
-  var alt, src; 
+  var alt, src;
 
   alt = link.href;
   if(alt != null)
@@ -28,13 +32,11 @@ function changeLink(link)
 
 function main(loaded)
 {
-  for(var i = 0; i < window.document.links.length; i++) 
-  { 
+  for(var i = 0; i < window.document.links.length; i++)
+  {
     changeLink(window.document.links[i]);
   }
 }
 
 main();
-
-  
 
