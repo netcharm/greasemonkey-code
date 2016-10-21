@@ -3,14 +3,15 @@
 // @namespace   NetCharm
 // @description Novel Content Link Remover
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @version     1.0.0.21
+// @version     1.0.0.23
 // @grant       none
 // @run-at      document-end
 // @include     http://read.qidian.com/BookReaderNew/*
 // @include     http://www.123yq.com/read/*
 // @include     http://www.123yq.org/read/*
 // @include     http://www.23zw.com/olread/*
-// @include     http://www.50zw.com/book_*
+// @include     http://www.50zw.com/book_*/*.html
+// @include     http://www.50zw.la/book_*/*.html
 // @include     http://www.6yzw.com/*
 // @include     http://www.aszw.com/book/*
 // @include     http://www.binhuo.com/html/*
@@ -32,6 +33,7 @@
 // @include     http://www.yunlaige.com/html/*
 // @include     http://www.zashu.net/*
 // @include     http://www.zhuzhudao.com/txt/*
+// @include     http://www.rengshu.com/book/* 
 // @include     /^http:\/\/www\.daomengren\.com\/\d+_\d+\/.*$/
 // @include     /^http:\/\/www\.shumilou\.co\/.*?\/\d+\.html$/
 // @include     /^http:\/\/www\.shumilou\.com\/.*?\/\d+\.html$/
@@ -67,6 +69,7 @@ const contents = [
   '.zhangjieTXT',
   '.content',
   '.contents',
+  '#container',
   '#mynovelreader-content'
 ];
 content = contents.join(', ');
@@ -93,6 +96,7 @@ function removeLink(s)
       pn.innerHTML = pn.innerHTML.replace(/[‘|’]/gi, "");
       pn.innerHTML = pn.innerHTML.replace(/&nbp;/gim, "");
       pn.innerHTML = pn.innerHTML.replace(/&amp;nbp;/gim, "");
+      pn.innerHTML = pn.innerHTML.trim().replace('姑且', '');
     });
       
     if(plist.length<2)
@@ -104,6 +108,7 @@ function removeLink(s)
       node.innerHTML = node.innerHTML.replace(/[‘|’]/gi, "");
       node.innerHTML = node.innerHTML.replace(/&nbp;/gim, "");
       node.innerHTML = node.innerHTML.replace(/&amp;nbp;/gim, "");
+      node.innerHTML = node.innerHTML.trim().replace('姑且', '');
     }
     
     // remove qidian ad text
@@ -131,6 +136,7 @@ function removeLink(s)
     //node.innerHTML = node.innerHTML.replace(/nbsp; /gim, " ");
 
     node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
+    node.innerHTML = node.innerHTML.trim().replace('姑且', '');
 }
 
 function removeFloat(s)
@@ -140,6 +146,11 @@ function removeFloat(s)
   console.log(floating);
   floating.hide();
   floating.remove();
+}
+
+function removeWords()
+{
+
 }
 
 function resizeFont(s)

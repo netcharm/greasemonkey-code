@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.152
+// @version     1.3.18.156
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -52,9 +52,9 @@ var ADS = [
   '妙女郎', '酵素梅', '酵素', '总代理', '世纪本草', '芸蓉集', '臻悦', '安普', '玛卡粉', '洛神花',
   '丰韵霜', '蓓卡露', '抹药老方', '袁爱荣快瘦汤', '袁医生瘦身汤', '快瘦汤',
   '一小兜', 'yixiaodou.com',
-  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别', '多兰恩',
+  '天津妇科', '香港健康医疗', '香港性别鉴定', '性别检测', '医务顾问', '胎儿性别鉴定', '代孕', '光美容仪', '验性别', '测性别', '胎儿性别', '多兰恩',
   '咨詢熱線', '咨询热线', '伊顿风尚', '网上赌场', '澳门赌钱', '博纳娱乐',
-  '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现', '/((抵押)|(贷款)).*?((抵押)|(贷款))/',
+  '新闻牙膏', '新闻牙刷', '信用卡現', '信用卡现', '/((抵押)|(贷款)).*?((抵押)|(贷款))/', '点金妙计',
   '海华伦', '扇贝王', '腊山烤鱼', '手工皂', '卉雨', '掌灵膏', '网赚',
   '成都装修', '苹果官方', '顶我给大家发红包哦', '/[^href="]http:\/\/hongbao\.ilovehongbao\.com\//',
   //'91y', '９１y游戏',
@@ -68,7 +68,7 @@ var ADS = [
   '风水', '老中医', '排毒', '华芝国际', '生命之源', '赛维片', '水苏糖', '排油丸', '水光针', '酵母原液', '香港疫苗',
   '/(又木).*?((总代)|(代理)|(茶)|(布丁)|(果冻)|(黑糖)|(减肥)|(瘦身)|(精华)|(道法)|(自然))/', '道法瘦身',
   //'/又木.{0,16}果冻/', '又木黑糖', '又木减肥', '又木瘦身', '又木精华', '又木道法', '又木自然', '又木布丁', '又木茶', '道法瘦身',
-  '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏',
+  '一面湖水', '壹面湖水', '青汁', '清汁', '道田', '洗衣片', '净衣片', '姜糖膏', '素耳纯露',
   //'/((华芝国际){0,1}(生命之源){0,1})/',
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
@@ -368,6 +368,7 @@ function findingLink(items, hasAD)
   var hasLink = false;
   var notice = '外链';
   var link_pat = new RegExp('http(s){0,1}://(?!.*?\.guokr\.com).*?$', 'gim');
+  var link_txt = new RegExp('(http(s){0,1}://){0,1}(www){1,1}\..*?(\.((com)|(cn)|(net))){1,1}', 'gim');
 
   items.each(function(){
     $(this).find('a').each(function(idx, aobj){
@@ -382,6 +383,14 @@ function findingLink(items, hasAD)
         link.addClass('extlink');
       }
     });
+    
+    $(this).each(function(idx, aobj){
+      hasLink = true;
+      aobj.innerHTML = aobj.innerHTML.replace(link_txt, function(text, offset, html){
+        var style = 'style="background-color:'+bgcolor+'!important;color:'+fgcolor+'!important;"';
+        return('<span class="ads_link" '+ style + '>'+text.substring(offset)+'</span>');
+      })
+    });    
   });
 
   if(hasLink)
