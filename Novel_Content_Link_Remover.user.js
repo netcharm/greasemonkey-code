@@ -97,6 +97,8 @@ function removeLink(s)
       pn.innerHTML = pn.innerHTML.replace(/&nbp;/gim, "");
       pn.innerHTML = pn.innerHTML.replace(/&amp;nbp;/gim, "");
       pn.innerHTML = pn.innerHTML.trim().replace('姑且', '');
+      pn.innerHTML = pn.innerHTML.trim().replace('\\r', '');
+      console.log(pn.innerHTML);
     });
       
     if(plist.length<2)
@@ -109,6 +111,7 @@ function removeLink(s)
       node.innerHTML = node.innerHTML.replace(/&nbp;/gim, "");
       node.innerHTML = node.innerHTML.replace(/&amp;nbp;/gim, "");
       node.innerHTML = node.innerHTML.trim().replace('姑且', '');
+      node.innerHTML = node.innerHTML.trim().replace('\\r', '');
     }
     
     // remove qidian ad text
@@ -137,6 +140,7 @@ function removeLink(s)
 
     node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
     node.innerHTML = node.innerHTML.trim().replace('姑且', '');
+    node.innerHTML = node.innerHTML.trim().replace('\\r', '');
 }
 
 function removeFloat(s)
@@ -206,4 +210,5 @@ function main()
   removeFloat(floatAD);
 }
 
+console.log('link remove');
 main();
