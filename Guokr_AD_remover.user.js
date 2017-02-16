@@ -8,7 +8,7 @@
 // @include     https://*.guokr.com/ask/*
 // @include     http://*.guokr.com/search/*
 // @include     https://*.guokr.com/search/*
-// @version     1.2.4.52
+// @version     1.2.4.53
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Guokr_AD_remover.user.js
@@ -50,7 +50,7 @@ const ADS = [
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
-  '总代'
+  '总代', '卖银行卡'
 ];
 
 var INITED = false;
@@ -260,27 +260,24 @@ function addPostOrderButton(){
 
 function removeUnreadableCharacter()
 {
-  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
-    //var node = $(this);
-    var node = this;
-    //node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF, \uE700-\uFF00,\uFFA0-\uFFFF]/gim, '');
-    node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
+  $('#articleTitle, #questionDesc, .ask-list-detials, .post-detail, .post-title, .title-content, .gbbcode-content, p, title').each(function(){
+    this.innerHTML = this.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
+    //this.innerHTML = this.innerHTML.replace(/[\uE654]/ugim, '')
   });
-
   return(false);
 }
 
 function main(loaded)
 {
   if(INITED) return;
-  
+
   removeUnreadableCharacter();
-  
+   
   addPostOrderButton();
   hideAD_group();
   hideAD_ask();
   hideAD_search();
-  
+
   INITED = true;
   jQueryVersion = $.fn.jquery;  
 }

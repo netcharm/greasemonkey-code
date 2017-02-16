@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.156
+// @version     1.3.18.157
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -73,7 +73,7 @@ var ADS = [
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
-  '总代'
+  '总代', '卖银行卡'
 ];
 
 var ADS_EXTRA = new Array();
@@ -361,6 +361,19 @@ function findingAD(items, regex, notice, mode)
   return(hasAD);
 }
 
+function replaceNode(node, text, replace)
+{
+  $(node).children().each(function(idx, aobj){
+    if($(this).children().length>0)
+      replaceNode(aobj, text, replace);
+    else
+    {
+      $(aobj).text($(aobj).text().replace(text, replace));
+      return;
+    }
+  });
+}
+
 function findingLink(items, hasAD)
 {
   var bgcolor = 'yellow';
@@ -368,7 +381,10 @@ function findingLink(items, hasAD)
   var hasLink = false;
   var notice = '外链';
   var link_pat = new RegExp('http(s){0,1}://(?!.*?\.guokr\.com).*?$', 'gim');
-  var link_txt = new RegExp('(http(s){0,1}://){0,1}(www){1,1}\..*?(\.((com)|(cn)|(net))){1,1}', 'gim');
+/*
+  var link_txt = new RegExp('(http(s){0,1}://){0,1}(www\.{0,1}(.*?))(\.((com)|(cn)|(net))){1,1}', 'gim');
+  //var link_txt = new RegExp('(http(s){0,1}://){0,1}((www)|((.*?){1,10})){1,1}\..*?(\.((com)|(cn)|(net))){1,1}', 'gim');
+*/
 
   items.each(function(){
     $(this).find('a').each(function(idx, aobj){
@@ -383,14 +399,14 @@ function findingLink(items, hasAD)
         link.addClass('extlink');
       }
     });
-    
-    $(this).each(function(idx, aobj){
+/*
+    replaceNode(this, link_txt, function(text, offset, html){
       hasLink = true;
-      aobj.innerHTML = aobj.innerHTML.replace(link_txt, function(text, offset, html){
-        var style = 'style="background-color:'+bgcolor+'!important;color:'+fgcolor+'!important;"';
-        return('<span class="ads_link" '+ style + '>'+text.substring(offset)+'</span>');
-      })
-    });    
+      var style = 'style="background-color:'+bgcolor+'!important;color:'+fgcolor+'!important;"';
+      return('<span class="ads_link" '+ style + '>'+text.substring(offset)+'</span>');
+    });
+  });
+*/
   });
 
   if(hasLink)
@@ -1101,9 +1117,9 @@ function fixedGroupTooltip()
 
 function removeUnreadableCharacter()
 {
-  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
-    var node = this;
-    node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
+  $('#articleTitle, #questionDesc, .ask-list-detials, .post-detail, .post-title, .title-content, .gbbcode-content, p, title').each(function(){
+    this.innerHTML = this.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF}]/ugim, '');
+    //this.innerHTML = this.innerHTML.replace(/[\uE654]/ugim, '')
   });
   return(false);
 }
