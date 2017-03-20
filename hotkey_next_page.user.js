@@ -71,7 +71,7 @@ const nextStrs = [
 
 const lastStrs = [
           '上一节',
-          '上一章',
+          '上一章',          
           '上一篇',
           '前一章',
           '前一篇',
@@ -194,7 +194,7 @@ const SpecialXpaths = [
     //下一页节点的xpath
     next : "//a/img[@src='http://ehgt.org/g/n.png']/.."
   },
-  {
+  {  
     //匹配的url
     urls : [
       "http://www.54tushu.com/book_library/chaptershow/"
@@ -202,7 +202,7 @@ const SpecialXpaths = [
     //上一页节点的xpath
     last : "//a/img[@src='/Public/Home/Images/bng50.png']/..",
     //下一页节点的xpath
-    next : "//a/img[@src='/Public/Home/Images/bng51.png']/.."
+    next : "//a/img[@src='/Public/Home/Images/bng51.png']/.."  
   }
 ];
 const LEFT = 37;
@@ -293,7 +293,7 @@ function main()
 {
   if (top.location != self.location)
     return;
-
+    
   window.addEventListener("keydown", checkKey, false);
   //unsafeWindow.document.addEventListener('keydown', checkKey, false);
   //document.addEventListener('keydown', checkKey, false);
