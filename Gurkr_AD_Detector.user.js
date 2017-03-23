@@ -1,4 +1,4 @@
-﻿4// ==UserScript==
+﻿// ==UserScript==
 // @name        Guokr AD Detector
 // @namespace   NetCharm - [https://github.com/netcharm]/[https://netcharm.bitbucket.org/]
 // @author      netcharm
@@ -24,13 +24,13 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.159
+// @version     1.3.18.161
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
-// @grant       none
 // ==/UserScript==
-// @grant       unsafeWindow
+// @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
+// @grant       none
 
 //①②③④⑤⑥⑦⑧⑨⑩
 //⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑
@@ -89,7 +89,8 @@ var jQuery = window.jQuery;
 
 var jQueryVersion = '';
 //$.fn.jquery;
-//var jQueryVersion = '1.4.4';
+//var jQueryVersion = $.fn.jquery;
+//var jQueryVersion = '1.4.4'
 //console.log(jQueryVersion);
 
 var ad_style = 'color:white!important; background-color:red!important;';
@@ -366,19 +367,6 @@ function findingAD(items, regex, notice, mode)
   return(hasAD);
 }
 
-function replaceNode(node, text, replace)
-{
-  $(node).children().each(function(idx, aobj){
-    if($(this).children().length>0)
-      replaceNode(aobj, text, replace);
-    else
-    {
-      $(aobj).text($(aobj).text().replace(text, replace));
-      return;
-    }
-  });
-}
-
 function findingLink(items, hasAD)
 {
   var bgcolor = 'yellow';
@@ -386,10 +374,6 @@ function findingLink(items, hasAD)
   var hasLink = false;
   var notice = '外链';
   var link_pat = new RegExp('http(s){0,1}://(?!.*?\.guokr\.com).*?$', 'gim');
-/*
-  var link_txt = new RegExp('(http(s){0,1}://){0,1}(www\.{0,1}(.*?))(\.((com)|(cn)|(net))){1,1}', 'gim');
-  //var link_txt = new RegExp('(http(s){0,1}://){0,1}((www)|((.*?){1,10})){1,1}\..*?(\.((com)|(cn)|(net))){1,1}', 'gim');
-*/
 
   items.each(function(){
     $(this).find('a').each(function(idx, aobj){
@@ -404,14 +388,6 @@ function findingLink(items, hasAD)
         link.addClass('extlink');
       }
     });
-/*
-    replaceNode(this, link_txt, function(text, offset, html){
-      hasLink = true;
-      var style = 'style="background-color:'+bgcolor+'!important;color:'+fgcolor+'!important;"';
-      return('<span class="ads_link" '+ style + '>'+text.substring(offset)+'</span>');
-    });
-  });
-*/
   });
 
   if(hasLink)
@@ -450,7 +426,7 @@ function getAccessToken()
     if(k.endsWith('access_token'))
     {
       // http://www.guokr.com/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token=xxx
-      var url = "http://www.guokr.com/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token="+v;
+      var url = "/apis/auth/account.json?retrieve_type=is_standalone&oauth_type=renren&access_token="+v;
       var iv = v;
       if(typeof(jQuery)=='undefined' && typeof($)=='undefined')
       {
@@ -461,10 +437,19 @@ function getAccessToken()
       else
       {
         //jQuery已載入
+        //console.log(url);
+        //$.get(url, function(data, status) {
+        //  alert("Data: " + data + "\nStatus: " + status);
+        //    if(data.ok)
+        //    {
+        //      token = iv;
+        //      found = true;
+        //    }                    
+        //});
         $.ajax({
           type: "GET",
           url: url,
-          dataType: "json",
+          dataType: "json"
           async: false,
           success : function(data) {
                       if(data.ok)
@@ -494,6 +479,7 @@ function tagAD(link)
 {
   var reportParam = getReportParam();
   var putUrl = reportParam.url;
+  if(putUrl.indexOf('question')<0) return(true);
   if(typeof(link) != 'undefined')
   {
     //putUrl = link.href;
@@ -1122,9 +1108,9 @@ function fixedGroupTooltip()
 
 function removeUnreadableCharacter()
 {
-  $('#articleTitle, #questionDesc, .ask-list-detials, .post-detail, .post-title, .title-content, .gbbcode-content, p, title').each(function(){
-    this.innerHTML = this.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF},\*]/ugim, '');
-    //this.innerHTML = this.innerHTML.replace(/[\uE654]/ugim, '')
+  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
+    var node = this;
+    node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF},\*]/ugim, '');
   });
   return(false);
 }
@@ -1192,6 +1178,7 @@ function main(loaded)
 
   INITED = true;
   jQueryVersion = $.fn.jquery;
+  console.log("jQuery Version : " + jQueryVersion);
 }
 
 //main();
