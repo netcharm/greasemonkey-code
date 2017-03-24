@@ -24,13 +24,13 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.161
+// @version     1.3.18.162
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
+// @grant       none
 // ==/UserScript==
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
-// @grant       none
 
 //①②③④⑤⑥⑦⑧⑨⑩
 //⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑
@@ -82,11 +82,8 @@ var ADS = [
 ];
 
 var ADS_EXTRA = new Array();
-
 var INITED = false;
-
 var jQuery = window.jQuery;
-
 var jQueryVersion = '';
 //$.fn.jquery;
 //var jQueryVersion = $.fn.jquery;
@@ -437,19 +434,10 @@ function getAccessToken()
       else
       {
         //jQuery已載入
-        //console.log(url);
-        //$.get(url, function(data, status) {
-        //  alert("Data: " + data + "\nStatus: " + status);
-        //    if(data.ok)
-        //    {
-        //      token = iv;
-        //      found = true;
-        //    }                    
-        //});
         $.ajax({
           type: "GET",
           url: url,
-          dataType: "json"
+          dataType: "json",
           async: false,
           success : function(data) {
                       if(data.ok)
@@ -1120,7 +1108,7 @@ function main(loaded)
   //if(accessToken==null) return;
   if(INITED) return;
 
-  console.log(accessToken);
+  console.log("Token : "+accessToken);
 
   removeBlankline();
   removeUnreadableCharacter();
