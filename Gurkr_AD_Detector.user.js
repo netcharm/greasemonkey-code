@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.163
+// @version     1.3.18.165
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -74,8 +74,9 @@ var ADS = [
   '/服务.{2,6}((鸡婆)|(小妹)|(学生)|(少妇)|(白领)|(模特)).*?过夜/',
   '/过夜.*?((鸡婆)|(小妹)|(学生)|(少妇)|(白领)|(模特))/',
   '/((鸡婆)|(小妹)|(学生)|(少妇)|(白领)|(模特)).*?过夜/',
+  '/哪里.*?((打架)|(打人)|(报仇)(情人)|(教训)|(报复))+?/',
   '过夜电话','找鸡婆大保健服务',
-  '原油', '黄金', '白银', '理财', '大盘', '微盘', '长线', '短线', '行情','投资','风险','反弹','止损','市场','上涨','回落','交易',
+  '原油','黄金','白银','欧元','理财','大盘','微盘','长线','短线','行情','操作','投资','风险','反弹','震荡','止损','上涨','回落','交易','投资者',
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
@@ -233,95 +234,107 @@ function highlightAD(word, node, mode, notice)
   var style = ad_style;
   function replacer(text, offset, html) {
     var mr = null;
-    if(typeof(offset) == 'number')
+    try
     {
-      var idxN0 = html.lastIndexOf('">@', offset);
-      var idxN1 = html.lastIndexOf('nickname="', offset);
-      var idxT = html.lastIndexOf('>', offset);
-      var idxS = html.lastIndexOf('<', offset);
-      var idxE = html.indexOf('">', offset+1);
-      //console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
-      //console.log(html.substring(idxS, idxT+1));
-      if(idxT == offset-1)
+      if(typeof(offset) == 'number')
       {
-        //console.log('----> span mr');
-        var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
-        mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
-        //console.log(mr, text, mt);
-      }
-      else if(idxT == offset-8)
-      {
-        //console.log('----> a mr');
-        var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
-        mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
-        //console.log(mr, text, mt);
-      }
-      else if(idxN0 == offset-3 || idxN1 == offset-10)
-      {
-        //console.log('----> @ nick');
-        var mt = html.substring(idxS, idxE+2).replace('\n',', ').replace('\r', ', ');
-        mr = mt.match(new RegExp('<a.*?('+text+')+(.*?)".*?>', 'gim'));
-        //console.log(mr, text, mt);
-        //console.log('----< @ nick');
-      }
-      else if(idxS>=0 && idxS<offset && idxE>offset) // && idxT>offset)
-      {
-        //console.log('----> st mr');
-        if(idxE-idxS > 5)
+        var idxN0 = html.lastIndexOf('">@', offset);
+        var idxN1 = html.lastIndexOf('nickname="', offset);
+        var idxT = html.lastIndexOf('>', offset);
+        var idxS = html.lastIndexOf('<', offset);
+        var idxE = html.indexOf('">', offset+1);
+        //console.log('----> ', text, offset, idxS, idxE, idxT, idxN0, idxN1);
+        //console.log(html.substring(idxS, idxT+1));
+        if(idxT == offset-1)
         {
-            //console.log(text, offset, idxS, idxE);
-            var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
-            //console.log(st);
-            mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+text+')+(.*?)".*?>', 'gim'));
-            //console.log(mr);
-            if(mr == null)
-            {
-              mr = st.match(new RegExp('<a.*?href="\/group\/', 'gim'));
-            }
-            if(mr == null)
-            {
-              mr = st.match(new RegExp('<a.*?href=".*?\.guokr\.com\/', 'gim'));
-            }
+          //console.log('----> span mr');
+          var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
+          mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
+          //console.log(mr, text, mt);
         }
+        else if(idxT == offset-8)
+        {
+          //console.log('----> a mr');
+          var mt = html.substring(idxS, idxT+1).replace('\n',', ').replace('\r', ', ');
+          mr = mt.match(new RegExp('<((a)|(span)).*?('+text+')+(.*?)".*?>', 'gim'));
+          //console.log(mr, text, mt);
+        }
+        else if(idxN0 == offset-3 || idxN1 == offset-10)
+        {
+          //console.log('----> @ nick');
+          var mt = html.substring(idxS, idxE+2).replace('\n',', ').replace('\r', ', ');
+          mr = mt.match(new RegExp('<a.*?('+text+')+(.*?)".*?>', 'gim'));
+          //console.log(mr, text, mt);
+          //console.log('----< @ nick');
+        }
+        else if(idxS>=0 && idxS<offset && idxE>offset) // && idxT>offset)
+        {
+          //console.log('----> st mr');
+          if(idxE-idxS > 5)
+          {
+              //console.log(text, offset, idxS, idxE);
+              var st = html.substring(idxS, idxE+2).replace('\n', '').replace('\r', '');
+              //console.log(st);
+              mr = st.match(new RegExp('<((a)|(span)).*?title="(.*?)('+text+')+(.*?)".*?>', 'gim'));
+              //console.log(mr);
+              if(mr == null)
+              {
+                mr = st.match(new RegExp('<a.*?href="\/group\/', 'gim'));
+              }
+              if(mr == null)
+              {
+                mr = st.match(new RegExp('<a.*?href=".*?\.guokr\.com\/', 'gim'));
+              }
+          }
+        }
+        //console.log(html.substring(idxS, idxT+1));
+      }
+
+      if(mr && mr.length>0)
+      {
+        return '<span class="ads_word" style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+text+'</span>';
+        return(text);
+      }
+      else if(text.match(/www\.guokr\.com/gim))
+      {
+        return(text);
+      }
+      else if(text.match(/\/i\/\d+\/{0,1}$/gim))
+      {
+        return(text);
+      }
+      else if(text.match(/">/gim))
+      {
+        return(text);
+      }
+      else if(text.startsWith('>http'))
+      {
+        return('><span class="ads_link" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text.substring(1)+'</span>');
+      }
+      else
+      {
+        return('<span class="ads_word" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text+'</span>');
       }
     }
-
-    if(mr && mr.length>0)
+    catch(err) 
     {
-      return(text);
-    }
-    else if(text.match(/www\.guokr\.com/gim))
-    {
-      return(text);
-    }
-    else if(text.match(/\/i\/\d+\/{0,1}$/gim))
-    {
-      return(text);
-    }
-    else if(text.match(/">/gim))
-    {
-      return(text);
-    }
-    else if(text.startsWith('>http'))
-    {
-      return('><span class="ads_link" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text.substring(1)+'</span>');
-    }
-    else
-    {
-      return('<span class="ads_word" style="' + style + '" title="' + notice + '\n匹配: ' + text + '">'+text+'</span>');
+      console.log(err);
+      return '<span class="ads_word" style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+text+'</span>';
     }
   }
 
-  var gwrap = $('div.gwrap');
-  if(node)
-  {
-    gwrap = $(node);
-  }
+  var gwrap = $(node) || $('div.gwrap');
   if(mode && mode.toLowerCase()=='link')
   {
     style = link_style;
   }
+  
+  //var html = gwrap.html().replace(/\<\/{0,1}strong\>/gim,'').replace(word, function(m){
+  //  return '<span class="ads_word" style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>';
+  //});  
+
   var html = gwrap.html().replace(word, replacer);
+
   //gwrap.html( $(html));
   gwrap.html( html );
 }
@@ -367,7 +380,7 @@ function hideAD_ask(pats){
   ask_list.each(function(){
     ask = $(this);
     title = ask.find('h2 > a').text();
-    $.each(pats,function(i,n)
+    $.each(pats, function(i,n)
     {
       var matchTitle = title.match(n);
       if(n && matchTitle)
@@ -560,7 +573,9 @@ function tagAD(link)
 {
   var reportParam = getReportParam();
   var putUrl = reportParam.url;
-  if(putUrl.indexOf('question')<0) return(true);
+  console.log(putUrl);
+  //if(putUrl.indexOf('question')<0) return(true);
+  if(link.indexOf('question')<0 && putUrl.indexOf('question')<0) return(false);
   if(typeof(link) != 'undefined')
   {
     //putUrl = link.href;
@@ -568,7 +583,7 @@ function tagAD(link)
   }
   putUrl = putUrl.replace(/(http:.*?\.com)\/(question)\/(\d+)\//gim, '$1/apis/ask/$2/$3.json');
   tagParam = {tags:'恶意广告', tag_op:'add', access_token:reportParam.access_token};
-  //console.log(putUrl, tagParam);
+  console.log(putUrl, tagParam);
   var tags = $('p#tags span.tag');
   var tr = tags.text().match('恶意广告');
   if(tr == null || tr.length<=0)
@@ -583,7 +598,7 @@ function tagAD(link)
         {
           var tagItem = '<span class="tag">';
           tagItem += '<a href="javascript: void 0;" class="gnicon-close-small" title="移除标签" data-operation="delete">X</a>';
-          tagItem += '<a itemprop="http://rdfs.org/sioc/ns#has_container" href="http://www.guokr.com/ask/tag/%E6%81%B6%E6%84%8F%E5%B9%BF%E5%91%8A/" data-id="恶意广告">恶意广告</a>';
+          tagItem += '<a itemprop="http://rdfs.org/sioc/ns#has_container" href="/ask/tag/%E6%81%B6%E6%84%8F%E5%B9%BF%E5%91%8A/" data-id="恶意广告">恶意广告</a>';
           tagItem += '</span>';
           tags.after(tagItem);
           return(true);
@@ -615,7 +630,7 @@ function reportAD()
   if(btns.length>0)
   {
     btn = btns[0];
-    $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
+    $.post('/apis/censor/report.json', reportParam, function( data ){
       if(data.ok)
       {
         $(btn).text('举报成功');
@@ -670,7 +685,7 @@ function reportADs(btn)
   var reportParam = getReportParam();
   reportParam.url = $(btn).attr('data-url').replace('/group', '').replace('/ask', '');
   //console.log(reportParam);
-  $.post('http://www.guokr.com/apis/censor/report.json', reportParam, function( data ){
+  $.post('/apis/censor/report.json', reportParam, function( data ){
     if(data.ok)
     {
       $(btn).text('举报成功');
@@ -697,7 +712,7 @@ function reportADs(btn)
   {
     var blackParam = {ukey_blocked:ukey, access_token:reportParam.access_token};
     //http://www.guokr.com/apis/community/relationship/black.json
-    $.post('http://www.guokr.com/apis/community/relationship/black.json', blackParam, function( data ){
+    $.post('/apis/community/relationship/black.json', blackParam, function( data ){
       if(data.ok)
       {
         //$(btn).text('加入黑名单成功');
@@ -1018,7 +1033,7 @@ function batchReport()
     if(url.toString().match('/topic/')) continue;
     reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
     var request = $.ajax({
-      url: 'http://www.guokr.com/apis/censor/report.json',
+      url: '/apis/censor/report.json',
       context: link,
       dataType: 'json',
       data: reportParam,
@@ -1048,7 +1063,7 @@ function batchReport()
     delay(25);
     //listbox.stop().delay( 25 );
     var taged = tagAD(link.href);
-    //console.log(taged);
+    //console.log(taged, link.href);
     delay(25);
     //listbox.stop().delay( 25 );
   }
