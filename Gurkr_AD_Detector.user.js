@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.162
+// @version     1.3.18.163
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -75,6 +75,7 @@ var ADS = [
   '/过夜.*?((鸡婆)|(小妹)|(学生)|(少妇)|(白领)|(模特))/',
   '/((鸡婆)|(小妹)|(学生)|(少妇)|(白领)|(模特)).*?过夜/',
   '过夜电话','找鸡婆大保健服务',
+  '原油', '黄金', '白银', '理财', '大盘', '微盘', '长线', '短线', '行情','投资','风险','反弹','止损','市场','上涨','回落','交易',
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
@@ -324,6 +325,98 @@ function highlightAD(word, node, mode, notice)
   //gwrap.html( $(html));
   gwrap.html( html );
 }
+
+function hideAD_group(pats){
+  var post_list = $('ul.titles > li.gclear');
+  var post = null;
+  var title = '';
+
+  post_list.each(function(){
+    post = $(this);
+    //nsel = 'h4 > a.title-link';
+    nsel = 'h4 > a';
+    tnode = post.find(nsel);
+    if(tnode.length>1)
+    {
+      tnode = $(post.find(nsel)[1])
+    }
+    else
+    {
+      tnode = $(post.find(nsel)[0])
+    }
+    title = tnode.text();
+
+    $.each(pats,function(i,n)
+    {
+      var matchTitle = title.match(n);
+      if(n && matchTitle)
+      {
+        //post.hide();
+        console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
+        highlightAD(n, tnode, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+$.unique(matchTitle).toString());
+        return false;
+      }
+    });
+  });
+};
+
+function hideAD_ask(pats){
+  var ask_list = $('.ask-list-detials');
+  var ask = null;
+  var title = '';
+  ask_list.each(function(){
+    ask = $(this);
+    title = ask.find('h2 > a').text();
+    $.each(pats,function(i,n)
+    {
+      var matchTitle = title.match(n);
+      if(n && matchTitle)
+      {
+        //ask.parent().hide();
+        console.log('已发现广告词: '+ ADS[i] +', 帖子标题:'+title);
+        highlightAD(n, ask, 'text', '广告问答标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+$.unique(matchTitle).toString());
+        return false;
+      }
+    });
+  });
+};
+
+function hideAD_search(pats){
+  var search_list = $('.search-page .items-post');
+  //console.log(search_list);
+  search_list.each(function(){
+    var search = $(this);
+    //console.log(search);
+    var title = search.find('h2 > a').text();
+    var content = $(search.find('p')[0]).text();
+    //console.log(title);
+    $.each(pats,function(i,n)
+    {    
+      var foundTitle = false;
+      var foundContent = false;
+      var matchTitle = title.match(n);
+      var matchContent = content.match(n);
+      var matchWords = [];
+      if(n && matchTitle)
+      {
+        foundTitle = true;
+        matchWords = $.unique($.merge(matchWords, matchTitle));
+        console.log('已发现贴子标题中的广告词: '+ ADS[i] +', 帖子标题:'+title+', 匹配词汇:'+$.unique(matchTitle).toString());
+      }
+      if(n && matchContent)
+      {
+        foundContent = true;
+        matchWords = $.unique($.merge(matchWords, matchContent));
+        console.log('已发现正文摘要中的广告词: '+ ADS[i] +', 帖子标题:'+title+', 匹配词汇:'+$.unique(matchContent).toString());
+      }
+      if(n && (foundTitle || foundContent))
+      {
+        highlightAD(n, search, 'text', '广告帖子标题: '+title+'\n已发现广告词: '+ ADS[i] +'\n已匹配广告词: '+matchWords.toString());
+        return(false);
+      }
+    });      
+  });
+};
 
 function findingAD(items, regex, notice, mode)
 {
@@ -827,6 +920,25 @@ function addReportButtons()
   addReportButtonsLink();
 }
 
+function addPostOrderButton(){
+  var btnTab = $("p.main-btn-tab");
+  //console.log(btnTab);
+  if(btnTab.length>0)
+  {
+    $("p.main-btn-tab").css('border-bottom', 'none');
+
+    $('p.main-btn-tab').find('*').addClass("tab-left");
+    var url = (window.location.pathname+'/?sort=created').replace('//', '/');
+    var $orderBtn = $('<a href="'+url+'" title="按创建时间排序">创建</a>').appendTo('p.main-btn-tab');
+
+    //$('ul.tab').find('*').addClass("tab-left");
+    var url = (window.location.pathname+'/?sort=created').replace('//', '/');
+    var $orderBtn = $('<li><a href="'+url+'" title="按创建时间排序">按创建排序</a></li>').appendTo('ul.tab');
+
+    //?sort=created
+  }
+};
+
 function getSelectionText()
 {
   var t = '';
@@ -1110,6 +1222,8 @@ function main(loaded)
 
   console.log("Token : "+accessToken);
 
+  var regexs = makePats(ADS);
+
   removeBlankline();
   removeUnreadableCharacter();
   fixedGroupTooltip();
@@ -1124,6 +1238,11 @@ function main(loaded)
     }
   });
 
+  addPostOrderButton();
+  hideAD_group(regexs);
+  hideAD_ask(regexs);
+  hideAD_search(regexs);
+
   addBatchReportDox();
   addReportButtons();
 
@@ -1137,7 +1256,6 @@ function main(loaded)
       ADS[ADS.length] = ADS_EXTRA[idx];
     }
   }
-  var regexs = makePats(ADS);
 
   var author = $('#articleAuthor');
   var title = $('#articleTitle');
