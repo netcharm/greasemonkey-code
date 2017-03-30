@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.165
+// @version     1.3.18.166
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -80,7 +80,7 @@ var ADS = [
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
-  '总代', '卖银行卡'
+  '总代', '卖银行卡', '办证'
 ];
 
 var ADS_EXTRA = new Array();
@@ -339,7 +339,8 @@ function highlightAD(word, node, mode, notice)
   gwrap.html( html );
 }
 
-function hideAD_group(pats){
+function hideAD_group(pats)
+{
   var post_list = $('ul.titles > li.gclear');
   var post = null;
   var title = '';
@@ -373,7 +374,8 @@ function hideAD_group(pats){
   });
 };
 
-function hideAD_ask(pats){
+function hideAD_ask(pats)
+{
   var ask_list = $('.ask-list-detials');
   var ask = null;
   var title = '';
@@ -394,7 +396,8 @@ function hideAD_ask(pats){
   });
 };
 
-function hideAD_search(pats){
+function hideAD_search(pats)
+{
   var search_list = $('.search-page .items-post');
   //console.log(search_list);
   search_list.each(function(){
@@ -569,21 +572,32 @@ function getReportParam()
   return({url:document.location.href, reason:'垃圾广告/淫秽色情信息/人身攻击', access_token:accessToken, invokedata:''});
 }
 
-function tagAD(link)
+function tagAD(link, linkobj)
 {
   var reportParam = getReportParam();
   var putUrl = reportParam.url;
-  console.log(putUrl);
+  var srcUrl = reportParam.url;
   //if(putUrl.indexOf('question')<0) return(true);
-  if(link.indexOf('question')<0 && putUrl.indexOf('question')<0) return(false);
+  //console.log(typeof(link), link, linkobj, putUrl);
   if(typeof(link) != 'undefined')
   {
     //putUrl = link.href;
     putUrl = link;
   }
-  putUrl = putUrl.replace(/(http:.*?\.com)\/(question)\/(\d+)\//gim, '$1/apis/ask/$2/$3.json');
+  if(typeof(link) == 'undefined' && typeof(linkobj) != 'undefined')
+  {
+    putUrl = linkobj[0].href;
+  }
+  if(putUrl.indexOf('question')<0) return(false);
+  putUrl = putUrl.replace(/(http:.*?\.com)\/(question)\/(\d+)\//gim, '/apis/ask/$2/$3.json');
   tagParam = {tags:'恶意广告', tag_op:'add', access_token:reportParam.access_token};
-  console.log(putUrl, tagParam);
+  //console.log(link, putUrl, tagParam);
+
+  var tagItem = '<span class="tag">';
+  tagItem += '<a href="javascript:void(0);" class="gnicon-close-small" title="移除标签" data-operation="delete">X</a>';
+  tagItem += '<a itemprop="http://rdfs.org/sioc/ns#has_container" href="/ask/tag/%E6%81%B6%E6%84%8F%E5%B9%BF%E5%91%8A/" data-id="恶意广告">恶意广告</a>';
+  tagItem += '</span>';
+
   var tags = $('p#tags span.tag');
   var tr = tags.text().match('恶意广告');
   if(tr == null || tr.length<=0)
@@ -596,11 +610,30 @@ function tagAD(link)
       success: function(data) {
         if(data.ok)
         {
-          var tagItem = '<span class="tag">';
-          tagItem += '<a href="javascript: void 0;" class="gnicon-close-small" title="移除标签" data-operation="delete">X</a>';
-          tagItem += '<a itemprop="http://rdfs.org/sioc/ns#has_container" href="/ask/tag/%E6%81%B6%E6%84%8F%E5%B9%BF%E5%91%8A/" data-id="恶意广告">恶意广告</a>';
-          tagItem += '</span>';
-          tags.after(tagItem);
+          //tags.after(tagItem);
+          $(tags[0]).before(tagItem);
+
+          // display tags in ask list
+          try
+          {
+            if(typeof(linkobj) != 'undefined')
+            {
+              //console.log($(linkobj[0]));
+              var items = $(linkobj[0]).parents('div.ask-list-detials');
+              if(items.length > 0)
+              {
+                var item = $(items[0]);
+                var ltags = item.find('a.tag');
+                var ltr = ltags.text().match('恶意广告');
+                if( ltr == null || ltr.length<=0 )
+                {
+                  //console.log("add tag to ask item list", ltags);
+                  $(ltags[0]).before(tagItem);
+                }
+              }
+            }
+          }catch(err){}
+          
           return(true);
         }
         else
@@ -1048,6 +1081,8 @@ function batchReport()
         listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
         count = listbox[0].options.length;
         btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
+        var taged = tagAD(link.href, link);
+        //console.log(taged, link.href);
       },
       error: function( data, textStatus ) {
         var link = $(this);
@@ -1062,9 +1097,9 @@ function batchReport()
     });
     delay(25);
     //listbox.stop().delay( 25 );
-    var taged = tagAD(link.href);
+    //var taged = tagAD(link.href, link);
     //console.log(taged, link.href);
-    delay(25);
+    //delay(25);
     //listbox.stop().delay( 25 );
   }
 }
