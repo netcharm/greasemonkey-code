@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.166
+// @version     1.3.18.167
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -235,7 +235,7 @@ function highlightAD(word, node, mode, notice)
   function replacer(text, offset, html) {
     var mr = null;
     try
-    {
+    {      
       if(typeof(offset) == 'number')
       {
         var idxN0 = html.lastIndexOf('">@', offset);
@@ -333,7 +333,11 @@ function highlightAD(word, node, mode, notice)
   //  return '<span class="ads_word" style="' + style + '" alt="'+ notice +'" title="'+ notice +'">'+m+'</span>';
   //});  
 
-  var html = gwrap.html().replace(word, replacer);
+  var html = gwrap.html();
+  html = html.replace(/((\r)|(\n)|(\r\n)|(\n\r))*/ugim, "");
+  html = html.replace(/<span class="ads_word".*?>(.*?)<\/span>/ugim, "$1");
+  html = html.replace(/"&gt;/ugim, "");
+  html = html.replace(word, replacer);
 
   //gwrap.html( $(html));
   gwrap.html( html );
@@ -1258,9 +1262,35 @@ function fixedGroupTooltip()
 
 function removeUnreadableCharacter()
 {
-  $('#articleTitle, #questionDesc, .ask-list-detials').each(function(){
+  $('#articleTitle, #questionDesc, .ask-list-detials, .cmtContent').each(function(){
     var node = this;
     node.innerHTML = node.innerHTML.trim().replace(/[\uE000-\uF8FF,\uFA6E-\uFA6F,\uFADA-\uFAFF,\uFB00-\uFE0F,\uFE1A-\uFE1F,\uFE6C-\uFF00,\uFFBF-\uFFFF,\u{10000}-\u{1D37F},\u{1D800}-\u{1EFFF},\u{1FC00}-\u{1FFFF},\*]/ugim, '');
+
+    //①②③④⑤⑥⑦⑧⑨⑩
+    //⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑
+    //㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩
+    //⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽
+    //壹贰叁肆伍陆柒捌玖拾零
+    //ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ
+    //ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹ
+    //node.innerHTML = node.innerHTML.replace(/[①,⒈,㈠,⑴,壹,Ⅰ,ⅰ]/ugim, '1');
+    node.innerHTML = node.innerHTML.replace(/[零]/ugim, "0");
+    node.innerHTML = node.innerHTML.replace(/[①|⒈|㈠|⑴|壹|Ⅰ|ⅰ]/ugim, "1");
+    node.innerHTML = node.innerHTML.replace(/[②|⒉|㈡|⑵|贰|Ⅱ|ⅱ]/ugim, "2");
+    node.innerHTML = node.innerHTML.replace(/[③|⒊|㈢|⑶|叁|Ⅲ|ⅲ]/ugim, "3");
+    node.innerHTML = node.innerHTML.replace(/[④|⒋|㈣|⑷|肆|Ⅳ|ⅳ]/ugim, "4");
+    node.innerHTML = node.innerHTML.replace(/[⑤|⒌|㈤|⑸|伍|Ⅴ|ⅴ]/ugim, "5");
+    node.innerHTML = node.innerHTML.replace(/[⑥|⒍|㈥|⑹|陆|Ⅵ|ⅵ]/ugim, "6");
+    node.innerHTML = node.innerHTML.replace(/[⑦|⒎|㈦|⑺|柒|Ⅶ|ⅶ]/ugim, "7");
+    node.innerHTML = node.innerHTML.replace(/[⑧|⒏|㈧|⑻|捌|Ⅷ|ⅷ]/ugim, "8");
+    node.innerHTML = node.innerHTML.replace(/[⑨|⒐|㈨|⑼|玖|Ⅸ|ⅸ]/ugim, "9");
+    node.innerHTML = node.innerHTML.replace(/[⑩|⒑|㈩|⑽|拾|Ⅹ|ⅹ]/ugim, "10");
+    node.innerHTML = node.innerHTML.replace(/(\d+)\.(\d+)\./ugim, "$1$2");
+    node.innerHTML = node.innerHTML.replace(/(\d{6,6})\.(\d{5,5})/ugim, "$1$2");
+    node.innerHTML = node.innerHTML.replace(/(\d{7,7})\.(\d{4,4})/ugim, "$1$2");
+    node.innerHTML = node.innerHTML.replace(/(\d{8,8})\.(\d{3,3})/ugim, "$1$2");
+    node.innerHTML = node.innerHTML.replace(/(\d{9,9})\.(\d{2,2})/ugim, "$1$2");
+    node.innerHTML = node.innerHTML.replace(/(\d{10,10})\.(\d{1,1})/ugim, "$1$2");
   });
   return(false);
 }
