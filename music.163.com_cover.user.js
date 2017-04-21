@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.10
+// @version     1.2.3.11
 // @run-at      document-end
 // @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
 // @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
@@ -126,11 +126,11 @@ function ConvertToMarkdown()
   var album = $(cover[0]).find('img')[0];
   var album_link = $(album).attr('data-src');
 
-  var title = content.find('div.m-info div.topblk div.tit h2').text();
-  var sub_title = content.find('div.m-info div.topblk div.subtit').text();
+  var title = content.find('div.m-info div.tit h2').text();
+  var sub_title = content.find('div.m-info div.subtit').text();
 
   var intrs = content.find('div.m-info div.topblk p.intr');
-  //console.log(intrs);
+  console.log(intrs);
   artist_link = "";
   if(intrs.length>0)
   {
@@ -139,13 +139,34 @@ function ConvertToMarkdown()
     artist_href = $(artist).find('a')[0].href.trim();
     artist_link = '[' + artist_name + '](' + artist_href + ')';
   }
-
   pub_date = "";
   if(intrs.length>1)
     pub_date = intrs[1].lastChild.textContent.trim();
   pub_corp = "";
   if(intrs.length>2)
     pub_corp = intrs[2].lastChild.textContent.trim();
+  
+  if(intrs.length<=0) {
+    artist = content.find('div.m-info div.user span.name > a');
+    artist_name = artist[0].textContent.trim();
+    artist_href = artist[0].href;
+    artist_link = '[' + artist_name + '](' + artist_href + ')';
+    
+    pub_date = content.find('div.m-info div.user span.time');
+    pub_date = pub_date[0].textContent.trim().substr(0, 10);
+  }
+  
+  var album_desc = [];
+  if(content.find('div#album-desc-more p').length>0 )
+    album_desc = content.find('div#album-desc-more p');
+  else if(content.find('div#album-desc-dot p').length>0 )
+    album_desc = content.find('div#album-desc-dot p');
+  else if(content.find('div.n-albdesc p').length>0)
+    album_desc = content.find('div.n-albdesc p');
+  else if(content.find('p#album-desc-more').length>0 )
+    album_desc = content.find('p#album-desc-more');
+  else if(content.find('p#album-desc-dot').length>0 )
+    album_desc = content.find('p#album-desc-dot');
 
   var songlist = content.find('div.n-songtb');
 
@@ -155,7 +176,8 @@ function ConvertToMarkdown()
   var songs = $(songlist_table.find('tbody')[0]).find('tr');
   //console.log(songs);
 
-  var md = '## [' + title.trim() +'](' + document.location.href + ')\n\n';
+  var md = '% ' + title.trim() +'\n\n';
+  md += '## [' + title.trim() +'](' + document.location.href + ')\n\n';
   if( sub_title.trim().length > 0 )
   {
     md += '> ' + sub_title.trim() + '\n\n';
@@ -167,15 +189,33 @@ function ConvertToMarkdown()
 
   md += '| 信息 | 属性 |\n';
   md += '|-|-|\n';
-  md += '| 歌手 | ' + artist_link + ' |\n';
-  md += '| 发行时间 | ' + pub_date + ' |\n';
-  md += '| 发行公司 | ' + pub_corp + ' |\n';
+  if(intrs.length>0) {
+    md += '| 歌手 | ' + artist_link + ' |\n';
+    md += '| 发行时间 | ' + pub_date + ' |\n';
+    md += '| 发行公司 | ' + pub_corp + ' |\n';
+  } else {
+    md += '| 创建者 | ' + artist_link + ' |\n';
+    md += '| 创建时间 | ' + pub_date + ' |\n';
+  }
   md += '\n';
 
+  if(album_desc.length>0) {
+    md += '### 专辑介绍\n\n';
+    album_desc.each(function(idx){
+      md += album_desc[idx].textContent.trim() + '\n';
+    });
+    md += '\n';    
+  }
+  
   md += '### 歌曲列表 [' + songlist_count[0].textContent + ']\n';
   md += '\n';
-  md += '| 声轨 | 歌曲名 | 时长 | 歌手 |\n';
-  md += '| -: | :- | :-: | -: |\n';
+  if(window.location.href.startsWith('http://music.163.com/#/playlist?')) {
+    md += '| 声轨 | 歌曲名 | 时长 | 歌手 | 专辑 |\n';
+    md += '| -: | :- | :-: | -: | -: |\n';
+  } else {
+    md += '| 声轨 | 歌曲名 | 时长 | 歌手 |\n';
+    md += '| -: | :- | :-: | -: |\n';  
+  }
   songs.each(function(idx){
     //console.log(idx, songs[idx]);
     var songinfo = $(songs[idx]).find('td');
@@ -190,6 +230,14 @@ function ConvertToMarkdown()
     //console.log(trk_time);
     var trk_artists = $(songinfo[3]).find('span')[0].textContent.trim();
     //console.log(trk_artists);
+    var trk_album = "";
+    if(songinfo.length>4)
+    {
+      album = $(songinfo[4]).find('div.text > a')[0];
+      album_name = album.textContent.trim().replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
+      album_href = album.href;
+      trk_album = '[' + album_name + '](' + album_href + ')';
+    }
 
     var trk_artistlist = $(songinfo[3]).find('.text > span')[0].childNodes;
     var trk_artistall = '';
@@ -215,7 +263,11 @@ function ConvertToMarkdown()
     else trk_num = 5;
     var trk_id = PrefixInteger(trk_no, trk_num);
     var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
-    md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' |\n';
+    if(songinfo.length>4) {
+      md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' | ' + trk_album +' |\n';
+    } else {
+      md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' |\n';
+    }
   });
 
   md += '\n';
