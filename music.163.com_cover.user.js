@@ -1,12 +1,16 @@
 ﻿// ==UserScript==
-// @name        music.163.com cover
+// @name        music.163.com utils
 // @namespace   NetCharm
-// @description music.163.com cover image
+// @description music.163.com cover image & other utils
 // @include     http://music.163.com/*
-// @version     1.2.3.9
+// @include     
+// @include    
+// @exclude     %exclude%
+// @version     1.2.3.10
+// @run-at      document-end
+// @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
+// @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
 // @grant       none
-// @require     //cdn.bootcss.com/jquery/2.1.4/jquery.min.js
-// @require     //cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
 // ==/UserScript==
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js
@@ -115,7 +119,7 @@ function PrefixInteger(num, length) {
 function ConvertToMarkdown()
 {
   console.log('Converting album/songlist to markdown...');
-  
+
   var content = $('iframe#g_iframe.g-iframe').contents();
   var cover = content.find('div.cover');
   var thumb = $(cover[0]).find('img')[0].src;
@@ -129,13 +133,13 @@ function ConvertToMarkdown()
   //console.log(intrs);
   artist_link = "";
   if(intrs.length>0)
-  {  
+  {
     artist = $(intrs[0]).find('span')[0];
     artist_name = artist.title.trim();
     artist_href = $(artist).find('a')[0].href.trim();
     artist_link = '[' + artist_name + '](' + artist_href + ')';
   }
-  
+
   pub_date = "";
   if(intrs.length>1)
     pub_date = intrs[1].lastChild.textContent.trim();
@@ -156,7 +160,7 @@ function ConvertToMarkdown()
   {
     md += '> ' + sub_title.trim() + '\n\n';
   }
-  
+
   md += '<div class="cover">\n';
   md += '![Front Cover](./'+ album_link.replace(/^.*[\\\/]/, '') + ')\n';
   md += '</div>\n\n';
@@ -167,14 +171,14 @@ function ConvertToMarkdown()
   md += '| 发行时间 | ' + pub_date + ' |\n';
   md += '| 发行公司 | ' + pub_corp + ' |\n';
   md += '\n';
-  
+
   md += '### 歌曲列表 [' + songlist_count[0].textContent + ']\n';
   md += '\n';
   md += '| 声轨 | 歌曲名 | 时长 | 歌手 |\n';
   md += '| -: | :- | :-: | -: |\n';
   songs.each(function(idx){
     //console.log(idx, songs[idx]);
-    var songinfo = $(songs[idx]).find('td');   
+    var songinfo = $(songs[idx]).find('td');
     var trk_no = songinfo[0].textContent.trim();
     //console.log(trk_no);
     var trk_name = songinfo[1].textContent.trim().replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
@@ -186,7 +190,7 @@ function ConvertToMarkdown()
     //console.log(trk_time);
     var trk_artists = $(songinfo[3]).find('span')[0].textContent.trim();
     //console.log(trk_artists);
-    
+
     var trk_artistlist = $(songinfo[3]).find('.text > span')[0].childNodes;
     var trk_artistall = '';
     $(trk_artistlist).each(function(id){
@@ -194,12 +198,12 @@ function ConvertToMarkdown()
       //console.log(id, art);
       if(art.nodeName=='A')
       {
-        trk_artistall += ' [' + art.textContent.trim() + '](' + art.href + ')';
+        trk_artistall += '[' + art.textContent.trim() + '](' + art.href + ') ';
       }
       //else if(art.nodeName=='SPAN')
       else
       {
-        trk_artistall += ' ' + art.textContent.trim();
+        trk_artistall += art.textContent.trim() + ' ';
       }
     });
     //console.log(trk_artistall);
@@ -211,30 +215,30 @@ function ConvertToMarkdown()
     else trk_num = 5;
     var trk_id = PrefixInteger(trk_no, trk_num);
     var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
-    md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' |\n';    
+    md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' |\n';
   });
-  
+
   md += '\n';
   //console.log(md);
   //alert(md);
-  
+
   var inline_options = {
-    closeClick : false, 
-    overlayShow : false, 
+    closeClick : false,
+    overlayShow : false,
     helpers : {
       overlay : null,
-    }, 
+    },
     closeBtn : true,
     padding : [5,5,5,5],
-  };  
+  };
   md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
-  $.fancybox.open('<div class="message">' + 
-    '<div style="float:right;position:absolute;top:16px;left:770px;">' + 
-    '<button id="saveMarkdown" style="padding:4px;" > Save </button>' + 
-    '</div>' + 
-    '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard">' + 
-    md_fancy + 
-    '</textarea>' + 
+  $.fancybox.open('<div class="message">' +
+    '<div style="float:right;position:absolute;top:16px;left:770px;">' +
+    '<button id="saveMarkdown" style="padding:4px;" > Save </button>' +
+    '</div>' +
+    '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard">' +
+    md_fancy +
+    '</textarea>' +
     '</div>', inline_options);
 
   $('#saveMarkdown').click(saveToFile);

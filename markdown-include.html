@@ -1,0 +1,158 @@
+<!--[if gte IE 9]><!-->
+<!-- Loading jQuery -->
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+<!--[endif]-->
+
+<!-- Loading bootstrap -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style>
+    .wrap {
+        width: 800px;
+        margin-left: auto ;
+        margin-right: auto ;
+    }
+
+    table:nth-of-type(1) th:nth-of-type(1) {
+        text-align: left !important;
+        width: 96px !important;
+    }
+
+    table:nth-of-type(2) th:nth-of-type(1) {
+        text-align: right !important;
+        width: 56px !important;
+    }
+
+    table:nth-of-type(2) th:nth-of-type(2) {
+        text-align: left !important;
+        width: auto;
+    }
+
+    table:nth-of-type(2) th:nth-of-type(3) {
+        text-align: center !important;
+        width: 48px !important;
+    }
+
+    table:nth-of-type(2) th:nth-of-type(4) {
+        text-align: right !important;
+        width: auto;
+    }
+
+    audio {
+        padding-top: 8px;
+        width: 99%;
+        background-color: #95B9C7;
+    }
+
+    .figure,
+    .figure img,
+    #cover {
+        width: 800px;
+        max-width: 800px;
+    }
+
+    .caption {
+        text-align: center;
+    }
+
+    #progress {
+        height: 4px !important;
+        line-height: 4px !important;
+        margin-bottom: 1px !important;
+    }
+</style>
+
+<script>
+    function PrefixInteger(num, length) {
+        return (Array(length).join('0') + num).slice(-length);
+    }
+
+    function paused(node) {
+        var trk = $(node).siblings('audio')[0];
+        return (trk.paused);
+    }
+
+    // play audio
+    function play(node) {
+        stopall();
+        $(node).removeClass('glyphicon-play').addClass('glyphicon-pause');
+        var trk = $(node).siblings('audio')[0];
+        trk.play();
+        //$('#progress').insertAfter($(node).siblings('table:nth-of-type(2) th:nth-of-type(2) > a'));
+        var target = $($(node).parent().siblings()[0]).find('a')[0];
+        $('#progress').insertAfter(target);
+    }
+
+    function playnext(node) {
+        console.log(node);
+        var ctrl = $(node).siblings('span.glyphicon').next('span.glyphicon-play');
+        console.log(ctrl);
+        play(ctrl);
+    }
+
+    function stop(node) {
+        var trk = $(node).siblings('audio')[0];
+        trk.pause();
+        $(node).removeClass('glyphicon-pause').addClass('glyphicon-play');
+    }
+
+    // stop all audio
+    function stopall() {
+        $('audio').each(function() {
+            this.pause();
+        });
+        $('audio').siblings('span.glyphicon').removeClass('glyphicon-pause').addClass('glyphicon-play');
+    }
+
+    $(window).ready(function() {
+        // fixed table width & style
+        $('table').addClass('table table-striped table-hover table-condensed');
+        $('table').attr('style', 'width:800px;');
+
+        // add tooltip to cover image
+        $('.cover img').each(function() {
+            $(this).attr('title', $(this).attr('alt'));
+            $(this).attr('data-placement', 'right');
+            $(this).siblings('p.caption').hide();
+        });
+        $('.cover img').tooltip();
+
+        $('<div id="progress" class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div></div>').appendTo('body');
+        $('#progress').tooltip();
+
+        // add icon to audio track
+        $('audio').each(function() {
+            $('<span class="glyphicon glyphicon-play" aria-hidden="true" role="button"></span>').insertBefore($(this));
+        });
+
+        // add click to play feature
+        $('span.glyphicon-play').click(function() {
+            if (paused(this)) {
+                play(this);
+            } else {
+                stop(this);
+            }
+        });
+
+        $('span.glyphicon-pause').click(function() {
+            stopall();
+        });
+
+        $('audio').on('ended', function() {
+            //stopall();
+            playnext($(this).siblings('span.glyphicon'));
+        });
+
+        $('audio').on('timeupdate', function() {
+            var sec = this.currentTime;
+            var per = sec / this.duration * 100;
+            var title = PrefixInteger(parseInt(sec / 60), 2) + ':' + PrefixInteger(parseInt(sec % 60), 2) + ' / ' +
+                PrefixInteger(parseInt(this.duration / 60), 2) + ':' + PrefixInteger(parseInt(this.duration % 60), 2);
+            $('#progress .progress-bar').attr('style', 'width: ' + per + '%;');
+            $('#progress').attr('title', title);
+        });
+    });
+</script>
