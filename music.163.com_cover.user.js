@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.11
+// @version     1.2.3.12
 // @run-at      document-end
 // @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
 // @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
@@ -118,6 +118,11 @@ function PrefixInteger(num, length) {
 
 function ConvertToMarkdown()
 {
+  if(window.location.href.startsWith('http://music.163.com/#/playlist?') ||
+     window.location.href.startsWith('http://music.163.com/#/album?')) {
+  }
+  else return(false);
+
   console.log('Converting album/songlist to markdown...');
 
   var content = $('iframe#g_iframe.g-iframe').contents();
