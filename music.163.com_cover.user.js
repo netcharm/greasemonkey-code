@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.14
+// @version     1.2.3.15
 // @run-at      document-end
 // @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
 // @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
@@ -182,9 +182,17 @@ function ConvertToMarkdown()
   var songlist_table = songlist.find('table.m-table');
   var songs = $(songlist_table.find('tbody')[0]).find('tr');
   //console.log(songs);
+  
+  var md_type = '';
+  if(window.location.href.startsWith('http://music.163.com/#/playlist?')) {
+    md_type = '歌单';
+  }
+  else if(window.location.href.startsWith('http://music.163.com/#/album?')) {
+    md_type = '专辑';  
+  }
 
   var md = '% ' + title.trim() +'\n\n';
-  md += '## [' + title.trim() +'](' + document.location.href + ')\n\n';
+  md += '## ' + md_type + ': [' + title.trim() +'](' + document.location.href + ')\n\n';
   if( sub_title.trim().length > 0 )
   {
     md += '> ' + sub_title.trim() + '\n\n';
@@ -207,9 +215,9 @@ function ConvertToMarkdown()
   md += '\n';
 
   if(album_desc.length>0) {
-    md += '### 专辑介绍\n\n';
+    md += '### '+ md_type + '介绍\n\n';
     album_desc.each(function(idx){
-      md += album_desc[idx].textContent.trim() + '\n';
+      md += album_desc[idx].textContent.trim().replace(/^介绍：/ui, '') + '\n';
     });
     md += '\n';    
   }

@@ -10,6 +10,10 @@
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <style>
+    #header {
+      display: none;
+    }
+
     .wrap {
         width: 800px;
         margin-left: auto ;
@@ -37,6 +41,11 @@
     }
 
     table:nth-of-type(2) th:nth-of-type(4) {
+        text-align: right !important;
+        width: auto;
+    }
+
+    table:nth-of-type(2) th:nth-of-type(5) {
         text-align: right !important;
         width: auto;
     }
@@ -87,10 +96,9 @@
     }
 
     function playnext(node) {
-        console.log(node);
-        var ctrl = $(node).siblings('span.glyphicon').next('span.glyphicon-play');
-        console.log(ctrl);
-        play(ctrl);
+        var next = node.parents('tr').next().find('span.glyphicon-play');
+        //console.log(next);
+        play(next);
     }
 
     function stop(node) {
@@ -111,6 +119,10 @@
         // fixed table width & style
         $('table').addClass('table table-striped table-hover table-condensed');
         $('table').attr('style', 'width:800px;');
+
+        $('h2, h3').each(function() {
+            $('<span class="glyphicon glyphicon-th-large" aria-hidden="true" style="padding-right:8px;"></span> ').prependTo($(this));
+        });
 
         // add tooltip to cover image
         $('.cover img').each(function() {
@@ -143,7 +155,7 @@
 
         $('audio').on('ended', function() {
             //stopall();
-            playnext($(this).siblings('span.glyphicon'));
+            playnext($(this));
         });
 
         $('audio').on('timeupdate', function() {
