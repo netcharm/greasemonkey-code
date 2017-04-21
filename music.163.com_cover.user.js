@@ -3,11 +3,13 @@
 // @namespace   NetCharm
 // @description music.163.com cover image
 // @include     http://music.163.com/*
-// @version     1.2.3.8
+// @version     1.2.3.9
 // @grant       none
+// @require     //cdn.bootcss.com/jquery/2.1.4/jquery.min.js
+// @require     //cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
+// ==/UserScript==
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js
-// ==/UserScript==
 // @resource    fancyCSS http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css
 // @include     http://music.163.com/#/album*
 // @include     http://music.163.com/#/song*
@@ -149,16 +151,15 @@ function ConvertToMarkdown()
   var songs = $(songlist_table.find('tbody')[0]).find('tr');
   //console.log(songs);
 
-  var md = '## [' + title.trim() +'](' + document.location.href + ')\n';
-  md += '\n';
+  var md = '## [' + title.trim() +'](' + document.location.href + ')\n\n';
   if( sub_title.trim().length > 0 )
-    md += '> ' + sub_title.trim() + '\n';
-  md += '\n';
+  {
+    md += '> ' + sub_title.trim() + '\n\n';
+  }
   
   md += '<div class="cover">\n';
   md += '![Front Cover](./'+ album_link.replace(/^.*[\\\/]/, '') + ')\n';
-  md += '</div>\n';
-  md += '\n';
+  md += '</div>\n\n';
 
   md += '| 信息 | 属性 |\n';
   md += '|-|-|\n';
@@ -176,7 +177,7 @@ function ConvertToMarkdown()
     var songinfo = $(songs[idx]).find('td');   
     var trk_no = songinfo[0].textContent.trim();
     //console.log(trk_no);
-    var trk_name = songinfo[1].textContent.trim();
+    var trk_name = songinfo[1].textContent.trim().replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
     //console.log(trk_name);
     var trk_href = $(songinfo[1]).find('a')[0].href;
     var trk_link = '[' + trk_name + '](' + trk_href + ')';
@@ -209,7 +210,7 @@ function ConvertToMarkdown()
     else if(trk_count>=1000 && trk_count<10000) trk_num = 4;
     else trk_num = 5;
     var trk_id = PrefixInteger(trk_no, trk_num);
-    var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3"/>';
+    var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
     md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' |\n';    
   });
   
@@ -226,10 +227,54 @@ function ConvertToMarkdown()
     closeBtn : true,
     padding : [5,5,5,5],
   };  
-  md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;').replace(/ /ugim, '&nbsp;');
-  //alert(md_fancy);
-  $.fancybox.open('<div class="message"><pre><code>' + md_fancy + '</code></pre></div>', inline_options);
+  md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
+  $.fancybox.open('<div class="message">' + 
+    '<div style="float:right;position:absolute;top:16px;left:770px;">' + 
+    '<button id="saveMarkdown" style="padding:4px;" > Save </button>' + 
+    '</div>' + 
+    '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard">' + 
+    md_fancy + 
+    '</textarea>' + 
+    '</div>', inline_options);
+
+  $('#saveMarkdown').click(saveToFile);
+
   return(false);
+}
+
+function destroyClickedElement(event)
+{
+  document.body.removeChild(event.target);
+}
+
+function saveToFile()
+{
+  //console.log('Saving file...');
+  var textToWrite = document.getElementById("markdownValue").value;
+  //alert('Saving file...\n' + textToWrite);
+  var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+  var fileNameToSaveAs = 'intro.md';
+
+  var downloadLink = document.createElement("a");
+  downloadLink.target = "_blank";
+  downloadLink.download = fileNameToSaveAs;
+  downloadLink.innerHTML = "Download File";
+  if (window.webkitURL != null)
+  {
+    // Chrome allows the link to be clicked
+    // without actually adding it to the DOM.
+    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+  }
+  else
+  {
+    // Firefox requires the link to be added to the DOM
+    // before it can be clicked.
+    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+  }
+  downloadLink.click();
 }
 
 function addToMarkdown()
