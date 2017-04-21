@@ -6,10 +6,12 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.12
+// @version     1.2.3.14
 // @run-at      document-end
 // @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
 // @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
+// @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
+// @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @grant       none
 // ==/UserScript==
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
@@ -290,7 +292,8 @@ function ConvertToMarkdown()
   };
   md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
   $.fancybox.open('<div class="message">' +
-    '<div style="float:right;position:absolute;top:16px;left:770px;">' +
+    //'<div style="float:right;position:relative;top:16px;right:64px;">' +
+    '<div style="float:right;position:absolute;top:16px;right:24px;">' +
     '<button id="saveMarkdown" style="padding:4px;" > Save </button>' +
     '</div>' +
     '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard">' +
