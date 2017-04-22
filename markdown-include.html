@@ -30,14 +30,23 @@
         color: lightslategray !important;
     }
 
+    span.glyphicon.invalid {
+        color: silver !important;
+    }
+
     #header {
         display: none;
     }
 
     .wrap {
-        width: 800px;
+        min-width: 800px;
+        max-width: 1000px;
         margin-left: auto ;
         margin-right: auto ;
+    }
+
+    table {
+        max-width: 100%;
     }
 
     table:nth-of-type(1) th:nth-of-type(1) {
@@ -79,8 +88,8 @@
     .figure,
     .figure img,
     #cover {
-        width: 800px;
-        max-width: 800px;
+        width: auto;
+        max-width: 1000px;
     }
 
     .caption {
@@ -112,6 +121,7 @@
         trk.play();
         var target = $($(node).parent().siblings()[0]).find('a')[0];
         $('#progress').insertAfter(target);
+        $('#progress').show();
     }
 
     function playnext(node) {
@@ -121,8 +131,9 @@
     }
 
     function stop(node) {
-        var trk = $(node).siblings('audio')[0];
-        trk.pause();
+        var trk = $(node).siblings('audio');
+        if(trk.length>0)
+          trk[0].pause();
         $(node).removeClass('glyphicon-pause').addClass('glyphicon-play');
     }
 
@@ -135,9 +146,10 @@
     }
 
     $(window).ready(function() {
+        $('body').wrapInner('<div class="wrap"></div>');
+
         // decoration table width & style
         $('table').addClass('table table-striped table-hover table-condensed');
-        $('table').attr('style', 'width:800px;');
 
         // decoration header
         $('h2').each(function() {
@@ -147,15 +159,20 @@
         $('h3').addClass('bs-callout bs-callout-info');
 
         // add tooltip to cover image
-        $('.cover img').each(function() {
+        $('.figure img').on('error', function(){
+            this.src = $(this).attr('data-original-src');
+        });
+        $('.figure img').each(function() {
+            $(this).attr('data-original-src', $(this).attr('title'));
             $(this).attr('title', $(this).attr('alt'));
             $(this).attr('data-placement', 'right');
             $(this).siblings('p.caption').hide();
         });
-        $('.cover img').tooltip();
+        $('.figure img').tooltip();
 
         // create progress bar
         $('<div id="progress" class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div></div>').appendTo('body');
+        $('#progress').hide();
         $('#progress').tooltip();
 
         // decoration icon to audio track
@@ -177,13 +194,33 @@
             stopall();
         });
 
-        // ended event handle
+        // audio ended event handle
         $('audio').on('ended', function() {
-            //stopall();
+            $('#progress').hide();
             playnext($(this));
         });
 
-        // play time update event handle
+        // audio error event handle
+        $('audio').on('error', function() {
+            console.log('ERROR!!!', this);
+            $('#progress').hide();
+            var btn = $(this).siblings('span.glyphicon');
+            $(btn).off();
+            $(btn).addClass("invalid");
+            stop($(btn));
+        });
+
+        // audio emptied event handle
+        $('audio').on('emptied', function() {
+            console.log('EMPTIED!!!', this);
+            $('#progress').hide();
+            var btn = $(this).siblings('span.glyphicon');
+            $(btn).off();
+            $(btn).addClass("invalid");
+            stop($(btn));
+        });
+
+        // audio play time update event handle
         $('audio').on('timeupdate', function() {
             var sec = this.currentTime;
             var per = sec / this.duration * 100;

@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.16
+// @version     1.2.3.17
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -153,6 +153,22 @@ function saveToFile()
   downloadLink.click();
 }
 
+function getMVid(musicid)
+{
+  url = 'http://music.163.com/api/song/detail/?id='+musicid+'&ids=['+musicid+']';
+  //console.log(url);
+  $.ajaxSetup({async: false});
+  var mvid = 0;
+  var result = $.getJSON(url, function(data){
+    mvid = data.songs[0].mvid;
+    //console.log(mvid);
+    $.ajaxSetup({async: true});
+    return(mvid);
+  });
+  $.ajaxSetup({async: true});
+  return(mvid);
+}
+
 function ConvertToMarkdown()
 {
   if(window.location.href.startsWith('http://music.163.com/#/playlist?') ||
@@ -163,10 +179,10 @@ function ConvertToMarkdown()
   console.log('Converting album/songlist to markdown...');
 
   var content = $('iframe#g_iframe.g-iframe').contents();
-  var cover = content.find('div.cover');
-  var thumb = $(cover[0]).find('img')[0].src;
-  var album = $(cover[0]).find('img')[0];
-  var album_link = $(album).attr('data-src');
+  var album = content.find('div.cover');
+  var thumb = $(album[0]).find('img')[0].src;
+  var cover = $(album[0]).find('img')[0];
+  var cover_link = $(cover).attr('data-src');
 
   var title = content.find('div.m-info div.tit h2').text();
   var sub_title = content.find('div.m-info div.subtit').text();
@@ -233,9 +249,9 @@ function ConvertToMarkdown()
     md += '> ' + sub_title.trim() + '\n\n';
   }
 
-  md += '<div class="cover">\n';
-  md += '![Front Cover](./'+ album_link.replace(/^.*[\\\/]/, '') + ')\n';
-  md += '</div>\n\n';
+  //md += '<div id="cover" class="cover">\n';
+  md += '![Front Cover](./'+ cover_link.replace(/^.*[\\\/]/, '') + ' "'+ cover_link +'")\n\n';
+  //md += '</div>\n\n';
 
   md += '| 信息 | 属性 |\n';
   md += '|-|-|\n';
@@ -271,10 +287,21 @@ function ConvertToMarkdown()
     var songinfo = $(songs[idx]).find('td');
     var trk_no = songinfo[0].textContent.trim();
     //console.log(trk_no);
-    var trk_name = songinfo[1].textContent.trim().replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
+    var trk_name = songinfo[1].textContent.trim();
+    var trk_mv = $(songinfo[1]).find('span.mv');
+    //console.log(trk_mv);
+    if(trk_mv.length>0) {
+      var resid = $(trk_mv[0]).attr('data-res-id');
+      var mvid = getMVid(resid);
+      trk_mv = ' [[' + trk_mv[0].textContent.trim() + '](http://music.163.com/mv?id=' + mvid + ')]';
+      //console.log(trk_mv);
+      trk_name = $(songinfo[1]).find('a')[0].textContent.trim();
+    }
+    else trk_mv = '';
+    trk_name = trk_name.replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
     //console.log(trk_name);
     var trk_href = $(songinfo[1]).find('a')[0].href;
-    var trk_link = '[' + trk_name + '](' + trk_href + ')';
+    var trk_link = '[' + trk_name + '](' + trk_href + ')' + trk_mv;
     //console.log(trk_href);
     var trk_time = $(songinfo[2]).find('span.u-dur')[0].textContent.trim();
     //console.log(trk_time);
@@ -323,28 +350,6 @@ function ConvertToMarkdown()
   md += '\n';
   //console.log(md);
   //alert(md);
-
-  //var inline_options = {
-  //  closeClick : false,
-  //  overlayShow : false,
-  //  helpers : {
-  //    overlay : null,
-  //  },
-  //  closeBtn : true,
-  //  padding : [5,5,5,5],
-  //};
-  //md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
-  //$.fancybox.open('<div class="message">' +
-  //  '<div style="float:right;position:absolute;top:16px;right:24px;">' +    
-  //  '<button id="saveMarkdown" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span>保存</button>' +
-  //  '</div>' +
-  //  '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard" data-provide="markdown">' +
-  //  md_fancy +
-  //  '</textarea>' +
-  //  '</div>', inline_options);
-  //$('#saveMarkdown').click(saveToFile); 
-  //$("#markdownValue").markdown({autofocus:false,savable:true}) 
-  //return(false);
   return(md);
 }
 
@@ -415,23 +420,6 @@ function addToMarkdown()
                         '  border-color: #8c8c8c;\n' +               
                         '}\n';
   $('<style type="text/css">\n'+saveButtonStyle+'</style>').appendTo($('head'));
-  
-  //var bs_css = document.createElement('link'); 
-  //bs_css.setAttribute('type', 'text/css');
-  //bs_css.setAttribute('rel', 'stylesheet');
-  //bs_css.setAttribute('media', 'screen');
-  //bs_css.setAttribute('href', 'http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css');
-  //document.head.appendChild(bs_css);
-  //var bs_css = document.createElement('link'); 
-  //bs_css.setAttribute('type', 'text/css');
-  //bs_css.setAttribute('rel', 'stylesheet');
-  //bs_css.setAttribute('media', 'screen');
-  //bs_css.setAttribute('href', 'http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css');
-  //document.head.appendChild(bs_css);
-
-  //$('<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">').appendTo($('head'));
-  //$('<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">').appendTo($('head'));
-  //$('<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>').appendTo($('head'));
   
   //var md_css = document.createElement('link'); 
   //md_css.setAttribute('type', 'text/css');
