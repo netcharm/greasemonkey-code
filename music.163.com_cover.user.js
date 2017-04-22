@@ -6,35 +6,35 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.15
+// @version     1.2.3.16
 // @run-at      document-end
-// @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
-// @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
+// @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
+// @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
+// @grant       GM_addStyle
+// @grant       GM_getResourceText
 // @grant       none
 // ==/UserScript==
-// @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
-// @require     http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js
-// @resource    fancyCSS http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css
+// @require     http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js
+// @resource    bs3CSS http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css
+// @resource    bs3tCSS http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css
+// @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
+// @resource    fancyCSS http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css
+// @require     http://cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js
+// @resource    mdCSS http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css
 // @include     http://music.163.com/#/album*
 // @include     http://music.163.com/#/song*
 // @include     http://music.163.com/#/playlist*
 
 function addFancyBox()
 {  
-  //var fancy_js = document.createElement('script'); 
-  //fancy_js.setAttribute('type', 'text/javascript');
-  //fancy_js.setAttribute('src', 'http://cdn.netcharm.local/static/fancybox/source/jquery.fancybox.js');
-  //fancy_js.setAttribute('src', 'http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js');
-  //document.head.appendChild(fancy_js);
-
   var fancy_css = document.createElement('link'); 
   fancy_css.setAttribute('type', 'text/css');
   fancy_css.setAttribute('rel', 'stylesheet');
   fancy_css.setAttribute('media', 'screen');
   //fancy_css.setAttribute('href', 'http://cdn.netcharm.local/static/fancybox/source/jquery.fancybox.css'); 
-  fancy_css.setAttribute('href', 'http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css');
+  fancy_css.setAttribute('href', 'http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css');
   document.head.appendChild(fancy_css);
 
   return(false);
@@ -118,6 +118,41 @@ function PrefixInteger(num, length) {
     return (Array(length).join('0') + num).slice(-length);
 }
 
+function destroyClickedElement(event)
+{
+  document.body.removeChild(event.target);
+}
+
+function saveToFile()
+{
+  //console.log('Saving file...');
+  var textToWrite = document.getElementById("markdownValue").value;
+  //alert('Saving file...\n' + textToWrite);
+  var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+  var fileNameToSaveAs = 'intro.md';
+
+  var downloadLink = document.createElement("a");
+  downloadLink.target = "_blank";
+  downloadLink.download = fileNameToSaveAs;
+  downloadLink.innerHTML = "Download File";
+  if (window.webkitURL != null)
+  {
+    // Chrome allows the link to be clicked
+    // without actually adding it to the DOM.
+    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+  }
+  else
+  {
+    // Firefox requires the link to be added to the DOM
+    // before it can be clicked.
+    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+  }
+  downloadLink.click();
+}
+
 function ConvertToMarkdown()
 {
   if(window.location.href.startsWith('http://music.163.com/#/playlist?') ||
@@ -137,7 +172,7 @@ function ConvertToMarkdown()
   var sub_title = content.find('div.m-info div.subtit').text();
 
   var intrs = content.find('div.m-info div.topblk p.intr');
-  console.log(intrs);
+  //console.log(intrs);
   artist_link = "";
   if(intrs.length>0)
   {
@@ -289,6 +324,32 @@ function ConvertToMarkdown()
   //console.log(md);
   //alert(md);
 
+  //var inline_options = {
+  //  closeClick : false,
+  //  overlayShow : false,
+  //  helpers : {
+  //    overlay : null,
+  //  },
+  //  closeBtn : true,
+  //  padding : [5,5,5,5],
+  //};
+  //md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
+  //$.fancybox.open('<div class="message">' +
+  //  '<div style="float:right;position:absolute;top:16px;right:24px;">' +    
+  //  '<button id="saveMarkdown" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span>保存</button>' +
+  //  '</div>' +
+  //  '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard" data-provide="markdown">' +
+  //  md_fancy +
+  //  '</textarea>' +
+  //  '</div>', inline_options);
+  //$('#saveMarkdown').click(saveToFile); 
+  //$("#markdownValue").markdown({autofocus:false,savable:true}) 
+  //return(false);
+  return(md);
+}
+
+function showMarkdown(markdown)
+{
   var inline_options = {
     closeClick : false,
     overlayShow : false,
@@ -298,55 +359,18 @@ function ConvertToMarkdown()
     closeBtn : true,
     padding : [5,5,5,5],
   };
-  md_fancy = md.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
+  md_fancy = markdown.replace(/&/ugim, '&amp;').replace(/</ugim, '&lt;').replace(/>/ugim, '&gt;');//.replace(/ /ugim, '&nbsp;');
   $.fancybox.open('<div class="message">' +
-    //'<div style="float:right;position:relative;top:16px;right:64px;">' +
-    '<div style="float:right;position:absolute;top:16px;right:24px;">' +
-    '<button id="saveMarkdown" style="padding:4px;" > Save </button>' +
+    '<div style="float:right;position:absolute;top:16px;right:24px;">' +    
+    '<button id="saveMarkdown" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span>保存</button>' +
     '</div>' +
-    '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard">' +
+    '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard" data-provide="markdown">' +
     md_fancy +
     '</textarea>' +
     '</div>', inline_options);
-
-  $('#saveMarkdown').click(saveToFile);
-
+  $('#saveMarkdown').click(saveToFile); 
+  //$("#markdownValue").markdown({autofocus:false,savable:true}) 
   return(false);
-}
-
-function destroyClickedElement(event)
-{
-  document.body.removeChild(event.target);
-}
-
-function saveToFile()
-{
-  //console.log('Saving file...');
-  var textToWrite = document.getElementById("markdownValue").value;
-  //alert('Saving file...\n' + textToWrite);
-  var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-  var fileNameToSaveAs = 'intro.md';
-
-  var downloadLink = document.createElement("a");
-  downloadLink.target = "_blank";
-  downloadLink.download = fileNameToSaveAs;
-  downloadLink.innerHTML = "Download File";
-  if (window.webkitURL != null)
-  {
-    // Chrome allows the link to be clicked
-    // without actually adding it to the DOM.
-    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
-  }
-  else
-  {
-    // Firefox requires the link to be added to the DOM
-    // before it can be clicked.
-    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-    downloadLink.onclick = destroyClickedElement;
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
-  }
-  downloadLink.click();
 }
 
 function addToMarkdown()
@@ -355,8 +379,68 @@ function addToMarkdown()
   $('<li><a id="btnMarkdown" hidefocus="true" href="javascript:;" title="Convert to Markdown"><em>Markdown</em></a></li>').appendTo(contentOp);
 
   $('a#btnMarkdown').click(function(){
-    ConvertToMarkdown();
+    var md = ConvertToMarkdown();
+    showMarkdown(md);
   });
+
+  var saveButtonStyle = '#saveMarkdown {\n' + 
+                        '  display: inline-block;\n' +
+                        '  padding: 6px 12px;\n' +
+                        '  margin-bottom: 0;\n' +
+                        '  font-size: 14px;\n' +
+                        '  font-weight: normal;\n' +
+                        '  line-height: 1.42857143;\n' +
+                        '  text-align: center;\n' +
+                        '  white-space: nowrap;\n' +
+                        '  vertical-align: middle;\n' +
+                        '  touch-action: manipulation;\n' +
+                        '  cursor: pointer;\n' +
+                        '  -webkit-user-select: none;\n' +
+                        '  -moz-user-select: none;\n' +
+                        '  -ms-user-select: none;\n' +
+                        '  user-select: none;\n' +
+                        '  background-image: none;\n' +
+                        '  border: 1px solid transparent;\n' +
+                        '  border-radius: 4px;\n' +
+                        '  color: #333;\n' +
+                        '  background-color: #fff;\n' +
+                        '  border-color: #ccc;\n' +
+                        '}\n\n' +
+                        '#saveMarkdown:hover,\n' +
+                        '#saveMarkdown:focus,\n' +
+                        '#saveMarkdown.focus {\n' +
+                        '  outline: 5px auto -webkit-focus-ring-color;\n' +
+                        '  outline-offset: -2px;\n' +
+                        '  background-color: #77ddff;\n' +
+                        '  border-color: #8c8c8c;\n' +               
+                        '}\n';
+  $('<style type="text/css">\n'+saveButtonStyle+'</style>').appendTo($('head'));
+  
+  //var bs_css = document.createElement('link'); 
+  //bs_css.setAttribute('type', 'text/css');
+  //bs_css.setAttribute('rel', 'stylesheet');
+  //bs_css.setAttribute('media', 'screen');
+  //bs_css.setAttribute('href', 'http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css');
+  //document.head.appendChild(bs_css);
+  //var bs_css = document.createElement('link'); 
+  //bs_css.setAttribute('type', 'text/css');
+  //bs_css.setAttribute('rel', 'stylesheet');
+  //bs_css.setAttribute('media', 'screen');
+  //bs_css.setAttribute('href', 'http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css');
+  //document.head.appendChild(bs_css);
+
+  //$('<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">').appendTo($('head'));
+  //$('<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">').appendTo($('head'));
+  //$('<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>').appendTo($('head'));
+  
+  //var md_css = document.createElement('link'); 
+  //md_css.setAttribute('type', 'text/css');
+  //md_css.setAttribute('rel', 'stylesheet');
+  //md_css.setAttribute('media', 'screen');
+  //md_css.setAttribute('href', 'http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css');
+  //document.head.appendChild(md_css);
+  //$('<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css">').appendTo($('head'));
+  //$('<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js"></script>').appendTo($('head'));  
 }
 
 $(document).ready(function(){

@@ -10,8 +10,28 @@
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <style>
+    .bs-callout {
+        padding: 20px;
+        margin: 20px 0;
+        border: 0px solid #eee;
+        border-left-width: 5px;
+        border-radius: 0px;
+    }
+
+    .bs-callout-info {
+        border-left-color: #1b809e;
+    }
+
+    span.glyphicon-th-large {
+        color: darkgray !important;
+    }
+
+    span.glyphicon-play, span.glyphicon-pause {
+        color: lightslategray !important;
+    }
+
     #header {
-      display: none;
+        display: none;
     }
 
     .wrap {
@@ -90,7 +110,6 @@
         $(node).removeClass('glyphicon-play').addClass('glyphicon-pause');
         var trk = $(node).siblings('audio')[0];
         trk.play();
-        //$('#progress').insertAfter($(node).siblings('table:nth-of-type(2) th:nth-of-type(2) > a'));
         var target = $($(node).parent().siblings()[0]).find('a')[0];
         $('#progress').insertAfter(target);
     }
@@ -116,13 +135,16 @@
     }
 
     $(window).ready(function() {
-        // fixed table width & style
+        // decoration table width & style
         $('table').addClass('table table-striped table-hover table-condensed');
         $('table').attr('style', 'width:800px;');
 
-        $('h2, h3').each(function() {
+        // decoration header
+        $('h2').each(function() {
             $('<span class="glyphicon glyphicon-th-large" aria-hidden="true" style="padding-right:8px;"></span> ').prependTo($(this));
         });
+        $('h2').addClass('page-header');
+        $('h3').addClass('bs-callout bs-callout-info');
 
         // add tooltip to cover image
         $('.cover img').each(function() {
@@ -132,15 +154,16 @@
         });
         $('.cover img').tooltip();
 
+        // create progress bar
         $('<div id="progress" class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div></div>').appendTo('body');
         $('#progress').tooltip();
 
-        // add icon to audio track
+        // decoration icon to audio track
         $('audio').each(function() {
             $('<span class="glyphicon glyphicon-play" aria-hidden="true" role="button"></span>').insertBefore($(this));
         });
 
-        // add click to play feature
+        // click to play handle
         $('span.glyphicon-play').click(function() {
             if (paused(this)) {
                 play(this);
@@ -149,15 +172,18 @@
             }
         });
 
+        // click pause handle
         $('span.glyphicon-pause').click(function() {
             stopall();
         });
 
+        // ended event handle
         $('audio').on('ended', function() {
             //stopall();
             playnext($(this));
         });
 
+        // play time update event handle
         $('audio').on('timeupdate', function() {
             var sec = this.currentTime;
             var per = sec / this.duration * 100;
