@@ -10,6 +10,95 @@
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <style>
+    audio {
+        padding-top: 8px;
+        width: 99%;
+        background-color: #95B9C7;
+    }
+
+    video::cue {
+        background-color: transparent;
+        /*background-image: linear-gradient(to bottom, dimgray, lightgray);*/
+        color: papayawhip;
+    }
+
+    video::media-text-track-display {
+        background-color: transparent;
+        color: papayawhip;
+    }
+
+    video::cue(b) {
+        color: peachpuff;
+    }
+
+    table {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    table.albuminfo th:nth-of-type(1) {
+        text-align: left !important;
+        width: 96px !important;
+    }
+
+    table.songlist th:nth-of-type(1) {
+        text-align: right !important;
+        width: 56px !important;
+    }
+
+    table.songlist th:nth-of-type(2) {
+        text-align: left !important;
+        width: auto;
+        min-width: 50%;
+    }
+
+    table.songlist th:nth-of-type(3) {
+        text-align: center !important;
+        width: 48px !important;
+    }
+
+    table.songlist th:nth-of-type(4) {
+        text-align: right !important;
+        width: auto;
+        max-width: 20%;
+    }
+
+    table.songlist th:nth-of-type(5) {
+        text-align: right !important;
+        width: auto;
+        max-width: 20%;
+    }
+
+    table.songlist td:nth-of-type(2) {
+        color: darkgray;
+    }
+
+    table.songlist td:nth-of-type(4) {
+        color: darkgray;
+    }
+
+    table.songlist td:nth-of-type(5) {
+        color: darkgray;
+    }
+
+    blockquote p {
+        color: darkgray;
+    }
+
+    figcaption {
+        display: none;
+    }
+
+    header, #header {
+        display: none;
+    }
+
+    #progress, .progress {
+        height: 4px !important;
+        line-height: 4px !important;
+        margin-bottom: 1px !important;
+    }
+
     .bs-callout {
         padding: 20px;
         margin: 20px 0;
@@ -22,72 +111,37 @@
         border-left-color: #1b809e;
     }
 
-    span.glyphicon-th-large {
+    .glyphicon-th-large {
         color: darkgray !important;
     }
 
-    span.glyphicon-play, span.glyphicon-pause {
+    .glyphicon-play,
+    .glyphicon-pause {
         color: lightslategray !important;
     }
 
-    span.glyphicon.invalid {
+    .glyphicon.invalid {
         color: silver !important;
     }
 
-    #header {
-        display: none;
-    }
-
-    .wrap {
+    #wrap, .wrap {
         min-width: 800px;
         max-width: 1000px;
-        margin-left: auto ;
-        margin-right: auto ;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    table {
-        max-width: 100%;
+    #TOC {
+        float: right;
+        top: 32px;
+        right: 16px;
+        width: 220px;
+        position: fixed;
     }
 
-    table:nth-of-type(1) th:nth-of-type(1) {
-        text-align: left !important;
-        width: 96px !important;
-    }
-
-    table:nth-of-type(2) th:nth-of-type(1) {
-        text-align: right !important;
-        width: 56px !important;
-    }
-
-    table:nth-of-type(2) th:nth-of-type(2) {
-        text-align: left !important;
-        width: auto;
-    }
-
-    table:nth-of-type(2) th:nth-of-type(3) {
-        text-align: center !important;
-        width: 48px !important;
-    }
-
-    table:nth-of-type(2) th:nth-of-type(4) {
-        text-align: right !important;
-        width: auto;
-    }
-
-    table:nth-of-type(2) th:nth-of-type(5) {
-        text-align: right !important;
-        width: auto;
-    }
-
-    audio {
-        padding-top: 8px;
-        width: 99%;
-        background-color: #95B9C7;
-    }
-
-    .figure,
-    .figure img,
-    #cover {
+    .figure, .figure img,
+    figure, figure img,
+    .cover, #cover {
         width: auto;
         max-width: 1000px;
     }
@@ -96,10 +150,9 @@
         text-align: center;
     }
 
-    #progress {
-        height: 4px !important;
-        line-height: 4px !important;
-        margin-bottom: 1px !important;
+    .video {
+        text-align: center;
+        max-width: 1000px;
     }
 </style>
 
@@ -120,20 +173,28 @@
         var trk = $(node).siblings('audio')[0];
         trk.play();
         var target = $($(node).parent().siblings()[0]).find('a')[0];
-        $('#progress').insertAfter(target);
+        //console.log($(target).parent());
+        $('#progress').appendTo($(target).parent());
+        $('#progress.progress-bar, .progress.progress-bar').attr('style', 'width: 0%;');
         $('#progress').show();
     }
 
     function playnext(node) {
         var next = node.parents('tr').next().find('span.glyphicon-play');
         //console.log(next);
-        play(next);
+        if (next.hasClass('invalid')) {
+            stopall();
+            playnext(next);
+        } else if (next.length > 0)
+            play(next);
+        else
+            stopall();
     }
 
     function stop(node) {
         var trk = $(node).siblings('audio');
-        if(trk.length>0)
-          trk[0].pause();
+        if (trk.length > 0)
+            trk[0].pause();
         $(node).removeClass('glyphicon-pause').addClass('glyphicon-play');
     }
 
@@ -142,38 +203,66 @@
         $('audio').each(function() {
             this.pause();
         });
-        $('audio').siblings('span.glyphicon').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        $('#progress').hide();
+        $('audio').siblings('span.glyphicon.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play');
     }
 
     $(window).ready(function() {
-        $('body').wrapInner('<div class="wrap"></div>');
+        $('body').wrapInner('<div id="wrap" class="wrap"></div>');
+
+        // decoration TOC to scrollspy
+        var lis = $('#TOC li, nav li');
+        lis.each(function() {
+            var al = $(this).find('a:nth-of-type(2)');
+            if(al.length>0) {
+                li = $(this).find('a:nth-of-type(1)')[0];
+                li.text += al[0].text;
+                al.remove();
+            }
+        });
+        $('body').attr('data-spy', 'scroll');
+        $('body').attr('data-target', '#TOC, nav');
+        $('nav').addClass('nav');
+        $('#TOC ul, nav ul').addClass('nav nav-pills nav-stacked');
 
         // decoration table width & style
+        $('colgroup').remove();
         $('table').addClass('table table-striped table-hover table-condensed');
+        $('table').removeAttr('style');
+        $('table').each(function(idx) {
+            var table = $(this);
+            var header = table.find('th');
+            if (header.length > 0) {
+                if (header[0].textContent.trim() == '信息') table.addClass('albuminfo');
+                else if (header[0].textContent.trim() == '声轨') table.addClass('songlist');
+            }
+        });
 
         // decoration header
         $('h2').each(function() {
-            $('<span class="glyphicon glyphicon-th-large" aria-hidden="true" style="padding-right:8px;"></span> ').prependTo($(this));
+            $('<span class="glyphicon glyphicon-th-large" aria-hidden="true" style="padding-right:8px;"></span>').prependTo($(this));
         });
         $('h2').addClass('page-header');
         $('h3').addClass('bs-callout bs-callout-info');
 
         // add tooltip to cover image
-        $('.figure img').on('error', function(){
+        $('.figure img, figure img').on('error', function() {
             this.src = $(this).attr('data-original-src');
         });
-        $('.figure img').each(function() {
+        $('.figure img, figure img').each(function() {
             $(this).attr('data-original-src', $(this).attr('title'));
             $(this).attr('title', $(this).attr('alt'));
             $(this).attr('data-placement', 'right');
-            $(this).siblings('p.caption').hide();
+            $(this).siblings('p.caption, figcaption').hide();
         });
-        $('.figure img').tooltip();
+        $('.figure img, figure img').tooltip();
 
         // create progress bar
-        $('<div id="progress" class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div></div>').appendTo('body');
-        $('#progress').hide();
-        $('#progress').tooltip();
+        $('<div id="progress" class="progress">\n' +
+            '  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div>\n' +
+            '</div>\n').appendTo('body');
+        $('#progress, .progress').hide();
+        $('#progress, .progress').tooltip();
 
         // decoration icon to audio track
         $('audio').each(function() {
@@ -224,8 +313,10 @@
         $('audio').on('timeupdate', function() {
             var sec = this.currentTime;
             var per = sec / this.duration * 100;
-            var title = PrefixInteger(parseInt(sec / 60), 2) + ':' + PrefixInteger(parseInt(sec % 60), 2) + ' / ' +
-                PrefixInteger(parseInt(this.duration / 60), 2) + ':' + PrefixInteger(parseInt(this.duration % 60), 2);
+            var title = PrefixInteger(parseInt(sec / 60), 2) + ':' +
+                PrefixInteger(parseInt(sec % 60), 2) + ' / ' +
+                PrefixInteger(parseInt(this.duration / 60), 2) + ':' +
+                PrefixInteger(parseInt(this.duration % 60), 2);
             $('#progress .progress-bar').attr('style', 'width: ' + per + '%;');
             $('#progress').attr('title', title);
         });

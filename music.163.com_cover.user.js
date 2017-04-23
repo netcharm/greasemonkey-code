@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.17
+// @version     1.2.3.18
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -128,8 +128,12 @@ function saveToFile()
   //console.log('Saving file...');
   var textToWrite = document.getElementById("markdownValue").value;
   //alert('Saving file...\n' + textToWrite);
-  var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+  var textFileAsBlob = new Blob(['\ufeff'+textToWrite], {type:'text/plain;charset=utf8'});
+  var album_title = getAlbumTitle();
   var fileNameToSaveAs = 'intro.md';
+  if( album_title != "" )
+    fileNameToSaveAs = 'intro_' + album_title +'.md';
+  
 
   var downloadLink = document.createElement("a");
   downloadLink.target = "_blank";
@@ -167,6 +171,19 @@ function getMVid(musicid)
   });
   $.ajaxSetup({async: true});
   return(mvid);
+}
+
+function getAlbumTitle()
+{
+  var content = $('iframe#g_iframe.g-iframe').contents();
+  var album = content.find('div.cover');
+  var thumb = $(album[0]).find('img')[0].src;
+  var cover = $(album[0]).find('img')[0];
+  var cover_link = $(cover).attr('data-src');
+
+  var title = content.find('div.m-info div.tit h2').text();
+  var sub_title = content.find('div.m-info div.subtit').text();
+  return(title);
 }
 
 function ConvertToMarkdown()
@@ -243,18 +260,16 @@ function ConvertToMarkdown()
   }
 
   var md = '% ' + title.trim() +'\n\n';
-  md += '## ' + md_type + ': [' + title.trim() +'](' + document.location.href + ')\n\n';
+  md += '## ' + md_type + ': [' + title.trim() +'](' + document.location.href.replace('/#/', '/') + ')\n\n';
   if( sub_title.trim().length > 0 )
   {
-    md += '> ' + sub_title.trim() + '\n\n';
+    md += '> [' + sub_title.trim() + ']{.subtitle}\n\n';
   }
 
-  //md += '<div id="cover" class="cover">\n';
-  md += '![Front Cover](./'+ cover_link.replace(/^.*[\\\/]/, '') + ' "'+ cover_link +'")\n\n';
-  //md += '</div>\n\n';
+  md += '![Front Cover](./'+ cover_link.replace(/^.*[\\\/]/, '') + ' "'+ cover_link +'"){.cover}\n\n';
 
   md += '| 信息 | 属性 |\n';
-  md += '|-|-|\n';
+  md += '|:-|:-|\n';
   if(intrs.length>0) {
     md += '| 歌手 | ' + artist_link + ' |\n';
     md += '| 发行时间 | ' + pub_date + ' |\n';
@@ -268,9 +283,9 @@ function ConvertToMarkdown()
   if(album_desc.length>0) {
     md += '### '+ md_type + '介绍\n\n';
     album_desc.each(function(idx){
-      md += album_desc[idx].textContent.trim().replace(/^介绍：/ui, '') + '\n';
+      md += album_desc[idx].textContent.trim().replace(/^介绍：/ui, '') + '\n\n';
     });
-    md += '\n';    
+    //md += '\n'; 
   }
   
   md += '### 歌曲列表 [' + songlist_count[0].textContent + ']\n';
@@ -287,7 +302,16 @@ function ConvertToMarkdown()
     var songinfo = $(songs[idx]).find('td');
     var trk_no = songinfo[0].textContent.trim();
     //console.log(trk_no);
-    var trk_name = songinfo[1].textContent.trim();
+    var trk_name = $(songinfo[1]).find('a');
+    if(trk_name.length>0)
+      trk_name = trk_name[0].textContent.trim();
+    else
+      trk_name = songinfo[1].textContent.trim();
+    var trk_comment = $(songinfo[1]).find('span.s-fc8');
+    if(trk_comment.length>0)
+      trk_comment = ' ' + trk_comment[0].textContent.trim();
+    else 
+      trk_comment = '';
     var trk_mv = $(songinfo[1]).find('span.mv');
     //console.log(trk_mv);
     if(trk_mv.length>0) {
@@ -301,7 +325,7 @@ function ConvertToMarkdown()
     trk_name = trk_name.replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
     //console.log(trk_name);
     var trk_href = $(songinfo[1]).find('a')[0].href;
-    var trk_link = '[' + trk_name + '](' + trk_href + ')' + trk_mv;
+    var trk_link = '[' + trk_name.replace(/~/ugim, '\\~') + '](' + trk_href + ')' + trk_comment + trk_mv;
     //console.log(trk_href);
     var trk_time = $(songinfo[2]).find('span.u-dur')[0].textContent.trim();
     //console.log(trk_time);
@@ -339,7 +363,8 @@ function ConvertToMarkdown()
     else if(trk_count>=1000 && trk_count<10000) trk_num = 4;
     else trk_num = 5;
     var trk_id = PrefixInteger(trk_no, trk_num);
-    var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
+    //var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
+    var audio = '<audio id="trk' + trk_id + '" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
     if(songinfo.length>4) {
       md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' | ' + trk_album +' |\n';
     } else {
@@ -369,7 +394,8 @@ function showMarkdown(markdown)
     '<div style="float:right;position:absolute;top:16px;right:24px;">' +    
     '<button id="saveMarkdown" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-save"></span>保存</button>' +
     '</div>' +
-    '<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard" data-provide="markdown">' +
+    //'<textarea id="markdownValue" autofocus readonly cols="150" rows="30" wrap="hard" data-provide="markdown">' +
+    '<textarea id="markdownValue" autofocus cols="150" rows="30" wrap="hard" data-provide="markdown">' +
     md_fancy +
     '</textarea>' +
     '</div>', inline_options);
