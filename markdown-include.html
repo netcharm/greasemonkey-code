@@ -16,6 +16,11 @@
         background-color: #95B9C7;
     }
 
+    video, .video {
+        text-align: center;
+        max-width: 1000px;
+    }
+
     video::cue {
         background-color: transparent;
         /*background-image: linear-gradient(to bottom, dimgray, lightgray);*/
@@ -149,11 +154,6 @@
     .caption {
         text-align: center;
     }
-
-    .video {
-        text-align: center;
-        max-width: 1000px;
-    }
 </style>
 
 <script>
@@ -207,8 +207,42 @@
         $('audio').siblings('span.glyphicon.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play');
     }
 
-    $(window).ready(function() {
+    $(document).ready(function() {
         $('body').wrapInner('<div id="wrap" class="wrap"></div>');
+
+        // fixed video & video subtitles
+        var mv_hidden = true;
+        var video = $('video');
+        if(video.length>0) {
+            video.each(function(){
+                //console.log(this.readyState, this.currentSrc);
+                if(this.src==null || this.src=="" || this.currentSrc=="" ||
+                  document.location.href.startsWith(this.src) ||
+                  window.location.href.startsWith(this.src) ) {
+                    $(this).hide();
+                }
+                else mv_hidden = false;
+                if(mv_hidden) return(true);
+                for (var i = 0; i < this.textTracks.length; i++) {
+                  if(this.textTracks[i].cues == null)
+                      this.textTracks[i].mode = 'hidden';
+                }
+            });
+        }
+
+        video.on('error', function(){
+            console.log('ERROR!!!', this);
+            $(this).remove();
+            if($('video').length<=0) {
+                $('#TOC li, nav li').each(function(){
+                    var ll = decodeURI($(this).find('a')[0].hash);
+                    if(ll=='#'+$('.mv-section').attr('id')) this.remove();
+                    //if(this.innerText.trim()=="MV视频" && $('.mv-section').length<=0)
+                    //    this.remove();
+                });
+                $('.mv-section').remove();
+            }
+        });
 
         // decoration TOC to scrollspy
         var lis = $('#TOC li, nav li');

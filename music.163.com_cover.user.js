@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.18
+// @version     1.2.3.19
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -132,7 +132,7 @@ function saveToFile()
   var album_title = getAlbumTitle();
   var fileNameToSaveAs = 'intro.md';
   if( album_title != "" )
-    fileNameToSaveAs = 'intro_' + album_title +'.md';
+    fileNameToSaveAs = 'intro_' + album_title.replace(/[\/\\|"<>\^]/ug, "-") +'.md';
   
 
   var downloadLink = document.createElement("a");
@@ -373,6 +373,15 @@ function ConvertToMarkdown()
   });
 
   md += '\n';
+  md += '### MV视频{.mv-section}\n\n';
+  md += '<div class="video">\n';
+  md += '  <video id="mv02" class="video" controls src="" preload="metadata">\n';
+  md += '    <track label="English" kind="subtitles" srclang="en" />\n';
+  md += '    <track label="Japanese" kind="subtitles" srclang="jp" />\n';
+  md += '    <track label="Chinese" kind="subtitles" srclang="cn" src="" default />\n';
+  md += '  </video>\n';
+  md += '</div>\n\n';
+
   //console.log(md);
   //alert(md);
   return(md);
