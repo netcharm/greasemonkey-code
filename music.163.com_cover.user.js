@@ -6,7 +6,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.3.19
+// @version     1.2.4.21
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -23,6 +23,8 @@
 // @resource    fancyCSS http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css
 // @require     http://cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js
 // @resource    mdCSS http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css
+// @resource    faIcon http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css
+// @resource    mdIcon http://cdn.bootcss.com/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css
 // @include     http://music.163.com/#/album*
 // @include     http://music.163.com/#/song*
 // @include     http://music.163.com/#/playlist*
@@ -36,6 +38,18 @@ function addFancyBox()
   //fancy_css.setAttribute('href', 'http://cdn.netcharm.local/static/fancybox/source/jquery.fancybox.css'); 
   fancy_css.setAttribute('href', 'http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css');
   document.head.appendChild(fancy_css);
+
+  return(false);
+}
+
+function addFonts()
+{  
+  var font_css = document.createElement('link'); 
+  font_css.setAttribute('type', 'text/css');
+  font_css.setAttribute('rel', 'stylesheet');
+  font_css.setAttribute('media', 'screen');
+  font_css.setAttribute('href', 'http://cdn.bootcss.com/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
+  document.head.appendChild(font_css);
 
   return(false);
 }
@@ -364,7 +378,7 @@ function ConvertToMarkdown()
     else trk_num = 5;
     var trk_id = PrefixInteger(trk_no, trk_num);
     //var audio = '<audio id="trk' + trk_id + '" type="audio/mpeg" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
-    var audio = '<audio id="trk' + trk_id + '" src="./'+ trk_id + '_' + trk_name + '.mp3" />';
+    var audio = '<audio id="trk' + trk_id + '" src="./'+ trk_id + '_' + trk_name + '.mp3" title="'+ trk_name +'"/>';
     if(songinfo.length>4) {
       md += '| ' + trk_no + ' ' + audio + ' | ' + trk_link + ' | ' + trk_time + ' | ' + trk_artistall.trim() + ' | ' + trk_album +' |\n';
     } else {
@@ -375,7 +389,7 @@ function ConvertToMarkdown()
   md += '\n';
   md += '### MV视频{.mv-section}\n\n';
   md += '<div class="video">\n';
-  md += '  <video id="mv02" class="video" controls src="" preload="metadata">\n';
+  md += '  <video id="mv00" class="video" controls src="" preload="metadata">\n';
   md += '    <track label="English" kind="subtitles" srclang="en" />\n';
   md += '    <track label="Japanese" kind="subtitles" srclang="jp" />\n';
   md += '    <track label="Chinese" kind="subtitles" srclang="cn" src="" default />\n';
@@ -466,9 +480,40 @@ function addToMarkdown()
   //$('<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js"></script>').appendTo($('head'));  
 }
 
+function updateAlbumIcon()
+{
+  $('iframe#g_iframe.g-iframe').load(function(){
+    var content = $('iframe#g_iframe.g-iframe').contents();
+    
+    var radio = content.find('.u-icn-53');
+    radio.addClass('zmdi zmdi-radio');
+    radio.removeClass('u-icn u-icn-53');
+    
+    var headset = content.find('.icon-headset');
+    headset.attr('style', 'float:left;width:14px;height:11px;margin:9px 5px 9px 10px;');
+    headset.addClass('zmdi zmdi-headset');
+    headset.removeClass('icon-headset');
+    
+    var play = content.find('.icon-play');
+    play.attr('style', 'padding-right: 4px;');
+    play.addClass('zmdi zmdi-play-circle-outline zmdi-hc-2x');
+    play.removeClass('icon-play');
+    
+    play = content.find('.f-alpha.zmdi-play-circle-outline');
+    play.addClass('icon-play');
+    
+    content.find('.info .sign').addClass('zmdi zmdi-assignment-o mdc-text-light-blue');
+    content.find('.info .u-btn2.u-btn2-dis').addClass('zmdi zmdi-assignment-check mdc-text-green');
+    
+    console.log("Album icons updated!");
+  });
+}
+
 $(document).ready(function(){
   addFancyBox();
+  addFonts();
   $('iframe').on('load', main);
   hideBobo();
   addToMarkdown();
+  updateAlbumIcon();
 });

@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.18.167
+// @version     1.3.19.168
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -80,7 +80,8 @@ var ADS = [
   '/(((锁|解)(码|锁))|(干扰)|(拦截)|(破解)|(复制)|(开门)|(屏蔽)|(遥控)|(防盗)|(复制)).*?(器|锁|仪|气|(解码)|(遥控)|(干扰))/', '潜伏科技', '车强开', '车解码', '车干扰', '钥匙匹配', '强开工具',
   '/[0|O|零].{0,4}[5|⒌|５|⑤|㈤|⑸|伍].{0,4}[7|７|⒎|⑦|㈦|⑺|柒].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[8|８|⒏|⑧|㈧|⑻|捌].{0,4}[2|２|⒉|②|㈡|⑵|贰].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[1|１|⒈|①|㈠|⑴|壹].{0,4}[4|４|⒋|④|㈣|⑷|肆].{0,4}[9|９|⒐|⑨|㈨|⑼|玖].{0,4}[9|９|⒐|⑨|㈨|⑼|玖]/',
   '/[Q|W|V|微|威|维|薇][Q|X|信|新|我]{0,1}[:|：| ]{0,1}.{0,6}\\d{7,16}/', '/q{1,2}.{1,4}[:|：| ]{0,1}\\d{7,16}/', '/[W|V|微][X|信|我|:|：| ].{1,4}\\d{7,16}/',
-  '总代', '卖银行卡', '办证'
+  '总代', '卖银行卡', '办证', 
+  '包夜', '/(小姐)(.*?)((包夜)|(上门)|(全套))/', 
 ];
 
 var ADS_EXTRA = new Array();
@@ -1020,6 +1021,7 @@ function getSelectionLink()
         link = alinks[idx];
         if(link && selObj.containsNode(link, true))
         {
+          console.log(link);
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
           if(link.href.search("guokr.com/ask/newest/")>=0) continue;
           if(link.href.search("guokr.com/scientific/")>=0) continue;
@@ -1038,7 +1040,7 @@ function getSelectionLink()
           if($(link).parents('.gellipsis').length==1){ links.push(link); continue;}
           if($(link).parents('.news-main, .blog_list li h4').length==1){ links.push(link); continue;}
 
-          if($(link).parents('.ask-list-detials, .post-detail, .post-title, .cmt-content, .cmtContent').length==1){ links.push(link); continue;}
+          if($(link).parents('.ask-list-detials, .post-detail, .post-title, .cmt-content, .cmtContent, .discuss-title').length==1){ links.push(link); continue;}
           if($(link).parents('.titles-txt, .title-content, #articleContent').length==1){ links.push(link); continue;}
         }
       }
@@ -1066,45 +1068,79 @@ function batchReport()
     if(!isFinite(idx) || idx<0) break;
     var link = links[idx];
     var url = link.href;
+    console.log(url);
     //if(url.contains('/topic/')) continue;
     if(url.toString().match('/topic/')) continue;
-    reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
-    var request = $.ajax({
-      url: '/apis/censor/report.json',
-      context: link,
-      dataType: 'json',
-      data: reportParam,
-      method: 'POST',
-      type: 'POST',
-      success: function(data){
-        var link = $(this);
-        var url = link[0].href;
-        var text = link.text();
-        var info = '举报成功';
-        listbox.append(new Option('[' + info + '] ' + text, url));
-        listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
-        count = listbox[0].options.length;
-        btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
-        var taged = tagAD(link.href, link);
-        //console.log(taged, link.href);
-      },
-      error: function( data, textStatus ) {
-        var link = $(this);
-        var url = link[0].href;
-        var text = link.text();
-        var info = '举报失败';
-        listbox.append(new Option('[' + info + '] ' + text, url));
-        listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
-        count = listbox[0].options.length;
-        btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
-      },
-    });
+    if(url.toString().match('mooc.guokr.com/post/')) {
+      var cid = link.href.replace(link.baseURI, '');
+      cid = cid.substr(0, cid.length-1)
+      rp = {content_type:'post', content_id:cid, reason:'ad', access_token:reportParam.access_token};
+      console.log(rp);
+      var request = $.ajax({
+        url: '/apis/academy/spam_report.json',
+        context: link,
+        dataType: 'json',
+        data: rp,
+        method: 'POST',
+        type: 'POST',
+        success: function(data){
+          var link = $(this);
+          var url = link[0].href;
+          var text = link.text();
+          var info = '举报成功';
+          listbox.append(new Option('[' + info + '] ' + text, url));
+          listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
+          count = listbox[0].options.length;
+          btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
+          var taged = tagAD(link.href, link);
+          //console.log(taged, link.href);
+        },
+        error: function( data, textStatus ) {
+          var link = $(this);
+          var url = link[0].href;
+          var text = link.text();
+          var info = '举报失败';
+          listbox.append(new Option('[' + info + '] ' + text, url));
+          listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
+          count = listbox[0].options.length;
+          btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
+        },
+      });
+    }
+    else {
+      reportParam.url = url.replace('/group', '').replace('/ask', '').replace(/\?page.*?$/ig, '').replace(/(\/i\/\d+\/).*?$/ig, '$1');
+      var request = $.ajax({
+        url: '/apis/censor/report.json',
+        context: link,
+        dataType: 'json',
+        data: reportParam,
+        method: 'POST',
+        type: 'POST',
+        success: function(data){
+          var link = $(this);
+          var url = link[0].href;
+          var text = link.text();
+          var info = '举报成功';
+          listbox.append(new Option('[' + info + '] ' + text, url));
+          listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
+          count = listbox[0].options.length;
+          btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
+          var taged = tagAD(link.href, link);
+          //console.log(taged, link.href);
+        },
+        error: function( data, textStatus ) {
+          var link = $(this);
+          var url = link[0].href;
+          var text = link.text();
+          var info = '举报失败';
+          listbox.append(new Option('[' + info + '] ' + text, url));
+          listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
+          count = listbox[0].options.length;
+          btnReport.text(title.replace(/\(\d+\/\d+\)/ig, '('+count+'/'+total+')'))
+        },
+      });
+    }
     delay(25);
-    //listbox.stop().delay( 25 );
-    //var taged = tagAD(link.href, link);
-    //console.log(taged, link.href);
-    //delay(25);
-    //listbox.stop().delay( 25 );
   }
 }
 
@@ -1338,7 +1374,7 @@ function main(loaded)
   }
 
   var author = $('#articleAuthor');
-  var title = $('#articleTitle');
+  var title = $('#articleTitle, .discuss-title');
   var article = $('#articleContent');
   var comments = $('#comments .cmtContent, .answerTxt');
 

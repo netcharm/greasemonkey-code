@@ -2,7 +2,7 @@
 // @name           HotKey Next Page
 // @namespace      scottxp@126.com
 // @author         scottxp, netcharm
-// @version        1.1.1.13
+// @version        1.1.1.14
 // @description    按左右键翻页，可以自己针对网站定制xpath规则
 // @grant          None
 // @include        http://*
@@ -133,6 +133,7 @@ const lastStrs = [
 const GeneralXpaths = [
   ["//a[(text()='","')]"],
   ["//a[@id='", "_page']"],
+  ["//a[@id='", "']"],
   ["//input[@type='button' and @value='","']"],
   ["//a/span[(text()='","')]"],
   ["//a/font[(text()='","')]"],
