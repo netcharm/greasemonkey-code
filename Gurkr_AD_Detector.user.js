@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.19.168
+// @version     1.3.20.168
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -1021,7 +1021,6 @@ function getSelectionLink()
         link = alinks[idx];
         if(link && selObj.containsNode(link, true))
         {
-          console.log(link);
           if(link.href.search(/\/group\/\d+\/$/ig)>=0) continue;
           if(link.href.search("guokr.com/ask/newest/")>=0) continue;
           if(link.href.search("guokr.com/scientific/")>=0) continue;
@@ -1068,14 +1067,13 @@ function batchReport()
     if(!isFinite(idx) || idx<0) break;
     var link = links[idx];
     var url = link.href;
-    console.log(url);
     //if(url.contains('/topic/')) continue;
     if(url.toString().match('/topic/')) continue;
     if(url.toString().match('mooc.guokr.com/post/')) {
-      var cid = link.href.replace(link.baseURI, '');
+      var cid = link.href.replace(link.origin, '').replace('/post/', '');
+      //console.log(link, link.href, link.baseURI);
       cid = cid.substr(0, cid.length-1)
       rp = {content_type:'post', content_id:cid, reason:'ad', access_token:reportParam.access_token};
-      console.log(rp);
       var request = $.ajax({
         url: '/apis/academy/spam_report.json',
         context: link,
@@ -1100,6 +1098,8 @@ function batchReport()
           var url = link[0].href;
           var text = link.text();
           var info = '举报失败';
+          var rt = JSON.parse(data.responseText);
+          if(rt.error == '您已举报过该内容') info = '已举报过';
           listbox.append(new Option('[' + info + '] ' + text, url));
           listbox[0].options[listbox[0].options.length-1].setAttribute('title', url);
           count = listbox[0].options.length;
