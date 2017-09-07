@@ -3,31 +3,43 @@
 // @namespace   NetCharm
 // @description music.163.com cover image & other utils
 // @include     http://music.163.com/*
+// @include     https://music.163.com/*
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.4.21
+// @version     1.2.4.24
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
-// @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
-// @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
+// @require     https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js
+// @require     https://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 // @grant       none
 // ==/UserScript==
+// @require     http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js
+
 // @require     http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js
 // @resource    bs3CSS http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css
 // @resource    bs3tCSS http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css
+
 // @require     http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js
 // @resource    fancyCSS http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css
+
 // @require     http://cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js
 // @resource    mdCSS http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css
+
 // @resource    faIcon http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css
 // @resource    mdIcon http://cdn.bootcss.com/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css
+
+// @include     http://music.163.com/*
+// @include     https://music.163.com/*
 // @include     http://music.163.com/#/album*
+// @include     https://music.163.com/#/album*
 // @include     http://music.163.com/#/song*
+// @include     https://music.163.com/#/song*
 // @include     http://music.163.com/#/playlist*
+// @include     https://music.163.com/#/playlist*
 
 function addFancyBox()
 {  
@@ -35,8 +47,7 @@ function addFancyBox()
   fancy_css.setAttribute('type', 'text/css');
   fancy_css.setAttribute('rel', 'stylesheet');
   fancy_css.setAttribute('media', 'screen');
-  //fancy_css.setAttribute('href', 'http://cdn.netcharm.local/static/fancybox/source/jquery.fancybox.css'); 
-  fancy_css.setAttribute('href', 'http://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css');
+  fancy_css.setAttribute('href', '//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css');
   document.head.appendChild(fancy_css);
 
   return(false);
@@ -90,6 +101,10 @@ function popupThumb()
     padding : [5,5,5,5],
   };
   $.fancybox.open(cover_thumb, thumb_options);
+  //$.fancybox.open({
+  //  src  : cover_thumb,
+  //  opts : thumb_options
+  //}, thumb_options);
   return(false);
 }
 
@@ -108,7 +123,17 @@ function main()
     closeClick : true, 
     padding : [5,5,5,5],
   };
-  $(msk).on('click', function(){$.fancybox.open(cover_img.attr('data-src'), cover_options);});
+  $(msk).on('click', function(){
+    $.fancybox.open(cover_img.attr('data-src'), cover_options);
+    //$.fancybox.open({
+    //  src  : cover_img.attr('data-src'),
+    //  type : 'image',
+    //  opts : {
+    //    closeClick : true, 
+    //    padding : [5,5,5,5]
+    //  }
+    //}, cover_options);
+  });
   
   //
   // show large cover thumb when mouse over player cover thumb
@@ -429,6 +454,12 @@ function showMarkdown(markdown)
 
 function addToMarkdown()
 {
+  if(window.location.href.startsWith('http://music.163.com/#/user/home?id=') ||
+     window.location.href.startsWith('http://music.163.com/user/home?id=')) {
+
+    return(false);
+  }
+
   var contentOp = $('.nav')[0];
   $('<li><a id="btnMarkdown" hidefocus="true" href="javascript:;" title="Convert to Markdown"><em>Markdown</em></a></li>').appendTo(contentOp);
 
@@ -436,7 +467,7 @@ function addToMarkdown()
     var md = ConvertToMarkdown();
     showMarkdown(md);
   });
-
+  
   var saveButtonStyle = '#saveMarkdown {\n' + 
                         '  display: inline-block;\n' +
                         '  padding: 6px 12px;\n' +
@@ -515,5 +546,5 @@ $(document).ready(function(){
   $('iframe').on('load', main);
   hideBobo();
   addToMarkdown();
-  updateAlbumIcon();
+  //updateAlbumIcon();
 });

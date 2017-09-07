@@ -2,8 +2,9 @@
 
 rem cd /d %~dp0
 
-set PANDOC=D:\APP\BookLib\Pandoc\pandoc
-set PANDOCCITE=D:\APP\BookLib\Pandoc\pandoc-citeproc
+set PANDOC_PATH=D:\APP\BookLib\Pandoc
+set PANDOC=%PANDOC_PATH%\pandoc.exe
+set PANDOCCITE=%PANDOC_PATH%\pandoc-citeproc.exe
 set INCLUDE=%~dp0markdown-header.html
 set BODY_BEFORE=%~dp0markdown-bodybefore.html
 set BODY_AFTER=%~dp0markdown-bodyafter.html
