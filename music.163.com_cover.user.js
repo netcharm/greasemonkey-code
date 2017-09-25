@@ -7,7 +7,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.4.24
+// @version     1.2.4.25
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -235,6 +235,7 @@ function ConvertToMarkdown()
   console.log('Converting album/songlist to markdown...');
 
   var content = $('iframe#g_iframe.g-iframe').contents();
+  content.find('div.soil').remove();
   var album = content.find('div.cover');
   var thumb = $(album[0]).find('img')[0].src;
   var cover = $(album[0]).find('img')[0];
