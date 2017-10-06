@@ -1,0 +1,513 @@
+<!--[if gte IE 9]><!-->
+<!-- Loading jQuery -->
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+<!--[endif]-->
+
+<!-- Loading bootstrap -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!-- Loading jsBarcode plugin -->
+<!--<script src="http://cdn.bootcss.com/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>-->
+<script src="http://cdn.bootcss.com/jsbarcode/3.6.0/barcodes/JsBarcode.ean-upc.min.js"></script>
+
+<!-- Loading QRCode plugin -->
+<script src="http://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<!--<script src="http://cdn.bootcss.com/qrcode-generator/1.2.0/qrcode.min.js"></script>-->
+<!--<script src="http://cdn.bootcss.com/lrsjng.jquery-qrcode/0.14.0/jquery-qrcode.min.js"></script>-->
+
+<style type="text/css">
+    audio {
+        padding-top: 8px;
+        width: 99%;
+        background-color: #95B9C7;
+    }
+
+    video,
+    .video {
+        text-align: center;
+        max-width: 1000px;
+    }
+
+    video::cue {
+        background-color: transparent;
+        /*background-image: linear-gradient(to bottom, dimgray, lightgray);*/
+        color: papayawhip;
+    }
+
+    video::media-text-track-display {
+        background-color: transparent;
+        color: papayawhip;
+    }
+
+    video::cue(b) {
+        color: peachpuff;
+    }
+
+    table {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    table.albuminfo th:nth-of-type(1) {
+        text-align: left !important;
+        width: 6em !important;
+        min-width: 6em !important;
+        max-width: 6em !important;
+    }
+
+    table.songlist th:nth-of-type(1) {
+        text-align: right !important;
+        width: 4em !important;
+        min-width: 4em !important;
+        max-width: 4em !important;
+    }
+
+    table.songlist th:nth-of-type(2) {
+        text-align: left !important;
+        width: auto;
+        /*min-width: 50%;*/
+        max-width: 70%;
+    }
+
+    table.songlist th:nth-of-type(3) {
+        text-align: center !important;
+        width: 5em !important;
+        min-width: 5em !important;
+        max-width: 5em !important;
+    }
+
+    table.songlist th:nth-of-type(4) {
+        text-align: right !important;
+        width: 16em;
+        /*min-width: 10%;*/
+        max-width: 20%;
+    }
+
+    table.songlist th:nth-of-type(5) {
+        text-align: right !important;
+        width: 16em;
+        /*min-width: 10%;*/
+        max-width: 20%;
+    }
+
+    table.songlist td:nth-of-type(2) {
+        color: darkgray;
+    }
+
+    table.songlist td:nth-of-type(4) {
+        color: darkgray;
+        /*word-break:keep-all;*/
+    }
+
+    table.songlist td:nth-of-type(5) {
+        color: darkgray;
+        /*word-break:keep-all;*/
+    }
+
+    blockquote p {
+        color: darkgray;
+    }
+
+    figcaption {
+        display: none;
+    }
+
+    header,
+    #header {
+        display: none;
+    }
+
+    #progress,
+    .progress {
+        height: 4px !important;
+        line-height: 4px !important;
+        margin-bottom: 1px !important;
+    }
+
+    .bs-callout {
+        padding: 20px;
+        margin: 20px 0;
+        border: 0px solid #eee;
+        border-left-width: 5px;
+        border-radius: 0px;
+    }
+
+    .bs-callout-info {
+        border-left-color: #1b809e;
+    }
+
+    .glyphicon-th-large {
+        color: darkgray !important;
+    }
+
+    .glyphicon-play,
+    .glyphicon-pause {
+        color: lightslategray !important;
+    }
+
+    .glyphicon.invalid {
+        color: silver !important;
+    }
+
+    #wrap,
+    .wrap {
+        min-width: 800px;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #TOC {
+        float: right;
+        top: 32px;
+        right: 16px;
+        width: 220px;
+        position: fixed;
+    }
+
+    .figure,
+    .figure img,
+    figure,
+    figure img,
+    .cover,
+    #cover {
+        width: auto;
+        max-width: 1000px;
+    }
+
+    .caption {
+        text-align: center;
+    }
+
+    .right {
+        float: right;
+        text-align: right;
+    }
+</style>
+
+<script type="text/javascript">
+    var doc_title = document.getElementsByTagName("title")[0].textContent.trim();
+
+    jQuery.fn.scrollTo = function(elem) {
+        $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top);
+        return this;
+    };
+
+    var str2utf8 = window.TextEncoder ? function(str) {
+        var encoder = new TextEncoder('utf8');
+        var bytes = encoder.encode(str);
+        var result = '';
+        for (var i = 0; i < bytes.length; ++i) {
+            result += String.fromCharCode(bytes[i]);
+        }
+        return result;
+    } : function(str) {
+        return eval('\'' + encodeURI(str).replace(/%/gm, '\\x') + '\'');
+    }
+
+    function PrefixInteger(num, length) {
+        return (Array(length).join('0') + num).slice(-length);
+    }
+
+    function paused(node) {
+        var trk = $(node).siblings('audio')[0];
+        return (trk.paused);
+    }
+
+    // ◼ ❙❙ ❚❚ ► ⚫ ⏪ ⏩
+    // play audio
+    function play(node) {
+        stopall();
+
+        var trk = $(node).siblings('audio');
+        if (trk.length > 0) {
+            trk[0].play();
+
+            $(node).removeClass('glyphicon-play').addClass('glyphicon-pause');
+
+            var target = $($(node).parent().siblings()[0]).find('a');
+            if(target.length > 0) {
+                $('#progress').appendTo($(target[0]).parent());
+                $('#progress.progress-bar, .progress.progress-bar').attr('style', 'width: 0%;');
+                $('#progress').show();
+            }
+
+            //console.log(trk[0].parentNode.nextElementSibling);
+            var audio_title = trk[0].parentNode.nextElementSibling.children[0].textContent.trim();
+            document.title = '▶ ' + audio_title + ' - ' + doc_title;
+            //document.title = '► ' + audio_title + ' - ' + doc_title;
+
+            $(trk[0]).scrollTop($(trk[0]));
+        }
+    }
+
+    function playnext(node) {
+        var next = $(node).parents('tr').next().find('span.glyphicon-play');
+        if(next.length==0) {
+          next = $(node).parents('tr').next();
+          while(next.length>0) {
+              var trk = next.find('span.glyphicon-play');
+              if(trk.length>0) {
+                  next = trk;
+                  break;
+              }
+              else
+                  next = next.next();
+          }
+        }
+        if (next.hasClass('invalid')) {
+            stopall();
+            playnext(next);
+        } else if (next.length > 0)
+            play(next);
+        else
+            stopall();
+    }
+
+    function stop(node) {
+        var trk = $(node).siblings('audio');
+        if (trk.length > 0) {
+            trk[0].pause();
+            var audio_title = trk[0].parentNode.nextElementSibling.children[0].textContent.trim();
+            //document.title = '❚❚ ' + audio_title + ' - ' + doc_title;
+            document.title = doc_title;
+        }
+        $(node).removeClass('glyphicon-pause').addClass('glyphicon-play');
+    }
+
+    // stop all audio
+    function stopall() {
+        $('audio').each(function() {
+            this.pause();
+        });
+        $('#progress').hide();
+        $('audio').siblings('span.glyphicon.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        document.title = doc_title;
+    }
+
+    function mediaPlayerSetup() {
+        // fixed video & video subtitles
+        var mv_hidden = true;
+        var video = $('video');
+        if (video.length > 0) {
+            video.each(function() {
+                //console.log(this.readyState, this.currentSrc);
+                if (this.src == null || this.src == "" || this.currentSrc == "" ||
+                    document.location.href.startsWith(this.src) ||
+                    window.location.href.startsWith(this.src)) {
+                    $(this).hide();
+                } else mv_hidden = false;
+                if (mv_hidden) return (true);
+                for (var i = 0; i < this.textTracks.length; i++) {
+                    if (this.textTracks[i].cues == null)
+                        this.textTracks[i].mode = 'hidden';
+                }
+            });
+        }
+
+        // video error handle
+        video.on('error', function() {
+            console.log('ERROR!!!', this);
+            $(this).remove();
+            if ($('video').length <= 0) {
+                $('#TOC li, nav li').each(function() {
+                    var ll = decodeURI($(this).find('a')[0].hash);
+                    if (ll == '#' + $('.mv-section').attr('id')) this.remove();
+                    //if(this.innerText.trim()=="MV视频" && $('.mv-section').length<=0)
+                    //    this.remove();
+                });
+                $('.mv-section').remove();
+            }
+        });
+
+        // audio ended event handle
+        $('audio').on('ended', function() {
+            $('#progress').hide();
+            playnext($(this));
+        });
+
+        // audio error event handle
+        $('audio').on('error', function() {
+            console.log('ERROR!!!', this);
+            $('#progress').hide();
+            var btn = $(this).siblings('span.glyphicon');
+            $(btn).off();
+            $(btn).addClass("invalid");
+            stop($(btn));
+        });
+
+        // audio emptied event handle
+        $('audio').on('emptied', function() {
+            console.log('EMPTIED!!!', this);
+            $('#progress').hide();
+            var btn = $(this).siblings('span.glyphicon');
+            $(btn).off();
+            $(btn).addClass("invalid");
+            stop($(btn));
+        });
+
+        // audio play time update event handle
+        $('audio').on('timeupdate', function() {
+            var sec = this.currentTime;
+            var per = sec / this.duration * 100;
+            var title = PrefixInteger(parseInt(sec / 60), 2) + ':' +
+                PrefixInteger(parseInt(sec % 60), 2) + ' / ' +
+                PrefixInteger(parseInt(this.duration / 60), 2) + ':' +
+                PrefixInteger(parseInt(this.duration % 60), 2);
+            $('#progress .progress-bar').attr('style', 'width: ' + per + '%;');
+            $('#progress').attr('title', title);
+        });
+
+        // decoration icon to audio track
+        $('audio').each(function() {
+            if(!$(this).hasClass('native')) {
+                $('<span class="glyphicon glyphicon-play" aria-hidden="true" role="button"></span>').insertBefore($(this));
+            }
+        });
+
+        // click to play handle
+        $('span.glyphicon-play').click(function() {
+            if (paused(this)) {
+                play(this);
+            } else {
+                stop(this);
+            }
+        });
+
+        // click pause handle
+        $('span.glyphicon-pause').click(function() {
+            stopall();
+        });
+
+    }
+
+    function TOC() {
+        var lis = $('#TOC li, nav li');
+        lis.each(function() {
+            var al = $(this).find('a:nth-of-type(2)');
+            if (al.length > 0) {
+                li = $(this).find('a:nth-of-type(1)')[0];
+                li.text += al[0].text;
+                al.remove();
+            }
+        });
+        $('body').attr('data-spy', 'scroll');
+        $('body').attr('data-target', '#TOC, nav');
+        $('nav').addClass('nav');
+        $('#TOC ul, nav ul').addClass('nav nav-pills nav-stacked');
+    }
+
+    function barcode() {
+        var count = 0;
+        $('.barcode').each(function() {
+            var id = 'barcode' + count;
+            var bctext = this.textContent.trim();
+            //console.log(this, id, bctext);
+            $(this).attr('title', bctext);
+            $(this).text('');
+            $('<svg id="' + id + '" title="' + bctext + '"></svg>').appendTo(this);
+            $('#' + id).JsBarcode(bctext, {
+                format: 'EAN13'
+            });
+            $('#' + id).tooltip();
+            count++;
+        });
+    }
+
+    function qrcode() {
+        var count = 0;
+        $('.qrcode').each(function() {
+            var id = 'qrcode' + count;
+            var qrtext = this.textContent.trim();
+            console.log(this, id, qrtext);
+            $(this).attr('title', qrtext);
+            $(this).text('');
+            $(this).qrcode({
+                text: str2utf8(qrtext),
+                width: 96,
+                height: 96,
+                //typeNumber: -1, //计算模式
+                //correctLevel: QRErrorCorrectLevel.H, //纠错等级
+                //background: "#ffffff", //背景颜色
+                //foreground: "#000000" //前景颜色
+            });
+            $('#' + id).tooltip();
+            count++;
+        });
+    }
+
+    $(document).ready(function() {
+        $('body').wrapInner('<div id="wrap" class="wrap"></div>');
+
+        // setup audio / video player events handle
+        mediaPlayerSetup();
+
+        // decoration TOC to scrollspy
+        TOC();
+
+        // decoration table width & style
+        $('colgroup').remove();
+        $('table').addClass('table table-striped table-hover table-condensed');
+        $('table').removeAttr('style');
+        $('table').each(function(idx) {
+            var table = $(this);
+            var header = table.find('th');
+            if (header.length > 0) {
+                if (header[0].textContent.trim() == '信息') table.addClass('albuminfo');
+                else if (header[0].textContent.trim() == '声轨') table.addClass('songlist');
+            }
+        });
+
+        // decoration header
+        $('h2').each(function() {
+            $('<span class="glyphicon glyphicon-th-large" aria-hidden="true" style="padding-right:8px;"></span>').prependTo($(this));
+        });
+        $('h2').addClass('page-header');
+        $('h3').addClass('bs-callout bs-callout-info');
+
+        // add tooltip to cover image
+        $('.figure img, figure img').on('error', function() {
+            this.src = $(this).attr('data-original-src');
+        });
+        $('.figure img, figure img').each(function() {
+            $(this).attr('data-original-src', $(this).attr('title'));
+            $(this).attr('title', $(this).attr('alt'));
+            $(this).attr('data-placement', 'right');
+            $(this).siblings('p.caption, figcaption').hide();
+        });
+        $('.figure img, figure img').tooltip();
+
+        // decoration link to popover tooltip
+        $('.pop').each(function(){
+            $(this).attr('data-toggle', 'popover');
+            $(this).attr('data-container', 'body');
+        });
+        $('.pop').popover({
+            animation: false,
+            html: 'true',
+            trigger: 'hover',
+            content: '<div id="linkqrcode" style="width: 160px; height: 160px;"></div>',
+        }).on("mouseenter", function () {
+            $('#linkqrcode').qrcode({
+                text: this.href,
+                width: 160,
+                height: 160,
+            });
+        });
+
+        // create progress bar
+        $('<div id="progress" class="progress">\n' +
+            '  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div>\n' +
+            '</div>\n').appendTo('body');
+        $('#progress, .progress').hide();
+        $('#progress, .progress').tooltip();
+
+        // decoration barcode node
+        barcode();
+        qrcode();
+
+    });
+</script>

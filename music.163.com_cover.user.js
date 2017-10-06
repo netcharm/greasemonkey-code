@@ -7,7 +7,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.4.25
+// @version     1.2.4.27
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -59,7 +59,7 @@ function addFonts()
   font_css.setAttribute('type', 'text/css');
   font_css.setAttribute('rel', 'stylesheet');
   font_css.setAttribute('media', 'screen');
-  font_css.setAttribute('href', 'http://cdn.bootcss.com/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
+  font_css.setAttribute('href', '//cdn.bootcss.com/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
   document.head.appendChild(font_css);
 
   return(false);
@@ -227,10 +227,10 @@ function getAlbumTitle()
 
 function ConvertToMarkdown()
 {
-  if(window.location.href.startsWith('http://music.163.com/#/playlist?') ||
-     window.location.href.startsWith('http://music.163.com/#/album?')) {
-  }
+  var loc = window.location.href.replace(/http(s){0,1}:\/\/music\.163\.com\/(#\/){0,1}/igm, '').toLowerCase();
+  if(loc.startsWith('playlist?') || loc.startsWith('album?')) {}
   else return(false);
+  
 
   console.log('Converting album/songlist to markdown...');
 
@@ -292,15 +292,15 @@ function ConvertToMarkdown()
   //console.log(songs);
   
   var md_type = '';
-  if(window.location.href.startsWith('http://music.163.com/#/playlist?')) {
+  if(loc.startsWith('playlist?')) {
     md_type = '歌单';
   }
-  else if(window.location.href.startsWith('http://music.163.com/#/album?')) {
+  else if(loc.startsWith('album?')) {
     md_type = '专辑';  
   }
 
   var md = '% ' + title.trim() +'\n\n';
-  md += '## ' + md_type + ': [' + title.trim() +'](' + document.location.href.replace('/#/', '/') + ')\n\n';
+  md += '## ' + md_type + ':[' + title.trim() +'](' + document.location.href.replace('/#/', '/') + '){.pop}\n\n';
   if( sub_title.trim().length > 0 )
   {
     md += '> [' + sub_title.trim() + ']{.subtitle}\n\n';
@@ -311,11 +311,11 @@ function ConvertToMarkdown()
   md += '| 信息 | 属性 |\n';
   md += '|:-|:-|\n';
   if(intrs.length>0) {
-    md += '| 歌手 | ' + artist_link + ' |\n';
+    md += '| 歌手 | ' + artist_link + '{.pop} |\n';
     md += '| 发行时间 | ' + pub_date + ' |\n';
     md += '| 发行公司 | ' + pub_corp + ' |\n';
   } else {
-    md += '| 创建者 | ' + artist_link + ' |\n';
+    md += '| 创建者 | ' + artist_link + '{.pop} |\n';
     md += '| 创建时间 | ' + pub_date + ' |\n';
   }
   md += '\n';
@@ -330,7 +330,7 @@ function ConvertToMarkdown()
   
   md += '### 歌曲列表 [' + songlist_count[0].textContent + ']\n';
   md += '\n';
-  if(window.location.href.startsWith('http://music.163.com/#/playlist?')) {
+  if(loc.startsWith('playlist?')) {
     md += '| 声轨 | 歌曲名 | 时长 | 歌手 | 专辑 |\n';
     md += '| -: | :- | :-: | -: | -: |\n';
   } else {
@@ -357,7 +357,7 @@ function ConvertToMarkdown()
     if(trk_mv.length>0) {
       var resid = $(trk_mv[0]).attr('data-res-id');
       var mvid = getMVid(resid);
-      trk_mv = ' [[' + trk_mv[0].textContent.trim() + '](http://music.163.com/mv?id=' + mvid + ')]';
+      trk_mv = ' [[' + trk_mv[0].textContent.trim() + '](http://music.163.com/mv?id=' + mvid + '){.pop}]';
       //console.log(trk_mv);
       trk_name = $(songinfo[1]).find('a')[0].textContent.trim();
     }
@@ -365,7 +365,7 @@ function ConvertToMarkdown()
     trk_name = trk_name.replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
     //console.log(trk_name);
     var trk_href = $(songinfo[1]).find('a')[0].href;
-    var trk_link = '[' + trk_name.replace(/~/ugim, '\\~') + '](' + trk_href + ')' + trk_comment + trk_mv;
+    var trk_link = '[' + trk_name.replace(/~/ugim, '\\~') + '](' + trk_href + '){.pop}' + trk_comment + trk_mv;
     //console.log(trk_href);
     var trk_time = $(songinfo[2]).find('span.u-dur')[0].textContent.trim();
     //console.log(trk_time);
@@ -377,7 +377,7 @@ function ConvertToMarkdown()
       album = $(songinfo[4]).find('div.text > a')[0];
       album_name = album.textContent.trim().replace(/(( )|(&nbsp;)|(\xC2\xC0)|(　))/ugim, ' ');
       album_href = album.href;
-      trk_album = '[' + album_name + '](' + album_href + ')';
+      trk_album = '[' + album_name + '](' + album_href + '){.pop}';
     }
 
     var trk_artistlist = $(songinfo[3]).find('.text > span')[0].childNodes;
@@ -387,7 +387,7 @@ function ConvertToMarkdown()
       //console.log(id, art);
       if(art.nodeName=='A')
       {
-        trk_artistall += '[' + art.textContent.trim() + '](' + art.href + ') ';
+        trk_artistall += '[' + art.textContent.trim() + '](' + art.href + '){.pop} ';
       }
       //else if(art.nodeName=='SPAN')
       else
@@ -455,11 +455,12 @@ function showMarkdown(markdown)
 
 function addToMarkdown()
 {
-  if(window.location.href.startsWith('http://music.163.com/#/user/home?id=') ||
-     window.location.href.startsWith('http://music.163.com/user/home?id=')) {
-
+  var loc = window.location.href.replace(/http(s){0,1}:\/\/music\.163\.com\/(#\/){0,1}/igm, '');
+  if(loc.startsWith('user/home?id=')) 
+  {
     return(false);
   }
+
 
   var contentOp = $('.nav')[0];
   $('<li><a id="btnMarkdown" hidefocus="true" href="javascript:;" title="Convert to Markdown"><em>Markdown</em></a></li>').appendTo(contentOp);
@@ -542,10 +543,13 @@ function updateAlbumIcon()
 }
 
 $(document).ready(function(){
+  console.log('Add fancybox for display album face image');
   addFancyBox();
   addFonts();
   $('iframe').on('load', main);
+  console.log('Hide Bobo AD image');
   hideBobo();
+  console.log('Will add markdown button');
   addToMarkdown();
   //updateAlbumIcon();
 });
