@@ -14,9 +14,9 @@ set PANDOCOPTC=%PANDOCOPT% --filter %PANDOCCITE%
 goto START
 
 :START
-if /I "%1"=="/R" (goto RECURSION)
+if /I "%~1"=="/R" (goto RECURSION)
 
-if "%1"=="" (
+if "%~1"=="" (
   goto MULTI
 ) else (
   goto SINGLE
@@ -48,8 +48,8 @@ echo Total converted %count% files.
 goto END
 
 :SINGLE
-echo Converting %1 -^> %~n1.html ......
-%PANDOC% %PANDOCOPT% -o "%~n1.html" %1
+echo Converting %~1 -^> %~n1.html ......
+%PANDOC% %PANDOCOPT% -o "%~n1.html" "%~1"
 goto END
 
 :END

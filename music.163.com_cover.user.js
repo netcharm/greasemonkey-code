@@ -7,7 +7,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.4.27
+// @version     1.2.4.29
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -198,7 +198,8 @@ function saveToFile()
 
 function getMVid(musicid)
 {
-  url = 'http://music.163.com/api/song/detail/?id='+musicid+'&ids=['+musicid+']';
+  protocol = window.location.protocol;
+  url = protocol + '//music.163.com/api/song/detail/?id='+musicid+'&ids=['+musicid+']';
   //console.log(url);
   $.ajaxSetup({async: false});
   var mvid = 0;
@@ -231,8 +232,9 @@ function ConvertToMarkdown()
   if(loc.startsWith('playlist?') || loc.startsWith('album?')) {}
   else return(false);
   
-
   console.log('Converting album/songlist to markdown...');
+
+  var protocol = window.location.protocol;
 
   var content = $('iframe#g_iframe.g-iframe').contents();
   content.find('div.soil').remove();
@@ -357,7 +359,7 @@ function ConvertToMarkdown()
     if(trk_mv.length>0) {
       var resid = $(trk_mv[0]).attr('data-res-id');
       var mvid = getMVid(resid);
-      trk_mv = ' [[' + trk_mv[0].textContent.trim() + '](http://music.163.com/mv?id=' + mvid + '){.pop}]';
+      trk_mv = ' [[' + trk_mv[0].textContent.trim() + '](' + protocol + '//music.163.com/mv?id=' + mvid + '){.pop}]';
       //console.log(trk_mv);
       trk_name = $(songinfo[1]).find('a')[0].textContent.trim();
     }
@@ -461,7 +463,6 @@ function addToMarkdown()
     return(false);
   }
 
-
   var contentOp = $('.nav')[0];
   $('<li><a id="btnMarkdown" hidefocus="true" href="javascript:;" title="Convert to Markdown"><em>Markdown</em></a></li>').appendTo(contentOp);
 
@@ -507,10 +508,10 @@ function addToMarkdown()
   //md_css.setAttribute('type', 'text/css');
   //md_css.setAttribute('rel', 'stylesheet');
   //md_css.setAttribute('media', 'screen');
-  //md_css.setAttribute('href', 'http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css');
+  //md_css.setAttribute('href', '//cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css');
   //document.head.appendChild(md_css);
   //$('<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap-markdown/2.10.0/css/bootstrap-markdown.min.css">').appendTo($('head'));
-  //$('<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js"></script>').appendTo($('head'));  
+  //$('<script type="text/javascript" src="//cdn.bootcss.com/bootstrap-markdown/2.10.0/js/bootstrap-markdown.min.js"></script>').appendTo($('head'));  
 }
 
 function updateAlbumIcon()
