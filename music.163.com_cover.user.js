@@ -7,7 +7,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.4.30
+// @version     1.2.4.31
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -110,6 +110,11 @@ function popupThumb()
 
 function main()
 {
+  console.log('Hide Index Banner');
+  hideIndexBanner();
+  console.log('Hide Bobo AD image');
+  hideBobo();
+  
   var iframe = $('#g_iframe').contents();
 
   var cover = $(iframe).find('.u-cover');
@@ -553,11 +558,6 @@ $(document).ready(function(){
   addFancyBox();
   addFonts();
   $('iframe').on('load', main);
-  
-  console.log('Hide Index Banner');
-  hideIndexBanner()
-  console.log('Hide Bobo AD image');
-  hideBobo();
   
   console.log('Will add markdown button');
   addToMarkdown();
