@@ -7,7 +7,7 @@
 // @include     
 // @include    
 // @exclude     %exclude%
-// @version     1.2.4.29
+// @version     1.2.4.30
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
@@ -151,6 +151,11 @@ function hideBobo()
   items.each(function(index, value){
     console.log(index+' : '+value);
   });
+}
+
+function hideIndexBanner()
+{
+  $('#g_iframe').contents().find('#index-banner').remove();
 }
 
 function PrefixInteger(num, length) {
@@ -544,12 +549,16 @@ function updateAlbumIcon()
 }
 
 $(document).ready(function(){
-  console.log('Add fancybox for display album face image');
+  console.log('Load fancybox for display album face image');
   addFancyBox();
   addFonts();
   $('iframe').on('load', main);
+  
+  console.log('Hide Index Banner');
+  hideIndexBanner()
   console.log('Hide Bobo AD image');
   hideBobo();
+  
   console.log('Will add markdown button');
   addToMarkdown();
   //updateAlbumIcon();

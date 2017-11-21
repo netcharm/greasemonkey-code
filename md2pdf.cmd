@@ -2,11 +2,12 @@
 
 set PANDOC_PATH=D:\APP\BookLib\Pandoc
 set PANDOC=%PANDOC_PATH%\pandoc.exe
+set PANDOC_DATA=%PANDOC_PATH%\templates
 set PANDOCCITE=%PANDOC_PATH%\pandoc-citeproc.exe
 set PANDOCOPT_META=-M 'papersize:a4' -M 'lang:zh-CN'
 set PANDOCOPT_VAR=-V 'papersize:a4' -V 'lang:zh-CN'
 set MARKDOWN_FLAG=markdown+fenced_code_blocks+raw_html+pipe_tables+backtick_code_blocks+auto_identifiers+ascii_identifiers+shortcut_reference_links+markdown_in_html_blocks+yaml_metadata_block+inline_code_attributes+tex_math_dollars
-set PANDOCOPT="%~dp0pdf-template.yaml" --smart --dpi=600 -f %MARKDOWN_FLAG% -t latex -s --toc --latex-engine=xelatex --template="%~dp0pdf-template.tex"
+set PANDOCOPT="%~dp0pdf-template.yaml" --data-dir=%PANDOC_DATA% --smart --dpi=600 -f %MARKDOWN_FLAG% -t latex -s --toc --latex-engine=xelatex --template="%~dp0pdf-template.tex"
 rem %PANDOCOPT_META% %PANDOCOPT_META%
 set PANDOCOPTC=%PANDOCOPT% --filter %PANDOCCITE%
 goto START
