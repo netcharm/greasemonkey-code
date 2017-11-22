@@ -24,7 +24,7 @@
 // @include     http://*.guokr.com/i/*
 // @include     https://*.guokr.com/i/*
 // @include
-// @version     1.3.20.168
+// @version     1.3.20.169
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/Gurkr_AD_Detector.user.js
@@ -1144,7 +1144,7 @@ function batchReport()
   }
 }
 
-function addBatchReportDox()
+function addBatchReportBox()
 {
   var floating = true;
   var boxFloat = '<div id="batchReportBox" style="position:fixed;bottom:10px;width:290px;z-index:999;"><button id="batchReportAD" title="批量举报所选链接">批量举报所选链接(0/0)</button></div><div style="clear:both;"></div>';
@@ -1359,7 +1359,7 @@ function main(loaded)
   hideAD_ask(regexs);
   hideAD_search(regexs);
 
-  addBatchReportDox();
+  addBatchReportBox();
   addReportButtons();
 
   var hasAD = false;

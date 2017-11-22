@@ -2333,7 +2333,7 @@
 		"originalMd5": null,
 		"sections": [
 			{
-				"code": "*, body\n    {\n        font-size: 13px !important;\n        font-family: glyphicons-msite, guokr-scientific, ask-icons, sex_guokr, mooc, guokr-group-icons, Monaco,Consolas,\"Courier New\",\"Hiragino Sans GB\",\"WenQuanYi Micro Hei\",\"WenQuanYi Micro Hei Mono\",\"Hiragino Sans GB W3\", \"HiraginoSansGB-W3\",冬青黑体简体中文,\"冬青黑体简体中文 W3\",\"Microsoft YaHei\",微软雅黑,Tahoma,Arial,Helvetica,sans-serif !important;\n    }\n    \n    .ask-index-page .ask-index-best h3,\n    .ask-index-page .ask-index-list h3,\n    .ask-index-page .ask-index-new h3,\n    .ask-index-list .ask-index-new h3\n    {\n        padding: 4px 4px 4px 4px !important;\n    }\n    \n    div.ask-index-list.ask-hot\n    {\n        width: 510px !important;\n    }\n    \n    #groupRecom\n    {\n        display: none !important;\n    }\n \n    #sideSlide, .focus-content, .side-handpick\n    {\n        display: none !important;\n    }\n    \n    .mce-ico\n    {   \n        font-size: 22px !important;\n        font-family: guokricon,tinymce,Arial !important;\n        vertical-align: middle !important;\n    }\n       \n    .titles-txt\n    {\n        width: 780px !important;\n    }\n    \n    .post-time\n    {\n        width: 80px !important;\n    }\n    \n    #articleContent,\n    .post-detail,\n    .gbbcode-content p,\n    .gbbcode-content p > *,\n    .pt-txt span,\n    .document P,\n    .cmt-content\n    {\n        font-size: 16px !important;\n    }\n    \n    blockquote\n    {\n        font-size: 1em;\n    }\n    \n    span.cmt-auth    \n    {\n        font-size: 12px !important;\n    }\n    \n    .wrap\n    {\n        width: 1400px !important;\n    }\n    \n    .main-title-list li\n    {\n        width: 330px !important;\n    }\n    \n    .mce-dropzone-container\n    {\n        margin-left: 1050px !important;\n    }\n    \n    .guokr-layer-beforelogin\n    {\n        display: none !important;\n    }\n    \n    .question_answer li p\n    {\n        width: 980px !important;;\n    }\n    \n    .add_question .question_content\n    {\n        width: 1000px !important;\n    }\n    \n    .add_tag\n    {\n        width: 1010px !important;\n    }\n    .add_question .question_tag .add_tag input\n    {\n        width: 750px !important;\n    }\n    \n    .begin-letter\n    {\n        width: 960px !important;\n    }\n    \n    .message-content-page .main-message li \n    {\n        width: 900px !important;\n    }\n    \n/*  \n    .gside > div:nth-of-type(4),\n    .gside > div:nth-of-type(5),\n    .gside > div:nth-of-type(6), \n*/\n    #groups\n    {\n        display: none !important;\n    }\n    \n    .reply-info\n    {\n        font-size: 2.5em !important;\n    }\n    \n/*     #mceu_11\n    {\n        width: 100% !important;\n    }\n    \n    #mceu_12\n    {\n        width: 100% !important;\n    }\n     */\n    div[class=\"mce-tinymce mce-container mce-panel\"]\n    {\n        width: 100% !important;\n    }\n\n    .title-like \n    {\n        display: none !important;\n    }\n    \n    .title-content\n    {\n        width: 980px !important;\n    }\n\n    .title-content > h4\n    {\n        width: 500px !important;\n        float: left !important;\n    }\n\n    .title-imgs\n    {\n        display: none !important;\n    }\n/*     \n    .comment-link\n    {\n        min-width: 120px !important;\n        width: 120px !important;\n    }\n      */\n    a.cmt-author, b[class^=\"mooc-star\"]\n    {\n        font-size: 16px !important;\n    }\n\n    .title-info\n    {\n        float: right !important;\n    }\n    \n    a.gui-screen-top\n    {\n       margin-left: 375px !important;\n    }\n\n    div.gheader-new\n    {\n      position: fixed !important;\n      width: 100% !important;\n    }\n\n    div.sub-nav-wrap\n    {\n      padding-top: 48px !important;\n    }\n\n    div.sub-nav\n    {\n      margin-bottom: 0px !important;\n    }\n\n    div.gwrap, div.gwrap-m, div.gwrap-p, div.grow/*, div.wrap*/\n    {\n      width: 1400px !important;\n      padding-top: 48px !important;\n    }\n\n    div.gmain, div.main\n    {\n      width: 1050px !important;\n    }\n\n    div.gside\n    {\n        width: 245px !important;\n    }\n/*\n    div.gside .side-list-item .item-name,\n    div.gside .side-list-item .gicon-super\n    {\n        max-width: 55px !important;\n        overflow-x: hidden;\n    }\n\n    div.gside .side-list-item .gicon-super\n    {\n        margin-left: 0;\n        margin-right: 0;\n    }\n*/    \n    div.profile-block\n    {\n      width: 1050px !important;\n        max-width: 1050px !important;\n    }\n\n    div.recos-article\n    {\n      width: 700px !important;\n    }\n\n    div.contents-l, div.contents-r\n    {\n      width: 500px !important;\n    }\n\n    div.ask-topic-desp\n    {\n      width: 700px !important;\n    }\n\n    div.ask-hot\n    {\n      width: 500px !important;\n    }\n\n    div.answer-r\n    {\n      width: 1000px !important;\n    }\n\n    div.recommend-best-question, div.recommend-relation-question\n    {\n      width: 500px !important;\n    }\n\n    div.recommend-article-next\n    {\n      bottom: 200px !important;\n      left: 910px !important;\n    }\n\n    ul.recommend-articles-list > li\n    {\n      width: 230px !important;\n    }\n\n    .post-reply_num > a\n    {\n      font-size: 11px !important;\n    }\n\n    .ding, .tooltip-new\n    {\n      left: 910px !important;   \n    }\n\n    .tooltip-new\n    {\n        display: none !important;\n    }\n\n    div.gform-box, \n    div.gform-textarea\n    {\n      width: 1050px !important;\n        max-width: 1050px !important;\n    }\n\n    div.gform-box > #title\n    {\n      width: 1000px !important;\n      max-width: 1000px !important;\n    }\n\n    .tooltip\n    {\n      left: 840px !important;\n      top: -96px !important;\n    }\n\n    .sub-nav-menu\n    {\n      width: 6em !important;\n    }\n\n    .topic-name0\n    {\n      width: 4em !important;\n    }\n\n    div.user-taste\n    {\n      display:none !important;\n    }\n\n    #toolBar, .toolBar-wrap\n    {\n        left:1100px !important;\n        top:640px !important;\n    }\n\n    #toolBar > li > a, .toolBar-wrap > li > a\n    {\n      width: 52px !important;\n    }\n\n    form#resetEmail > div.gform-box,\n    form#changePassword > div.gform-box,\n    form#profile > div.gform-box\n    {\n      width: 500px !important;\n    }\n\n    form#profile.gform > div > input[type=\"text\"],\n    form#profile.gform > div > textarea,\n    form#profile.gform > div > #wordCount\n    {\n      width: 480px !important;\n    }\n\n    div#mce_11\n    {\n        width: 1050px !important;\n        max-width: 1050px !important;\n    }\n    \n    a#serviceTool\n    {\n        display: none !important;\n    }\n    \n    div.post-belong\n    {\n        min-height: 3em !important;\n    }\n    \n    /* Group Post List */\n    a.comment-link\n    {\n        display: inline-block;\n        width: 128px !important;\n        float: right !important;\n    }\n    \n    a.title-comment\n    {\n        display: inline-block;\n        width: 36px !important;\n        float: right !important;\n        text-align: right !important;\n    }\n\n    a.title-comment > span\n    {\n        float: left !important;\n    }",
+				"code": "*,\nbody {\n    font-size: 13px !important;\n    font-family: glyphicons-msite, guokr-scientific, ask-icons, sex_guokr, mooc, guokr-group-icons, Monaco, Consolas, \"Courier New\", \"Hiragino Sans GB\", \"WenQuanYi Micro Hei\", \"WenQuanYi Micro Hei Mono\", \"Hiragino Sans GB W3\", \"HiraginoSansGB-W3\", 冬青黑体简体中文, \"冬青黑体简体中文 W3\", \"Microsoft YaHei\", 微软雅黑, Tahoma, Arial, Helvetica, sans-serif !important;\n}\n.ask-index-page .ask-index-best h3,\n.ask-index-page .ask-index-list h3,\n.ask-index-page .ask-index-new h3,\n.ask-index-list .ask-index-new h3 {\n    padding: 4px 4px 4px 4px !important;\n}\ndiv.ask-index-list.ask-hot {\n    width: 510px !important;\n}\n#groupRecom {\n    display: none !important;\n}\n#sideSlide,\n.focus-content,\n.side-handpick {\n    display: none !important;\n}\n.mce-ico {\n    font-size: 22px !important;\n    font-family: guokricon, tinymce, Arial !important;\n    vertical-align: middle !important;\n}\n.titles-txt {\n    width: 780px !important;\n}\n.post-time {\n    width: 80px !important;\n}\n#articleContent,\n.post-detail,\n.gbbcode-content p,\n.gbbcode-content p > *,\n.pt-txt span,\n.document P,\n.cmt-content {\n    font-size: 16px !important;\n}\nblockquote {\n    font-size: 1em;\n}\nspan.cmt-auth {\n    font-size: 12px !important;\n}\n.wrap {\n    width: 1400px !important;\n}\n.main-title-list li {\n    width: 330px !important;\n}\n.mce-dropzone-container {\n    margin-left: 1050px !important;\n}\n.guokr-layer-beforelogin {\n    display: none !important;\n}\n.question_answer li p {\n    width: 980px !important;\n    ;\n}\n.add_question .question_content {\n    width: 1000px !important;\n}\n.add_tag {\n    width: 1010px !important;\n}\n.add_question .question_tag .add_tag input {\n    width: 750px !important;\n}\n.begin-letter {\n    width: 960px !important;\n}\n.message-content-page .main-message li {\n    width: 900px !important;\n}\n\n/*  \n    .gside > div:nth-of-type(4),\n    .gside > div:nth-of-type(5),\n    .gside > div:nth-of-type(6), \n*/\n#groups {\n    display: none !important;\n}\n.reply-info {\n    font-size: 2.5em !important;\n}\n\n/*     #mceu_11\n    {\n        width: 100% !important;\n    }\n    \n    #mceu_12\n    {\n        width: 100% !important;\n    }\n     */\ndiv[class=\"mce-tinymce mce-container mce-panel\"] {\n    width: 100% !important;\n}\n.title-like {\n    display: none !important;\n}\n.title-content {\n    width: 980px !important;\n}\n.title-content > h4 {\n    width: 500px !important;\n    float: left !important;\n}\n.title-imgs {\n    display: none !important;\n}\n\n/*     \n    .comment-link\n    {\n        min-width: 120px !important;\n        width: 120px !important;\n    }\n      */\na.cmt-author,\nb[class^=\"mooc-star\"] {\n    font-size: 16px !important;\n}\n.title-info {\n    float: right !important;\n}\na.gui-screen-top {\n    margin-left: 375px !important;\n}\ndiv.gheader-new {\n    position: fixed !important;\n    width: 100% !important;\n}\ndiv.sub-nav-wrap {\n    padding-top: 48px !important;\n}\ndiv.sub-nav {\n    margin-bottom: 0px !important;\n}\ndiv.gwrap,\ndiv.gwrap-m,\ndiv.gwrap-p,\ndiv.grow {\n    width: 1400px !important;\n    padding-top: 48px !important;\n}\ndiv.gmain {\n    width: 980px !important;\n}\ndiv.gside {\n    width: 245px !important;\n}\n.container {\n    width: 1320px !important;\n    max-width: 1400px !important;\n}\n.main {\n    width: 950px !important;\n    max-width: 1400px !important;\n}\n\n/*\n    div.gside .side-list-item .item-name,\n    div.gside .side-list-item .gicon-super\n    {\n        max-width: 55px !important;\n        overflow-x: hidden;\n    }\n\n    div.gside .side-list-item .gicon-super\n    {\n        margin-left: 0;\n        margin-right: 0;\n    }\n*/\ndiv.profile-block {\n    width: 1050px !important;\n    max-width: 1050px !important;\n}\ndiv.recos-article {\n    width: 700px !important;\n}\ndiv.contents-l,\ndiv.contents-r {\n    width: 500px !important;\n}\ndiv.ask-topic-desp {\n    width: 700px !important;\n}\ndiv.ask-hot {\n    width: 500px !important;\n}\ndiv.answer-r {\n    width: 1000px !important;\n}\ndiv.recommend-best-question,\ndiv.recommend-relation-question {\n    width: 500px !important;\n}\ndiv.recommend-article-next {\n    bottom: 200px !important;\n    left: 910px !important;\n}\nul.recommend-articles-list > li {\n    width: 230px !important;\n}\n.post-reply_num > a {\n    font-size: 11px !important;\n}\n.ding,\n.tooltip-new {\n    left: 910px !important;\n}\n.tooltip-new {\n    display: none !important;\n}\ndiv.gform-box,\ndiv.gform-textarea {\n    width: 1050px !important;\n    max-width: 1050px !important;\n}\ndiv.gform-box > #title {\n    width: 1000px !important;\n    max-width: 1000px !important;\n}\n.tooltip {\n    left: 840px !important;\n    top: -96px !important;\n}\n.sub-nav-menu {\n    width: 6em !important;\n}\n.topic-name0 {\n    width: 4em !important;\n}\ndiv.user-taste {\n    display: none !important;\n}\n#toolBar,\n.toolBar-wrap {\n    left: 1100px !important;\n    top: 640px !important;\n}\n#toolBar > li > a,\n.toolBar-wrap > li > a {\n    width: 52px !important;\n}\nform#resetEmail > div.gform-box,\nform#changePassword > div.gform-box,\nform#profile > div.gform-box {\n    width: 500px !important;\n}\nform#profile.gform > div > input[type=\"text\"],\nform#profile.gform > div > textarea,\nform#profile.gform > div > #wordCount {\n    width: 480px !important;\n}\ndiv#mce_11 {\n    width: 1050px !important;\n    max-width: 1050px !important;\n}\na#serviceTool {\n    display: none !important;\n}\ndiv.post-belong {\n    min-height: 3em !important;\n}\n\n/* Group Post List */\na.comment-link {\n    /* display: inline-block; */\n    width: 128px !important;\n    float: right !important;\n}\na.title-comment {\n    /* display: inline-block; */\n    width: 36px !important;\n    float: right !important;\n    text-align: right !important;\n}\na.title-comment > span {\n    float: left !important;\n}",
 				"urls": [],
 				"urlPrefixes": [],
 				"domains": [
@@ -2342,71 +2342,79 @@
 				"regexps": []
 			},
 			{
-				"code": "div.gside\n    {\n        width:160px !important;\n    }\n    \n    div.gmain\n    {\n        margin-top: -48px !important;\n        width: 1090px !important;\n        max-width: 1090px !important;\n    }",
+				"code": "div.gside {\n    width: 160px !important;\n}\ndiv.gmain {\n    margin-top: -48px !important;\n    width: 1090px !important;\n    max-width: 1090px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
 					"http://www.guokr.com/user/messages/",
-					"http://www.guokr.com/settings/"
+					"http://www.guokr.com/settings/",
+					"https://www.guokr.com/user/messages/",
+					"https://www.guokr.com/settings/"
 				],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": "/*ul.gh-nav > li.gh-sm-hidden,*/\n    ul.gh-nav > li:nth-child(6),\n    ul.gh-nav > li:nth-child(8)\n    {\n        display: none !important;\n    }\n    \n    .side-group .pt-txt span\n    {\n        font-size: 10px !important;\n    }",
+				"code": "/*ul.gh-nav > li.gh-sm-hidden,*/\nul.gh-nav > li:nth-child(6),\nul.gh-nav > li:nth-child(8) {\n    display: none !important;\n}\n.side-group .pt-txt span {\n    font-size: 10px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
-					"http://www.guokr.com/"
+					"http://www.guokr.com/",
+					"https://www.guokr.com/"
 				],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": ".focus-content\n    {\n        display: block !important;\n    }",
+				"code": ".focus-content {\n    display: block !important;\n}",
 				"urls": [
-					"http://www.guokr.com/"
+					"http://www.guokr.com/",
+					"https://www.guokr.com/"
 				],
 				"urlPrefixes": [],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": ".answer-main-wrap\n    {\n        width: 94% !important;\n    }",
+				"code": ".answer-main-wrap {\n    width: 94% !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
-					"http://www.guokr.com/i/"
+					"http://www.guokr.com/i/",
+					"https://www.guokr.com/i/"
 				],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": "#batchReportBox\n    {\n       left: 2px !important;\n       width: 250px !important;\n    }\n    \n    .toolbar-wrap\n    {\n        margin-left: 550px !important;\n    }",
+				"code": "#batchReportBox {\n    /*left: 2px !important;*/\n    width: 250px !important;\n    margin-right:100px !important;\n}\n.toolbar-wrap {\n    margin-left: 550px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
-					"http://www.guokr.com/article/"
+					"http://www.guokr.com/article/",
+					"https://www.guokr.com/article/"
 				],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": ".main-btn-tab\n    {\n        top: auto !important;\n    }",
+				"code": ".main-btn-tab {\n    top: auto !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
-					"http://www.guokr.com/post/search/"
+					"http://www.guokr.com/post/search/",
+					"https://www.guokr.com/post/search/"
 				],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": "#batchReportBox\n    {\n       left: 53px !important;\n       width: 240px !important;\n    }",
+				"code": "#batchReportBox {\n    left: 53px !important;\n    width: 240px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
-					"http://www.guokr.com/i/"
+					"http://www.guokr.com/i/",
+					"https://www.guokr.com/i/"
 				],
 				"domains": [],
 				"regexps": []
 			},
 			{
-				"code": "div.main\n    {\n      width:400px !important;\n    }",
+				"code": "div.main {\n    width: 400px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [],
 				"domains": [
@@ -2415,7 +2423,7 @@
 				"regexps": []
 			},
 			{
-				"code": ".container,\n    .main\n    {\n        width: 1400px !important;\n        max-width: 1400px !important;\n    }\n    \n    .side\n    {\n        width: 320px !important;\n    }\n    \n    .related-list\n    {\n        width: 310px !important;\n    }\n    \n    #dimensionCode\n    {\n        width: 310px !important;\n    }",
+				"code": ".container {\n    width: 1400px !important;\n    max-width: 1400px !important;\n}\n.main {\n    width: 950px !important;\n    max-width: 1400px !important;\n}\n.side {\n    width: 320px !important;\n}\n.related-list {\n    width: 310px !important;\n}\n#dimensionCode {\n    width: 310px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [],
 				"domains": [
@@ -2424,7 +2432,7 @@
 				"regexps": []
 			},
 			{
-				"code": "div.wrap\n    {\n       width: 1400px !important;\n       max-width: 1400px !important;\n    }",
+				"code": "div.wrap {\n    width: 1400px !important;\n    max-width: 1400px !important;\n}",
 				"urls": [],
 				"urlPrefixes": [],
 				"domains": [
@@ -2433,10 +2441,11 @@
 				"regexps": []
 			},
 			{
-				"code": "span.gselected\n    {\n        width: 60px !important;\n    }\n    \n    iframe#frame\n    {\n       border: 0 !important;\n    }",
+				"code": "span.gselected {\n    width: 60px !important;\n}\niframe#frame {\n    border: 0 !important;\n}",
 				"urls": [],
 				"urlPrefixes": [
-					"http://www.guokr.com/link/"
+					"http://www.guokr.com/link/",
+					"https://www.guokr.com/link/"
 				],
 				"domains": [],
 				"regexps": []
