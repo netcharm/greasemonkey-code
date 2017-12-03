@@ -1,22 +1,22 @@
 <!--[if gte IE 9]><!-->
 <!-- Loading jQuery -->
-<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <!--[endif]-->
 
 <!-- Loading bootstrap -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <!-- Loading jsBarcode plugin -->
-<!--<script src="http://cdn.bootcss.com/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>-->
-<script src="http://cdn.bootcss.com/jsbarcode/3.6.0/barcodes/JsBarcode.ean-upc.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>-->
+<script src="https://cdn.bootcss.com/jsbarcode/3.6.0/barcodes/JsBarcode.ean-upc.min.js"></script>
 
 <!-- Loading QRCode plugin -->
-<script src="http://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
-<!--<script src="http://cdn.bootcss.com/qrcode-generator/1.2.0/qrcode.min.js"></script>-->
-<!--<script src="http://cdn.bootcss.com/lrsjng.jquery-qrcode/0.14.0/jquery-qrcode.min.js"></script>-->
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/qrcode-generator/1.2.0/qrcode.min.js"></script>-->
+<!--<script src="https://cdn.bootcss.com/lrsjng.jquery-qrcode/0.14.0/jquery-qrcode.min.js"></script>-->
 
 <style type="text/css">
     audio {
@@ -511,3 +511,30 @@
 
     });
 </script>
+
+<!-- MathJax Config Begin -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        extensions: ["asciimath2jax.js", "tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'a'],
+            processClass: 'math',
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+            displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+            processEscapes: false
+        },
+        asciimath2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'a'],
+            processClass: 'backtick',
+            delimiters: [['$','$']]
+        },
+        "HTML-CSS": {
+            linebreaks: {automatic: true}
+        },
+        SVG: {
+            linebreaks: {automatic: true}
+        }
+    });
+</script>
+<script type='text/javascript' src='https://cdn.bootcss.com/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_HTMLorMML-full'></script>
