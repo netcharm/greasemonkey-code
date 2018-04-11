@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.1.15
+// @version        5.3.1.18
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -70,6 +70,7 @@
 // @include        http://www.quledu.com/wcxs-*-*/
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
+// @include        https://www.ranwena.com/files/article/*/*/*.html
 // @include        http://www.64mi.com/*/*/*/*.html
 // @include        http://www.bxs.cc/*/*.html*
 // @include        http://www.laishuwu.com/html/*/*/*.html
@@ -182,7 +183,6 @@
 // @include        http://www.23wx.com/html/*/*/*.html
 // @include        http://www.xs222.com/html/*/*/*.html
 // @include        http://www.bixiage.com/*/*/*/*.html
-// @include        http://www.ranwenxiaoshuo.com/files/article/html/*/*/*.html
 // @include        http://www.ranwenxiaoshuo.com/*/*-*-*.html
 // @include        http://www.bjxiaoshuo.com/bjxs-*-*/
 // @include        http://www.59shuku.com/xiaoshuo/*/*.htm
@@ -307,7 +307,8 @@
 // @include        http://www.lwxiaoshuo.com/*
 // @include        http://www.ltsw888.com/book_*
 // @include        http://www.biqugezw.com/*
-// @include        http://www.qu.la/book/*
+// @include        http://www.qu.la/book/*/*.html
+// @include        https://www.qu.la/book/*/*.html
 // @include        http://www.hbooker.com/chapter/book_chapter_detail/*
 // @include        http://book.qq.com/read.html*
 // @include        http://www.23zw.me/olread/*
@@ -336,6 +337,20 @@
 // @include        https://www.aszw.org/book/*/*/*.html
 // @include        https://www.sqsxs.com/book/*/*/*.html
 // @include        https://www.biqugezw.com/*/*.html
+// @include        http://www.b5200.org/*/*.html
+// @include        https://www.b5200.org/*/*.html
+// @include        http://www.b5200.net/*/*.html
+// @include        https://www.b5200.net/*/*.html
+// @include        http://www.ranwenxiaoshuo.com/files/article/html/*/*/*.html
+// @include        http://www.bqg5200.com/xiaoshuo/*/*/*.html
+// @include        https://www.bqg5200.com/xiaoshuo/*/*/*.html
+// @include        http://www.wanxiaoshuo.com/*/*.html
+// @include        https://www.wanxiaoshuo.com/*/*.html
+// @include        http://www.shushu8.com/*/*
+// @include        https://www.shushu8.com/*/*
+// @include        http://www.lewenxiaoshuo.com/books/*/*.html
+// @include        https://www.lewenxiaoshuo.com/books/*/*.html
+
 
 // Others
 // @exclude        */List.htm
@@ -1916,11 +1931,13 @@ Rule.replace = {
     "&gt;": "",
     "\\*\\*": "",
     "(&nbsp;)+": "",
-    "(&amp;)+": "&",
+    "((&amp;)|(amp;))+": "&",
     "\\*(.+?)\\*": "$1",
     "<\/>": "",
     "<a.*?>.*?<\/a>": "",
     "&lt;r \/&gt;&lt;r \/&gt;": "",
+    "‘(.*?)’":"$1",
+    
     
     // 需要？
     ",": "，",
@@ -1941,6 +1958,7 @@ Rule.replace = {
     // "？(,|，)": "？",
     //"”(,|，|。)": "”",
     "@{3,}": "",
+    "\\\\r":"",
 
     // === 一些特殊的替换 ===
     "\\[+CP.*(http://file.*\\.jpg)\\]+": "<img src='$1'>",
@@ -1964,9 +1982,10 @@ Rule.replace = {
     "水印广告测试": "",
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
-    "~无~错~小~说": "",
+    "~无~错~小~说": "",    
+    "<center.*?纯文字在线阅读.*?/center>":"",
 
-    "\\(一秒记住小说界\\）|\\*一秒记住\\*":"",
+    "\\(一秒记住小说界\\)|\\*一秒记住\\*":"",
     "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com|www\\.23uS\\.com": "",
     "txt53712/": "",
     "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
@@ -1985,6 +2004,7 @@ Rule.replace = {
     "大公无si":"大公无私",
     "fu道人家":"妇道人家", "放sōng'xià来":"放松下来",
     "奸yin掳掠":"奸淫掳掠",
+    "jian夫yin妇":"奸夫淫妇",
     "空dangdang":"空荡荡",
     "突发qing况": "突发情况",
     "yin奉阳违":"阴奉阳违", "一yin一阳":"一阴一阳",
@@ -2002,10 +2022,17 @@ Rule.replace = {
     "屁pì":"屁", "日rì":"日", "禁jìn":"禁", "贱jiànjiàn":"贱",
     "贱jiàn":"贱", "谷欠":"欲", "‘毛’":"毛", "‘露’":"露",
     "‘浪’":"浪", "舔tiǎn":"舔", "舔tiǎntiǎn":"舔", "娇jiāo":"娇",
+    //"为师":"我", 
+    "乳rǔ":"乳", "du":"毒", "吸du":"吸毒",
+     "‘性’":"性", "咏‘春’":"咏春", "duang":"Duang", "qun":"群",
+     "han":"韩", "shi润":"湿润", "春chūn":"春", "":"",
+     "‘精’":"精", "衣果":"裸", "":"", "":"",
+     "":"", "":"", "":"", "":"",
+      
     
     // === 双字替换 ===
     "女xìng":"女性", "fú音":"福音", "chuang":"床", "qiaoling":"巧玲",
-    "bai皙":"白皙", "发qing":"发情",
+    "bai皙":"白皙", "发qing":"发情", "奔溃":"崩溃", "登6":"登录",
     "xi[aǎ]o ji[eě]":"小姐", "fú wù":"服务", "jiān zhí":"兼职", "bèi'pò":"被迫",
     "奸 zhí":"兼职", "性 yùn":"幸运", "官 fāng":"官方", "wěi zhuāng":"伪装", 
     "dà má":"大麻", "tí gòng":"提供", "tóu zhù":"投注", "miàn前":"面前", 
@@ -2121,7 +2148,21 @@ Rule.replace = {
     "cuī lèi":"催泪", "sāo luàn":"骚乱", "sè yòu":"色诱", "dài bàn":"代办",
     "kǎn rén":"砍人", "péi shuì":"陪睡", "jun1 dāo":"军刀", "jun1 zhǎng":"军长",
     "bào luàn":"暴乱", "míng dāo":"名刀", "shú nǚ":"熟女", "tòu shì":"透视",
-    "mī mī":"咪咪", "liù jí":"六级", "dài kāi":"代开", "":"", 
+    "mī mī":"咪咪", "liù jí":"六级", "dài kāi":"代开", "kè zhāng":"刻章", 
+    "chuán shì":"传世", "chūn mèng":"春梦", "sè jiè":"色界", "liǎng xìng":"两性",
+    "ròu jī":"肉鸡", "dāo jù":"刀具", "zhèng shū":"证书", "mí qíng":"迷情",
+    "jìn gōng":"禁宫", "sè láng":"色狼", "tōu pāi":"偷拍", "miàn pí":"面皮",
+    "mí xiāng":"迷香", "fēi wén":"绯闻", "péi liáo":"陪聊", "hé píng":"和平",
+    "ròu gǎn":"肉感", "zhuī wěi":"追尾", "kāi suǒ":"开锁", "tōu rén":"偷人",
+    "luàn jiāo":"乱交", "huáng bīng":"黄冰", "jiā bǎo":"家宝", "mí yào":"迷药",
+    "qì qiāng":"气枪", "zhí xiāo":"直销", "mài shèn":"卖肾", "sì shé":"四折",
+    "diǎndiǎn":"点点", "sǎomiáo":"扫描", "wǔqì":"武器", "diànhuà":"电话",
+    "奶孑":"奶子", "hòumén":"后门", "huódòng":"活动", "lòudòng":"漏洞",
+    "xiāoshòu":"销售", "shì界":"世界", "jiānzhí":"兼职", "gòngyīng":"供应",
+    "luoli":"萝莉", "shǒujī":"手机", "qiáng奸":"强奸", "CD":"成都",
+    "rb":"日本", "":"", "":"", "":"",
+    "":"", "":"", "":"", "":"",
+    "":"", "":"", "":"", "":"",
     "":"", "":"", "":"", "":"",
     "":"", "":"", "":"", "":"",
     "":"", "":"", "":"", "":"",
@@ -2188,10 +2229,15 @@ Rule.replace = {
 Rule.replaceAll = [
     // 长文字替换
     '检测出盗版！',
+    "(&amp;nsp;)+",
+    "(&amp;bp;)+",
     "(&nbsp;)+",
+    "(&nsp;)+",
+    "(&bp;)+",
     "center\/center",
     '【.*?更新快 无弹窗.*?】', '【】',
     '纯文字在线阅读本站域名手机同步阅读请访问',
+    '手机用户请.*',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
     '-优－优－小－说－更－新－最－快-www.ＵＵＸＳ.ＣＣ-',
     '一秒记住【.*?】.*?。',
@@ -2200,20 +2246,30 @@ Rule.replaceAll = [
     '\\|每两个看言情的人当中，就有一个注册过可°乐°小°说°网的账号。',
     '最新章节全文阅读看书神器\\.yankuai\\.',
     '（800小说网 www.800Book.net 提供Txt免费下载）最新章节全文阅读-..-',
+    '天才壹秒.*閱讀.*',
+    '天才壹秒.*阅读.*',
     '\\[看本书最新章节请到求书 .\\]',
     '\\[800\\]\\[站页面清爽，广告少，',
     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快\\|www.uuxs.cc\\|',
     '看本书最新章节请到800小说网（www.800book.net）',
+    '请大家搜索.*?的小说',
     '（800小说网 www.800Book.net 提供Txt免费下载）',
     '热门小说最新章节全文阅读.。 更新好快。',
     '-优－优－小－说－更－新－最－快x',
     '亲，眼&快，大量小说免费看。',
     '手机看小说哪家强手机阅',
+    '手机无.*流量.*',
     '思ˊ路ˋ客，更新最快的！',
     '（本章未完，请翻页）',
     '最新章节全文阅读（..首发）',
     '最新章节全文阅读【首发】',
     '最新章节全文阅读',
+    '请记住.*网址.*',
+    '更新快无广告.*',
+    '手机最省流量，无广告的站点.*',
+    '天才一秒.*',
+    '.*这是.*分割线.*',
+    '小说网.*',
     '来可乐网看小说',
     'txt电子书下载/',
     'txt全集下载',
@@ -2238,12 +2294,17 @@ Rule.replaceAll = [
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
     '\\[限时抢购\\].*',
     '支持网站发展.逛淘宝买东西就从这里进.*',
+    '友请提示.*',
     'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！',
+    '.*?国.*?女主播.*?在线看$',
+    '.*?在线看$',
     '(?:ps[:：])?看《.*?》背后的独家故事.*?告诉我吧！',
     '（?天上掉馅饼的好活动.*?微信公众号！）?',
     '（微信添加.*qdread微信公众号！）',
     'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
     '一秒记住.*?免费阅读！',
+    '天才本站.*',
+    '\(纯文字在线在线阅读.*?\)',
 
     // 短文字替换
     '\\[txt全集下载\\]',
