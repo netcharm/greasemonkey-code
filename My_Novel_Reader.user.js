@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.1.18
+// @version        5.3.1.23
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -111,6 +111,9 @@
 // @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.qiuwu.net/html/*/*/*.html
+// @include        https://www.qiuwu.net/html/*/*/*.html
+// @include        http://www.qiuwu.net/html/*/*/*.shtml
+// @include        https://www.qiuwu.net/html/*/*/*.shtml
 // @include        http://www.fengwu.org/html/*/*/*.html
 // @include        http://www.xs84.com/*_*/*
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
@@ -341,6 +344,8 @@
 // @include        https://www.b5200.org/*/*.html
 // @include        http://www.b5200.net/*/*.html
 // @include        https://www.b5200.net/*/*.html
+// @include        http://www.biqugetw.com/*/*.html
+// @include        https://www.biqugetw.com/*/*.html
 // @include        http://www.ranwenxiaoshuo.com/files/article/html/*/*/*.html
 // @include        http://www.bqg5200.com/xiaoshuo/*/*/*.html
 // @include        https://www.bqg5200.com/xiaoshuo/*/*/*.html
@@ -350,6 +355,19 @@
 // @include        https://www.shushu8.com/*/*
 // @include        http://www.lewenxiaoshuo.com/books/*/*.html
 // @include        https://www.lewenxiaoshuo.com/books/*/*.html
+// @include        http://www.lewendu8.com/books/*/*.html
+// @include        https://www.lewendu8.com/books/*/*.html
+// @include        http://www.liudu9.com/*/*/*.html
+// @include        https://www.liudu9.com/*/*/*.html
+// @include        http://www.yuyouge.com/book/*/*.html
+// @include        https://www.yuyouge.com/book/*/*.html
+// @include        http://www.zhuishubang.com/*/*.html
+// @include        https://www.zhuishubang.com/*/*.html
+// @include        http://www.shuquge.com/txt/*/*.html
+// @include        https://www.shuquge.com/txt/*/*.html
+
+
+
 
 
 // Others
@@ -423,7 +441,8 @@ var Rule = {
         "#text_area", "#chapter_content", "#chapterContent", "#partbody",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".Book_Text", ".yd_text2", "#laiba", "#DivContentBG",
-        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content", "#Content", ".Content"],
+        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content", "#Content", ".Content",
+        ".articleCon"],
 
     // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
@@ -1931,7 +1950,8 @@ Rule.replace = {
     "&gt;": "",
     "\\*\\*": "",
     "(&nbsp;)+": "",
-    "((&amp;)|(amp;))+": "&",
+    "≈bp;":"",
+    "((&amp;)|(amp;)|(amp))+": "&",
     "\\*(.+?)\\*": "$1",
     "<\/>": "",
     "<a.*?>.*?<\/a>": "",
@@ -1962,7 +1982,8 @@ Rule.replace = {
 
     // === 一些特殊的替换 ===
     "\\[+CP.*(http://file.*\\.jpg)\\]+": "<img src='$1'>",
-    "『(.)』": "$1",  // "『色』": "色",
+    "『(.)』": "$1",  // "『色』": "色", 
+    "（河蟹）":"",
 
     // === 去广告 ===
     "\\[搜索最新更新尽在[a-z\\.]+\\]": "",
@@ -1982,7 +2003,8 @@ Rule.replace = {
     "水印广告测试": "",
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
-    "~无~错~小~说": "",    
+    "~无~错~小~说": "",
+    "www.kuangsha.net":"",
     "<center.*?纯文字在线阅读.*?/center>":"",
 
     "\\(一秒记住小说界\\)|\\*一秒记住\\*":"",
@@ -2022,13 +2044,7 @@ Rule.replace = {
     "屁pì":"屁", "日rì":"日", "禁jìn":"禁", "贱jiànjiàn":"贱",
     "贱jiàn":"贱", "谷欠":"欲", "‘毛’":"毛", "‘露’":"露",
     "‘浪’":"浪", "舔tiǎn":"舔", "舔tiǎntiǎn":"舔", "娇jiāo":"娇",
-    //"为师":"我", 
-    "乳rǔ":"乳", "du":"毒", "吸du":"吸毒",
-     "‘性’":"性", "咏‘春’":"咏春", "duang":"Duang", "qun":"群",
-     "han":"韩", "shi润":"湿润", "春chūn":"春", "":"",
-     "‘精’":"精", "衣果":"裸", "":"", "":"",
-     "":"", "":"", "":"", "":"",
-      
+    //"为师":"我",      
     
     // === 双字替换 ===
     "女xìng":"女性", "fú音":"福音", "chuang":"床", "qiaoling":"巧玲",
@@ -2159,24 +2175,45 @@ Rule.replace = {
     "diǎndiǎn":"点点", "sǎomiáo":"扫描", "wǔqì":"武器", "diànhuà":"电话",
     "奶孑":"奶子", "hòumén":"后门", "huódòng":"活动", "lòudòng":"漏洞",
     "xiāoshòu":"销售", "shì界":"世界", "jiānzhí":"兼职", "gòngyīng":"供应",
-    "luoli":"萝莉", "shǒujī":"手机", "qiáng奸":"强奸", "CD":"成都",
-    "rb":"日本", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
-    "":"", "":"", "":"", "":"",
+    "luoli":"萝莉", "shǒujī":"手机", "qiáng奸":"强奸", "mèimèi":"妹妹",
+    "＂ｋｏｕｊｉａｏ＂":"口交", "měinǚ":"美女", "junren":"军人", "daomai":"倒卖",    
+    "师zhang":"师长", "xìngyùn":"幸运", "junzhang":"军长", "zhàopiàn":"照片",
+    "jun1zhǎng":"军长", "tuanzhang":"团长", "xiongbu":"胸部", "siling":"司令",
+    "fangeming":"反革命", "yuwang":"欲望", "dite":"敌特", "yunian":"欲念",
+    "fandong":"反动", "tanwu":"贪污", "daoqie":"盗窃", "toujidaoba":"投机倒把",
+    "yundong":"运动", "gaizao":"改造", "yin乱":"淫乱", "卖yin":"卖淫",
+    "piaochang":"嫖娼", "she影":"摄影", "人ti":"人体", "ren体":"人体",
+    "luo拍":"裸拍", "yinhui":"淫秽", "yi术":"艺术", "luo体":"裸体",
+    "ji委":"纪委", "淫hui":"淫秽", "zuotai":"坐台", "淫luan":"淫乱",
+    "xiǎojiě":"小姐", "藏读":"藏毒", "贩读":"贩毒", "层ing":"曾经",
+    "贫ru":"贫乳", "tongzhi":"同志", "zhengzhi":"政治", "hépíng":"和平",
+    "rénmiàn":"人面", "diànyǐng":"电影", "xiāngzǐ":"箱子", "月匈":"胸",
+    "女表":"婊", "大角虫":"大触", "挺挺":"挺", "坨xiang":"坨屎",
+    "yin":"淫", "piao":"嫖", "情qu":"情趣", "lun奸":"轮奸",
+    "欲w*ang":"欲望", "催qing":"催情", "大、麻":"大麻", "毒pin":"毒品", 
+    "qing欲":"情欲", "欲huo":"欲火", "ren类":"人类", "jiàn蹄子":"贱蹄子", 
+    "歌命":"革命", "床chuáng":"床", "文化bu":"文化部", "xie教":"邪教", 
+    "háo水":"潮水", "bu长":"部长", "sāoāo":"骚操", "āo纵":"操纵", 
+    "sx小吃":"沙县小吃", "快gan":"快感", "":"", "":"", 
+    "jiàn\\)人":"贱人", "jiàn人":"贱人", "":"", "":"", 
+    "didu":"帝都", "":"", "":"", "":"", 
+    "shan":"山", "套tào":"套", "":"", "":"", 
+    "zhang":"长", "han":"韩", "tuan":"团", "jun":"军",
+    "zhuang":"装",
+    //"sh":"上海", "CD":"成都", 
+    "rbq":"肉便器", "rmb":"人民币", "jing部":"警部", "":"",
+    "rbm":"人民币", "rb":"日本", "jing视厅":"警视厅", "jing官":"警官",
+
+    "乳rǔ":"乳", "du":"毒", "吸du":"吸毒",
+     "‘性’":"性", "咏‘春’":"咏春", "duang":"Duang", "qun":"群",
+    "shi润":"湿润", "春chūn":"春", "咪mī":"咪", "挺挺":"挺",
+     "‘精’":"精", "衣果":"裸", "嫖piáopiáo":"嫖", "吮shǔn":"吮",
+     "~爷":"爷", "性~趣":"性趣", "大~法":"大法", "~":"",
+     "诱yòu":"诱", "穴xué":"穴", "":"", "":"",
 
     "</p>\\n<p>\\s*ì":"日",
 };
+// netcharm modified
 
 // 单字替换，可能会误替换，所以需要特殊处理
 (function(){
@@ -2235,6 +2272,8 @@ Rule.replaceAll = [
     "(&nsp;)+",
     "(&bp;)+",
     "center\/center",
+    "三寸人间.",
+    "www.kuangsha.net",
     '【.*?更新快 无弹窗.*?】', '【】',
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '手机用户请.*',
@@ -2252,6 +2291,7 @@ Rule.replaceAll = [
     '\\[800\\]\\[站页面清爽，广告少，',
     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快\\|www.uuxs.cc\\|',
     '看本书最新章节请到800小说网（www.800book.net）',
+    '想和更多志同道合.*?微信关注.*?',
     '请大家搜索.*?的小说',
     '（800小说网 www.800Book.net 提供Txt免费下载）',
     '热门小说最新章节全文阅读.。 更新好快。',
@@ -2278,7 +2318,9 @@ Rule.replaceAll = [
     'readx;',
     '追书必备',
     '樂文小说',
+    '（河蟹）',
     '&lt;r /&gt;&lt;r /&gt;',
+    '[一|壹|要]*?看 *?w *?w *?w.*?u·',
 
     // 包含 \P 的替换
     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
@@ -2302,6 +2344,9 @@ Rule.replaceAll = [
     '（?天上掉馅饼的好活动.*?微信公众号！）?',
     '（微信添加.*qdread微信公众号！）',
     'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
+    '.*?最快更新，无弹窗阅读.*?',
+    '请.*?收藏.*',
+    '<a.*?收藏.*?/a>',
     '一秒记住.*?免费阅读！',
     '天才本站.*',
     '\(纯文字在线在线阅读.*?\)',
@@ -3035,9 +3080,10 @@ var UI = {
         if(m) {
             var size = m[1],
                 type = m[2];
-            return parseInt(size, 10) * 1.8 + type;
+            var ts = parseInt(size, 10) * 1.8;
+            ts = Math.min(52, ts);
+            return ts + type;
         }
-
         return "";
     },
     fixMobile: function(){  // 自适应网页设计

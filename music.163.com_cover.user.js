@@ -7,7 +7,7 @@
 // @include
 // @include
 // @exclude     %exclude%
-// @version     1.2.4.32
+// @version     1.2.4.33
 // @run-at      document-end
 // @updateURL   https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
 // @downloadURL https://raw.githubusercontent.com/netcharm/greasemonkey-code/master/music.163.com_cover.user.js
